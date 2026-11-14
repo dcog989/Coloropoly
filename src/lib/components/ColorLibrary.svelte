@@ -1,6 +1,6 @@
 ﻿<script lang="ts">
 import CircleAlert from "@lucide/svelte/icons/circle-alert";
-import { onDestroy, onMount } from "svelte";
+import { onDestroy, onMount, untrack } from "svelte";
 import { getApp } from "../context";
 import { FILTER_LIMIT } from "../utils/color-search";
 import { tooltip } from "../utils/tooltip";
@@ -9,7 +9,6 @@ import LoadingSpinner from "./LoadingSpinner.svelte";
 const { color: colorStore, engine } = getApp();
 
 let searchQuery = $state("");
-let searchInput = $state<HTMLInputElement>();
 
 let workerFilteredColors: Array<{ name: string; hex: string }> = $state([]);
 let totalColors = $state(0);
@@ -72,16 +71,18 @@ onDestroy(() => {
 });
 
 $effect(() => {
+  const query = searchQuery.trim();
+
   if (searchDebounceTimeout !== null) {
     clearTimeout(searchDebounceTimeout);
   }
 
   filterCapped = false;
 
-  if (searchQuery.trim()) {
+  if (query) {
     isFiltering = true;
     searchDebounceTimeout = window.setTimeout(() => {
-      debouncedQuery = searchQuery.trim();
+      debouncedQuery = query;
       searchDebounceTimeout = null;
     }, 500);
   } else {
@@ -89,9 +90,13 @@ $effect(() => {
     debouncedQuery = "";
   }
 
-  scrollEl?.scrollTo({ top: 0 });
-  _scrollTop = 0;
-  throttledScrollTop = 0;
+  // Untracked: the scroll box unmounts while the spinner replaces the list, and
+  // tracking it would re-run this effect after the results arrive.
+  untrack(() => {
+    scrollEl?.scrollTo({ top: 0 });
+    _scrollTop = 0;
+    throttledScrollTop = 0;
+  });
 });
 
 $effect(() => {
@@ -161,12 +166,6 @@ function selectColor(hex: string) {
   colorStore.set(hex);
   onSelect?.();
 }
-
-$effect(() => {
-  if (searchInput) {
-    searchInput.focus();
-  }
-});
 </script>
 
 <div class="flex h-full flex-col">
@@ -179,7 +178,6 @@ $effect(() => {
   >
     <input
       id="searchInput"
-      bind:this={searchInput}
       type="text"
       bind:value={searchQuery}
       placeholder="Search 30,000+ colors..."

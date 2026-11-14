@@ -5,7 +5,9 @@ export function trapFocus(node: HTMLElement) {
   const previouslyFocused = document.activeElement instanceof HTMLElement ? document.activeElement : null;
   const focusable = () => Array.from(node.querySelectorAll<HTMLElement>(FOCUSABLE));
 
-  (focusable()[0] ?? node).focus();
+  // Dialogs whose primary control is a text field should open ready to type.
+  const textField = node.querySelector<HTMLElement>("input:not([disabled]), textarea:not([disabled])");
+  (textField ?? focusable()[0] ?? node).focus();
 
   const onKeydown = (event: KeyboardEvent) => {
     if (event.key !== "Tab") return;

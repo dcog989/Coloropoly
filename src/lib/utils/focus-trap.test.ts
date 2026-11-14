@@ -12,15 +12,15 @@ const buildPanel = () => {
 };
 
 describe("trapFocus", () => {
-  it("focuses the first control and restores the previous focus on destroy", () => {
+  it("focuses the first text field, else the first control, and restores the previous focus on destroy", () => {
     const opener = document.createElement("button");
     document.body.append(opener);
     opener.focus();
 
-    const { panel, first } = buildPanel();
+    const { panel, middle } = buildPanel();
     const action = trapFocus(panel);
 
-    expect(document.activeElement).toBe(first);
+    expect(document.activeElement).toBe(middle);
 
     action.destroy();
 
@@ -28,6 +28,21 @@ describe("trapFocus", () => {
 
     panel.remove();
     opener.remove();
+  });
+
+  it("falls back to the first control when there is no text field", () => {
+    const panel = document.createElement("div");
+    const first = document.createElement("button");
+    const second = document.createElement("button");
+    panel.append(first, second);
+    document.body.append(panel);
+
+    const action = trapFocus(panel);
+
+    expect(document.activeElement).toBe(first);
+
+    action.destroy();
+    panel.remove();
   });
 
   it("wraps Tab at both ends", () => {
