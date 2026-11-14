@@ -8,22 +8,28 @@ export interface PaletteEntry {
 }
 
 export const MAX_PALETTE_COLORS = 24;
+// A color must cover this share of the image to be ranked; specks must not crowd out real areas.
+export const MIN_PIXEL_SHARE = 0.001;
 
 export function orderPalette(entries: ReadonlyArray<PaletteEntry>, sortMode: PaletteSortMode): string[] {
+  const totalPixels = entries.reduce((sum, item) => sum + item.pixels, 0);
+  const minPixels = totalPixels * MIN_PIXEL_SHARE;
   const needsColor = sortMode !== "dominant";
-  const candidates = entries.map((item) => {
-    let l = 0;
-    let c = 0;
-    if (needsColor) {
-      const parsed = colordx(item.color);
-      if (parsed.isValid()) {
-        const oklch = parsed.toOklch();
-        l = oklch.l;
-        c = oklch.c;
+  const candidates = entries
+    .filter((item) => item.pixels >= minPixels)
+    .map((item) => {
+      let l = 0;
+      let c = 0;
+      if (needsColor) {
+        const parsed = colordx(item.color);
+        if (parsed.isValid()) {
+          const oklch = parsed.toOklch();
+          l = oklch.l;
+          c = oklch.c;
+        }
       }
-    }
-    return { ...item, l, c };
-  });
+      return { ...item, l, c };
+    });
 
   switch (sortMode) {
     case "vibrant":

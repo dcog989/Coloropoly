@@ -28,4 +28,8 @@ describe("orderPalette", () => {
   it("treats unparseable colors as neutral", () => {
     expect(orderPalette([entry("nope", 1), entry("#ff0000", 2)], "vibrant")[0]).toBe("#ff0000");
   });
+
+  it("drops specks under a thousandth of the pixels", () => {
+    expect(orderPalette([entry("#808080", 10_000), entry("#ff0000", 1)], "vibrant")).toEqual(["#808080"]);
+  });
 });
