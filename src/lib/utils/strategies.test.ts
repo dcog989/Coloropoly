@@ -250,6 +250,15 @@ describe("exportCodeFile", () => {
     click.mockRestore();
   });
 
+  it("downloads JSON now that it has a file format", () => {
+    const click = vi.spyOn(HTMLAnchorElement.prototype, "click").mockImplementation(() => {});
+
+    exportCodeFile(root, "json", "hex");
+
+    expect(click).toHaveBeenCalled();
+    click.mockRestore();
+  });
+
   it("throws for an unknown strategy", () => {
     expect(() => exportCodeFile(root, "nope")).toThrow(/Unknown export strategy/);
   });

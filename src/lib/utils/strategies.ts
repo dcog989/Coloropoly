@@ -138,6 +138,8 @@ class AndroidXmlExportStrategy implements ExportStrategy {
 
 class JsonExportStrategy implements ExportStrategy {
   name = "JSON";
+  extension = "json";
+  mimeType = "application/json";
   format(source: ColorSource, exportFormat: ExportFormat): string {
     const obj: Record<string, string> = {};
     source.colors.forEach((item, i) => {
