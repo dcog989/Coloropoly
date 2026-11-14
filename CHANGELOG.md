@@ -2,6 +2,17 @@
 All notable changes to this project will be documented in this file. See [conventional commits](https://www.conventionalcommits.org/) for commit guidelines.
 
 - - -
+## v3.11.1 - 2026-11-14
+
+#### Bug Fixes
+
+- (639ab39) keep chroma and saturation when lightness hits black or white - dcog989
+
+#### Miscellaneous Chores
+
+- (79a716b) tidy directory file - dcog989
+- - -
+
 ## v3.11.0 - 2026-11-14
 
 #### Features
