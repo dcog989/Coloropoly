@@ -47,9 +47,7 @@ export class ManagedWorker<TMessage = unknown> {
       worker.onmessage = (e: MessageEvent<TMessage>) => {
         this.#retryCount = 0;
         handlers.onMessage(e.data);
-        this.#subscribers.forEach((h) => {
-          h(e.data);
-        });
+        this.notify(e.data);
       };
 
       worker.onerror = (error) => {
@@ -68,15 +66,17 @@ export class ManagedWorker<TMessage = unknown> {
     }
   }
 
-  post(data: unknown, transfer?: Transferable[]): void {
+  post(data: unknown, transfer?: Transferable[]): boolean {
     if (!this.#worker) {
       console.warn(`${this.#context} worker not available`);
-      return;
+      return false;
     }
     try {
       this.#worker.postMessage(data, transfer ?? []);
+      return true;
     } catch (error) {
       console.error(`Failed to send message to ${this.#context}:`, error);
+      return false;
     }
   }
 
@@ -85,6 +85,11 @@ export class ManagedWorker<TMessage = unknown> {
     return () => {
       this.#subscribers = this.#subscribers.filter((h) => h !== handler);
     };
+  }
+
+  /** Tell subscribers about something that is not an incoming worker message (e.g. a failure). */
+  notify(msg: TMessage): void {
+    for (const handler of this.#subscribers) handler(msg);
   }
 
   terminate(): void {

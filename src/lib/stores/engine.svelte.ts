@@ -1,5 +1,4 @@
-import { type Colordx, colordx } from "@colordx/core";
-import { PRECISION } from "../constants";
+import { colordx } from "@colordx/core";
 import { type GenerationMode, generatePalette, isHarmonyMode } from "../utils/palette";
 import { ManagedWorker } from "../utils/worker-manager";
 import ColorNameSearchWorker from "../workers/color-name-search.ts?worker";
@@ -26,34 +25,6 @@ export class EngineStore {
 
   constructor(colorStore: ColorStore) {
     this.#colorStore = colorStore;
-  }
-
-  #currentColor = $derived.by((): Colordx | null => {
-    try {
-      return colordx(this.#colorStore.hex);
-    } catch {
-      return null;
-    }
-  });
-
-  #contrastWhite = $derived.by((): string => {
-    const current = this.#currentColor;
-    if (!current) return "0";
-    return Math.abs(current.apcaContrast("#fff")).toFixed(PRECISION.CONTRAST_DISPLAY);
-  });
-
-  get contrastWhite(): string {
-    return this.#contrastWhite;
-  }
-
-  #contrastBlack = $derived.by((): string => {
-    const current = this.#currentColor;
-    if (!current) return "0";
-    return Math.abs(current.apcaContrast("#000")).toFixed(PRECISION.CONTRAST_DISPLAY);
-  });
-
-  get contrastBlack(): string {
-    return this.#contrastBlack;
   }
 
   #isHarmonyMode = $derived(isHarmonyMode(this.genAxis));
@@ -116,6 +87,8 @@ export class EngineStore {
         },
         onError: () => {
           this.closestName = "Custom Color";
+          // Subscribers (the color library) would otherwise wait forever for a page.
+          this.#managedWorker.notify({ type: "error" });
         },
         onReady: () => {
           if (this.#pendingSearch) {
@@ -147,7 +120,9 @@ export class EngineStore {
   }
 
   postToWorker(data: Record<string, unknown>): void {
-    this.#managedWorker.post(data);
+    if (!this.#managedWorker.post(data)) {
+      this.#managedWorker.notify({ type: "error" });
+    }
   }
 
   #getBaseColor(): { l: number; c: number; h: number; alpha: number } {

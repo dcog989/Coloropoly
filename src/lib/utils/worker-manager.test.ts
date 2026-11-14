@@ -52,12 +52,24 @@ describe("ManagedWorker", () => {
     expect(worker.postMessage).not.toHaveBeenCalled();
 
     managed.init(() => worker as unknown as Worker, { onMessage: vi.fn() });
-    managed.post({ ping: true });
+    expect(managed.post({ ping: true })).toBe(true);
     expect(worker.postMessage).toHaveBeenCalledWith({ ping: true }, []);
 
     managed.terminate();
-    managed.post({ ping: true });
+    expect(managed.post({ ping: true })).toBe(false);
     expect(worker.postMessage).toHaveBeenCalledTimes(1);
+  });
+
+  it("notifies subscribers about failures that are not worker messages", () => {
+    const subscriber = vi.fn();
+    const managed = new ManagedWorker<{ type: string }>();
+
+    managed.init(() => createWorker() as unknown as Worker, { onMessage: vi.fn() });
+    managed.subscribe(subscriber);
+    managed.notify({ type: "error" });
+
+    expect(subscriber).toHaveBeenCalledWith({ type: "error" });
+    managed.destroy();
   });
 
   it("retries a failed worker until the limit", () => {

@@ -13,10 +13,6 @@ export const PAINTBOX = {
   STORAGE_KEY: "paintbox",
 } as const;
 
-export const PRECISION = {
-  CONTRAST_DISPLAY: 0,
-} as const;
-
 // Export dimensions
 export const EXPORT = {
   PNG_WIDTH: 1200,

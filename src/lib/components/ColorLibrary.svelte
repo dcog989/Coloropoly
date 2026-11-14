@@ -49,6 +49,7 @@ onMount(() => {
       loadError = "Failed to load color library. Please refresh the page.";
       isPagePending = false;
       isLoading = false;
+      isFiltering = false;
     }
   });
 
