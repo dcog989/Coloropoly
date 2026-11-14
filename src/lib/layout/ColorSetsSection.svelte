@@ -196,6 +196,7 @@ function handleExport(event: Event) {
             type="button"
             onclick={(event) => app.copy(color.name, event)}
             aria-label="Copy {color.name}"
+            use:tooltip={`Copy ${color.name}`}
             class="relative z-10 min-w-0 truncate text-left text-xs font-bold hover:underline"
           >
             {color.name}
@@ -209,6 +210,7 @@ function handleExport(event: Event) {
               {color.useDarkText ? "hover:bg-black/15" : "hover:bg-white/20"}
             "
             aria-label="Copy {color.value}"
+            use:tooltip={`Copy ${color.value}`}
           >
             {color.value}
           </button>
