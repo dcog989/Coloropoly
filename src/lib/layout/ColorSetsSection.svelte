@@ -3,6 +3,7 @@ import CircleAlert from "@lucide/svelte/icons/circle-alert";
 import ColorBlindFilters from "../components/ColorBlindFilters.svelte";
 import LoadingSpinner from "../components/LoadingSpinner.svelte";
 import { getApp } from "../context";
+import { COLOR_BLIND_MODES } from "../data/color-blind";
 import { COLOR_SETS, loadColorSet } from "../data/color-sets";
 import { type ExportFormat, formatColor } from "../utils/formatters";
 import { filterAndSortSetColors, processSetColors, type SetSortOrder } from "../utils/palette-sets";
@@ -23,18 +24,6 @@ const FORMAT_OPTIONS: Array<{ label: string; value: ExportFormat }> = [
   { label: "RGB", value: "rgb" },
   { label: "HSL", value: "hsl" },
   { label: "OKLCH", value: "oklch" },
-];
-
-const COLOR_BLIND_OPTIONS: Array<{ label: string; value: string }> = [
-  { label: "None", value: "none" },
-  { label: "Protanopia", value: "protanopia" },
-  { label: "Protanomaly", value: "protanomaly" },
-  { label: "Deuteranopia", value: "deuteranopia" },
-  { label: "Deuteranomaly", value: "deuteranomaly" },
-  { label: "Tritanopia", value: "tritanopia" },
-  { label: "Tritanomaly", value: "tritanomaly" },
-  { label: "Achromatopsia", value: "achromatopsia" },
-  { label: "Achromatomaly", value: "achromatomaly" },
 ];
 
 const EXPORT_OPTIONS = Object.entries(strategies).map(([id, strategy]) => ({ id, name: strategy.name }));
@@ -135,7 +124,7 @@ function handleExport(event: Event) {
       <label class="flex items-center gap-2 text-xs font-bold text-(--ui-text-muted) uppercase">
         Vision
         <select bind:value={colorBlind} class="select-control">
-          {#each COLOR_BLIND_OPTIONS as option (option.value)}
+          {#each COLOR_BLIND_MODES as option (option.value)}
             <option value={option.value}>{option.label}</option>
           {/each}
         </select>
