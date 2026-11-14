@@ -13,6 +13,32 @@ describe("ColorStore", () => {
     expect(store.c).toBeLessThanOrEqual(0.001);
   });
 
+  it("keeps the chroma when lightness is dragged to either end", () => {
+    const store = new ColorStore();
+    store.set("#ff0000");
+    const chroma = store.c;
+
+    store.l = 0;
+    expect(store.c).toBeCloseTo(chroma);
+
+    store.l = 1;
+    expect(store.c).toBeCloseTo(chroma);
+
+    store.l = 0.5;
+    expect(store.hex).not.toBe("#000000");
+    expect(store.hex).not.toBe("#ffffff");
+  });
+
+  it("lets an explicit chroma replace the retained one", () => {
+    const store = new ColorStore();
+    store.set("#ff0000");
+
+    store.l = 0;
+    store.c = 0;
+
+    expect(store.c).toBe(0);
+  });
+
   it("rejects an unreadable value and keeps the current color", () => {
     const store = new ColorStore();
     store.set("#123456");

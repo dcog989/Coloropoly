@@ -18,19 +18,27 @@ const RANDOM_HUE_MAX = 360;
 const RANDOM_LIGHTNESS = 0.45;
 const RANDOM_CHROMA = 0.08;
 const MIN_CHROMA_MAX = 0.001;
+const MEANINGFUL_CHROMA = 0.001;
+// Black and white carry no chroma or hue, so channels within this distance of
+// either end of the lightness scale are treated as the endpoints.
+const EDGE_LIGHTNESS = 0.001;
 
 export class ColorStore {
   #current = $state<Colordx>(ColorStore.#getRandomColor());
   #oklch = $derived(this.#current.toOklch());
   #lastMeaningfulHue = 0;
+  #lastChroma = 0;
   mode = $state<"okhsl" | "oklch" | "rgb">("okhsl");
   #precisionMode: () => "precise" | "practical" = () => "practical";
 
   constructor(precisionGetter: () => "precise" | "practical" = () => "practical") {
     this.#precisionMode = precisionGetter;
-    // Capture initial hue if meaningful
+    // Capture initial hue and chroma if meaningful
     const init = this.#oklch;
-    if (init.c > 0.001) this.#lastMeaningfulHue = init.h;
+    if (init.c > MEANINGFUL_CHROMA) {
+      this.#lastMeaningfulHue = init.h;
+      this.#lastChroma = init.c;
+    }
   }
 
   static #getRandomColor(): Colordx {
@@ -40,8 +48,9 @@ export class ColorStore {
 
   #setCurrent(color: Colordx) {
     const oklch = color.toOklch();
-    if (oklch.c > 0.001) {
+    if (oklch.c > MEANINGFUL_CHROMA) {
       this.#lastMeaningfulHue = oklch.h;
+      this.#lastChroma = oklch.c;
     }
     this.#current = color;
   }
@@ -65,15 +74,19 @@ export class ColorStore {
   }
 
   get c() {
-    return this.#oklch.c;
+    const { l, c } = this.#oklch;
+    // The ends of the lightness scale erase chroma; keep the last value so
+    // dragging lightness there and back does not wipe it.
+    return l <= EDGE_LIGHTNESS || l >= 1 - EDGE_LIGHTNESS ? this.#lastChroma : c;
   }
   set c(v: number) {
+    this.#lastChroma = v;
     this.#setOklchField("c", v);
   }
 
   get h() {
     const { c, h } = this.#oklch;
-    return c > 0.001 ? h : this.#lastMeaningfulHue;
+    return c > MEANINGFUL_CHROMA ? h : this.#lastMeaningfulHue;
   }
   set h(v: number) {
     // Record an explicit hue so a neutral color keeps it when chroma rises later.

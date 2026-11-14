@@ -21,10 +21,13 @@ $effect(() => {
   const { h, s, l } = color.okhslComp;
   const prev = untrack(() => local);
   const hasHue = s > ACHROMATIC_S_THRESHOLD && l > EDGE_L_THRESHOLD && l < 100 - EDGE_L_THRESHOLD;
+  const atEdgeLightness = l <= EDGE_L_THRESHOLD || l >= 100 - EDGE_L_THRESHOLD;
   // Mutate in place so each channel keeps its identity; a wholesale reassignment
   // would invalidate every gradient ramp, including ones whose channels did not change.
   local.h = hasHue ? h : prev.h;
-  local.s = s;
+  // Black and white have no saturation of their own; keep the last value so
+  // dragging lightness to either end does not wipe it.
+  local.s = atEdgeLightness ? prev.s : s;
   local.l = l;
 });
 
