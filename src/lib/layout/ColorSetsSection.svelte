@@ -184,7 +184,7 @@ function handleExport(event: Event) {
       {#each colors as color (color.name)}
         <li
           class="
-            group flex min-w-0 items-center justify-between gap-2 rounded-md
+            group relative flex min-w-0 items-center justify-between gap-2 rounded-md
             px-2.5 py-2
             [contain-intrinsic-size:auto_2.5rem] [content-visibility:auto]
             {color.useDarkText ? "text-black" : "text-white"}
@@ -193,8 +193,15 @@ function handleExport(event: Event) {
         >
           <button
             type="button"
+            class="absolute inset-0 cursor-pointer rounded-md"
+            onclick={() => app.color.set(color.css)}
+            title="Set as current color"
+            aria-label="Set {color.name} as the current color"
+          ></button>
+          <button
+            type="button"
             onclick={(event) => app.copy(color.name, event)}
-            class="min-w-0 truncate text-left text-xs font-bold hover:underline"
+            class="relative z-10 min-w-0 truncate text-left text-xs font-bold hover:underline"
             title="Copy name"
           >
             {color.name}
@@ -203,7 +210,7 @@ function handleExport(event: Event) {
             type="button"
             onclick={(event) => app.copy(color.value, event)}
             class="
-              shrink-0 rounded px-1.5 py-0.5 font-mono text-[0.7rem]
+              relative z-10 shrink-0 rounded px-1.5 py-0.5 font-mono text-[0.7rem]
               tracking-wider uppercase
               {color.useDarkText ? "hover:bg-black/15" : "hover:bg-white/20"}
             "
