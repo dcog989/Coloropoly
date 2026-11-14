@@ -320,6 +320,12 @@ button:disabled {
   outline-offset: 2px;
 }
 
+/* Bordered text fields show one focus ring: the global outline, not border + outline.
+   Unlayered on purpose: the utilities layer would lose to the base border. */
+.text-input:focus-visible {
+  border-color: transparent;
+}
+
 @utility text-on-current {
   color: var(--ui-on-current);
 }
