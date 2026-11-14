@@ -47,11 +47,14 @@ const mobileEmptyLimit = $derived(Math.max(mobileCols * minRows, itemCount) - it
           paintbox.remove(item.id);
         }}
         class="
-                  absolute -top-2 -right-2 z-10 flex size-6 items-center
-                  justify-center rounded-full bg-black/50 text-sm font-bold
-                  text-white opacity-0 shadow-lg transition-all
-                  group-hover:opacity-100 group-focus-within:opacity-100
-                  hover:bg-red-500
+                  pointer-events-none absolute -top-2 -right-2 z-10 flex
+                  size-6 items-center justify-center rounded-full bg-black/50
+                  text-sm font-bold text-white opacity-0 shadow-lg
+                  transition-all
+                  group-hover:pointer-events-auto group-hover:opacity-100
+                  group-focus-within:pointer-events-auto
+                  group-focus-within:opacity-100 hover:bg-red-500
+                  max-md:pointer-events-auto max-md:opacity-100
                 "
         aria-label="Remove color"
       >
