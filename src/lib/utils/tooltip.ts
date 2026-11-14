@@ -2,6 +2,29 @@ const SHOW_DELAY_MS = 250;
 const GAP_PX = 8;
 const EDGE_PX = 4;
 
+// Every mounted tooltip registers here, so the page keeps one pair of viewport
+// listeners instead of two per tip (a large color set mounts thousands).
+const hiders = new Set<() => void>();
+let watchingViewport = false;
+
+const hideAll = () => {
+  for (const hide of hiders) hide();
+};
+
+const watchViewport = (watch: boolean) => {
+  if (watch === watchingViewport) return;
+  watchingViewport = watch;
+
+  if (watch) {
+    // Capture so a scroll inside any panel also dismisses a stale position.
+    window.addEventListener("scroll", hideAll, true);
+    window.addEventListener("resize", hideAll);
+  } else {
+    window.removeEventListener("scroll", hideAll, true);
+    window.removeEventListener("resize", hideAll);
+  }
+};
+
 /**
  * App-styled replacement for the native `title` tooltip. Renders one fixed-position
  * element outside the trigger, so scrolling panels and overflow-hidden swatches
@@ -60,10 +83,12 @@ export function tooltip(node: HTMLElement, text: string) {
     }, SHOW_DELAY_MS);
   };
 
-  const onViewportChange = () => hide();
   const onKeydown = (event: KeyboardEvent) => {
     if (event.key === "Escape") hide();
   };
+
+  hiders.add(hide);
+  watchViewport(true);
 
   node.addEventListener("pointerenter", onEnter);
   node.addEventListener("pointerleave", hide);
@@ -71,9 +96,6 @@ export function tooltip(node: HTMLElement, text: string) {
   node.addEventListener("blur", hide);
   node.addEventListener("pointerdown", hide);
   node.addEventListener("keydown", onKeydown);
-  // Capture so a scroll inside any panel also dismisses a stale position.
-  window.addEventListener("scroll", onViewportChange, true);
-  window.addEventListener("resize", onViewportChange);
 
   return {
     update(next: string) {
@@ -90,8 +112,8 @@ export function tooltip(node: HTMLElement, text: string) {
       node.removeEventListener("blur", hide);
       node.removeEventListener("pointerdown", hide);
       node.removeEventListener("keydown", onKeydown);
-      window.removeEventListener("scroll", onViewportChange, true);
-      window.removeEventListener("resize", onViewportChange);
+      hiders.delete(hide);
+      if (hiders.size === 0) watchViewport(false);
     },
   };
 }

@@ -122,4 +122,17 @@ describe("tooltip action", () => {
     vi.advanceTimersByTime(250);
     expect(document.querySelector(".app-tooltip")).toBeNull();
   });
+
+  it("hides a visible tip when the window scrolls", () => {
+    const node = makeTrigger();
+    const action = tooltip(node, "Copy");
+
+    node.focus();
+    expect(tip().style.visibility).toBe("visible");
+
+    window.dispatchEvent(new Event("scroll"));
+    expect(tip().style.visibility).toBe("hidden");
+
+    action.destroy();
+  });
 });
