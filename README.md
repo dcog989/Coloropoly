@@ -25,7 +25,7 @@ Visit [Color Picker Palette](https://dcog989.github.io/Color-Picker-Palette/).
 
 ## Getting Started
 
-Required: [bun](https://bun.sh).
+Required: [bun](https://bun.sh). The git hooks and the release flow also need [cog](https://docs.cocogitto.io/) on your `PATH`; `bun install` installs the hooks, so `cog` must be present before your first commit.
 
 | Command                 | Action                                                      |
 | ----------------------- | ----------------------------------------------------------- |
