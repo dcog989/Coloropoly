@@ -75,7 +75,9 @@ export class ColorStore {
     return c > 0.001 ? h : this.#lastMeaningfulHue;
   }
   set h(v: number) {
-    this.#setOklchField("h", clampHue(v));
+    // Record an explicit hue so a neutral color keeps it when chroma rises later.
+    this.#lastMeaningfulHue = clampHue(v);
+    this.#setOklchField("h", this.#lastMeaningfulHue);
   }
 
   #setOklchField(field: "l" | "c" | "h", value: number) {
