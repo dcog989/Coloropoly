@@ -7,6 +7,7 @@ import {
   exportCode,
   exportCodeFile,
   exportSource,
+  exportVisual,
   generateColorLabel,
   generateColorName,
   generateFilename,
@@ -64,6 +65,15 @@ describe("DTCG export", () => {
     expect(parsed.color.test.$value.components).toEqual([0, 0, 0]);
     expect(parsed.color.test.$value.hex).toBe("#000000");
   });
+
+  it("uses its own filename so JSON and DTCG downloads do not collide", () => {
+    const root = rootWith([]);
+    const jsonName = generateFilename(root, strategies.json.extension ?? "");
+    const dtcgName = generateFilename(root, strategies.dtcg.extension ?? "");
+
+    expect(dtcgName).not.toBe(jsonName);
+    expect(dtcgName).toBe("Color-Picker-Palette-Fuzzy-Wuzzy.tokens.json");
+  });
 });
 
 describe("GIMP GPL export", () => {
@@ -81,6 +91,15 @@ describe("GIMP GPL export", () => {
 
     expect(lines[4]).toMatch(/^\s*0\s+0\s+0\s+test$/);
   });
+
+  it("keeps the readable color name, not the code slug", () => {
+    const named: ColorSource = {
+      colors: [{ name: "Breakfast Room Green (No. 81)", css: "#ff0000" }],
+      isSingle: false,
+    };
+
+    expect(strategies.gpl.format(named, "hex")).toContain("\tBreakfast Room Green (No. 81)");
+  });
 });
 
 describe("code export strategies", () => {
@@ -93,6 +112,9 @@ describe("code export strategies", () => {
   it("formats a Tailwind config", () => {
     const output = strategies.tailwind.format(source(["#ff0000", "#00ff00"]), "hex");
 
+    // The whole output must be valid JS, not a bare fragment.
+    expect(output.startsWith("export default {")).toBe(true);
+    expect(output.endsWith("};")).toBe(true);
     expect(output).toContain("colors: {");
     expect(output).toContain("'color-1': '#ff0000',");
     expect(output).toContain("'color-2': '#00ff00',");
@@ -219,8 +241,37 @@ describe("exportCodeFile", () => {
     expect(() => exportCodeFile(root, "css", "hex")).toThrow(/no file format/);
   });
 
+  it("downloads Android XML now that it has a file format", () => {
+    const click = vi.spyOn(HTMLAnchorElement.prototype, "click").mockImplementation(() => {});
+
+    exportCodeFile(root, "xml", "hex");
+
+    expect(click).toHaveBeenCalled();
+    click.mockRestore();
+  });
+
   it("throws for an unknown strategy", () => {
     expect(() => exportCodeFile(root, "nope")).toThrow(/Unknown export strategy/);
+  });
+});
+
+describe("exportVisual", () => {
+  beforeAll(() => {
+    URL.createObjectURL = vi.fn(() => "blob:mock");
+    URL.revokeObjectURL = vi.fn();
+  });
+
+  it("renders the visual strategy and downloads the blob", async () => {
+    const click = vi.spyOn(HTMLAnchorElement.prototype, "click").mockImplementation(() => {});
+
+    await exportVisual(rootWith([{ css: "#ff0000" }]), "svg");
+
+    expect(click).toHaveBeenCalled();
+    click.mockRestore();
+  });
+
+  it("throws for an unknown visual strategy", async () => {
+    await expect(exportVisual(rootWith([]), "nope")).rejects.toThrow(/Unknown visual export strategy/);
   });
 });
 

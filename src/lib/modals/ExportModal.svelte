@@ -62,7 +62,7 @@ const exports = $derived.by(() =>
       </div>
     </header>
     <div class="space-y-6">
-      {#each exports as exportItem (exportItem.name)}
+      {#each exports as exportItem (exportItem.key)}
         <div class="space-y-3">
           <div class="flex items-center justify-between">
             <span class="sub-label">{exportItem.name}</span>

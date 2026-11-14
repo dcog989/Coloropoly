@@ -108,18 +108,20 @@ const variablesStrategy = (
 class TailwindExportStrategy implements ExportStrategy {
   name = "Tailwind Config";
   format(source: ColorSource, exportFormat: ExportFormat): string {
-    const lines = ["theme: {", "  extend: {", "    colors: {"];
+    const lines = ["export default {", "  theme: {", "    extend: {", "      colors: {"];
     source.colors.forEach((item, i) => {
       const name = generateColorName(i, source);
-      lines.push(`      '${name}': '${formatColor(item.css, exportFormat)}',`);
+      lines.push(`        '${name}': '${formatColor(item.css, exportFormat)}',`);
     });
-    lines.push("    }", "  }", "}");
+    lines.push("      }", "    }", "  }", "};");
     return lines.join("\n");
   }
 }
 
 class AndroidXmlExportStrategy implements ExportStrategy {
-  name = "Android XML";
+  name = "Android XML (HEX)";
+  extension = "xml";
+  mimeType = "application/xml";
   format(source: ColorSource, _exportFormat: ExportFormat): string {
     const lines = ['<?xml version="1.0" encoding="utf-8"?>', "<resources>"];
     source.colors.forEach((item, i) => {
@@ -203,7 +205,8 @@ const toDtcgValue = (css: string, exportFormat: ExportFormat): DtcgColorValue =>
 
 class DtcgExportStrategy implements ExportStrategy {
   name = "DTCG Design Tokens";
-  extension = "json";
+  // Own suffix, else it shares a download filename with the plain JSON export.
+  extension = "tokens.json";
   mimeType = "application/json";
   format(source: ColorSource, exportFormat: ExportFormat): string {
     const color: Record<string, { $type: "color"; $value: DtcgColorValue }> = {};
@@ -215,7 +218,7 @@ class DtcgExportStrategy implements ExportStrategy {
 }
 
 class GplExportStrategy implements ExportStrategy {
-  name = "GIMP Palette";
+  name = "GIMP Palette (RGB)";
   extension = "gpl";
   mimeType = "text/plain";
   format(source: ColorSource): string {
@@ -223,7 +226,7 @@ class GplExportStrategy implements ExportStrategy {
     source.colors.forEach((item, i) => {
       const parsed = safeColor(item.css);
       const { r, g, b } = parsed ? parsed.toRgb() : { r: 0, g: 0, b: 0 };
-      const name = generateColorName(i, source);
+      const name = generateColorLabel(i, source);
       lines.push(`${String(r).padStart(3, " ")} ${String(g).padStart(3, " ")} ${String(b).padStart(3, " ")}\t${name}`);
     });
     return lines.join("\n");
