@@ -1,7 +1,7 @@
 import { EXPORT } from "../constants";
 import type { RootStore } from "../stores/root.svelte";
 import { safeColor } from "./formatters";
-import { type ColorSource, resolveClosestName, type VisualExportStrategy } from "./strategies";
+import { type ColorSource, escapeXml, resolveClosestName, type VisualExportStrategy } from "./strategies";
 import { usesDarkText } from "./text-contrast";
 
 /** Black or white text, by the same rule the on-screen swatches use. */
@@ -97,7 +97,7 @@ class SvgExportStrategy implements VisualExportStrategy {
       svg = `<?xml version="1.0" encoding="UTF-8"?>
 <svg width="${EXPORT.SVG_SIZE}" height="${EXPORT.SVG_SIZE}" viewBox="0 0 ${EXPORT.SVG_SIZE} ${EXPORT.SVG_SIZE}" xmlns="http://www.w3.org/2000/svg">
   <rect width="${EXPORT.SVG_SIZE}" height="${EXPORT.SVG_SIZE}" fill="${root.color.hexa}" />
-  <text x="20" y="40" font-family="sans-serif" font-weight="bold" font-size="24" fill="${textFill}">${resolveClosestName(root.engine.closestName, root.color.hex).toUpperCase()}</text>
+  <text x="20" y="40" font-family="sans-serif" font-weight="bold" font-size="24" fill="${textFill}">${escapeXml(resolveClosestName(root.engine.closestName, root.color.hex).toUpperCase())}</text>
   <text x="20" y="70" font-family="monospace" font-size="14" fill="${textFill}">${root.color.display}</text>
   ${root.color.alpha < 1 ? `<text x="20" y="90" font-family="monospace" font-size="12" fill="${textFill}">Alpha: ${(root.color.alpha * 100).toFixed(0)}%</text>` : ""}
 </svg>`;

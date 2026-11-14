@@ -45,7 +45,7 @@ export function getMaxSrgbChroma(l: number, h: number): number {
   return low;
 }
 
-const round = (value: number, decimals: number): number => parseFloat(value.toFixed(decimals));
+export const round = (value: number, decimals: number): number => parseFloat(value.toFixed(decimals));
 
 const joinColor = (fn: string, channels: (number | string)[], alpha: number, decimals: number): string => {
   const suffix = alpha < 1 ? ` / ${round(alpha, decimals)}` : "";

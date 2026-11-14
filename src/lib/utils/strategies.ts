@@ -1,4 +1,5 @@
 import type { RootStore } from "../stores/root.svelte";
+import { round } from "./color-format";
 import { type ExportFormat, formatColor, safeColor } from "./formatters";
 
 export interface ColorSource {
@@ -8,6 +9,17 @@ export interface ColorSource {
 }
 
 const PENDING_COLOR_NAME = "Searching...";
+
+const XML_ESCAPES: Record<string, string> = {
+  "&": "&amp;",
+  "<": "&lt;",
+  ">": "&gt;",
+  '"': "&quot;",
+  "'": "&apos;",
+};
+
+/** Escape text before embedding it in XML/SVG; color names can contain "&". */
+export const escapeXml = (value: string): string => value.replace(/[&<>"']/g, (char) => XML_ESCAPES[char] ?? char);
 
 export const resolveClosestName = (closestName: string, hex: string): string => {
   const trimmed = closestName.trim();
@@ -177,8 +189,6 @@ interface DtcgColorValue {
   hex: string;
   alpha?: number;
 }
-
-const round = (value: number, decimals: number): number => Number(value.toFixed(decimals));
 
 const toDtcgValue = (css: string, exportFormat: ExportFormat): DtcgColorValue => {
   const parsed = safeColor(css);

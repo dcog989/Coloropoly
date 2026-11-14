@@ -3,6 +3,7 @@ import type { RootStore } from "../stores/root.svelte";
 import {
   type ColorSource,
   downloadFile,
+  escapeXml,
   exportCode,
   exportCodeFile,
   exportSource,
@@ -25,6 +26,13 @@ const rootWith = (items: Array<{ css: string }>, name = "Fuzzy Wuzzy"): RootStor
     color: { hex: "#abcdef", hexa: "#abcdef80" },
     engine: { closestName: name },
   }) as unknown as RootStore;
+
+describe("escapeXml", () => {
+  it("escapes the characters that would break an SVG document", () => {
+    expect(escapeXml("Dark & Stormy")).toBe("Dark &amp; Stormy");
+    expect(escapeXml(`<a href="x">'y'</a>`)).toBe("&lt;a href=&quot;x&quot;&gt;&apos;y&apos;&lt;/a&gt;");
+  });
+});
 
 describe("DTCG export", () => {
   it("emits an sRGB color token with hex fallback", () => {
