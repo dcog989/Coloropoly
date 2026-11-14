@@ -39,6 +39,7 @@ let loadError = $state(false);
 
 $effect(() => {
   const id = selectedId;
+  query = "";
   rawData = null;
   loading = true;
   loadError = false;
@@ -98,7 +99,7 @@ function handleExport(event: Event) {
       <input
         type="search"
         bind:value={query}
-        placeholder="Filter colors..."
+        placeholder="Filter names and hex"
         aria-label="Filter colors by name or hex"
         class="text-input min-w-40 flex-1 px-3 py-1.5 text-xs"
       >
@@ -171,7 +172,7 @@ function handleExport(event: Event) {
     <div class="flex min-h-40 items-center justify-center text-sm text-(--ui-text-muted)">No colors found</div>
   {:else}
     <ul
-      class="grid grid-cols-[repeat(auto-fill,minmax(13rem,1fr))] gap-2"
+      class="grid grid-cols-[repeat(auto-fill,minmax(16rem,1fr))] gap-2"
       style:filter={colorBlind === "none" ? "" : `url(#cb-${colorBlind})`}
     >
       {#each colors as color (color.name)}
@@ -194,8 +195,8 @@ function handleExport(event: Event) {
           <button
             type="button"
             onclick={(event) => app.copy(color.name, event)}
+            aria-label="Copy {color.name}"
             class="relative z-10 min-w-0 truncate text-left text-xs font-bold hover:underline"
-            use:tooltip={"Copy name"}
           >
             {color.name}
           </button>
@@ -204,10 +205,9 @@ function handleExport(event: Event) {
             onclick={(event) => app.copy(color.value, event)}
             class="
               relative z-10 shrink-0 rounded px-1.5 py-0.5 font-mono text-[0.7rem]
-              tracking-wider uppercase
+              tracking-wider
               {color.useDarkText ? "hover:bg-black/15" : "hover:bg-white/20"}
             "
-            use:tooltip={`Copy ${color.value}`}
             aria-label="Copy {color.value}"
           >
             {color.value}
