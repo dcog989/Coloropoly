@@ -1,119 +1,22 @@
 import type { Colordx } from "@colordx/core";
-import { colordx, inGamutSrgb, oklchToLinear } from "@colordx/core";
+import { colordx, inGamutSrgb } from "@colordx/core";
+import {
+  clampHue,
+  decimalsFor,
+  formatHsl,
+  formatHsv,
+  formatHwb,
+  formatOkhsl,
+  formatOklch,
+  formatRgb,
+  getMaxSrgbChroma,
+} from "../utils/color-format";
 import { normalizeColorString } from "../utils/formatters";
 
 const RANDOM_HUE_MAX = 360;
 const RANDOM_LIGHTNESS = 0.45;
 const RANDOM_CHROMA = 0.08;
-const CHROMA_SEARCH_UPPER_BOUND = 0.5;
-const CHROMA_SEARCH_ITERATIONS = 18;
 const MIN_CHROMA_MAX = 0.001;
-const HUE_MAX = 359.999;
-// Mirrors colordx's in-gamut test, which allows a small linear-sRGB tolerance.
-const GAMUT_TOLERANCE = 5e-4;
-
-const clampHue = (h: number): number => Math.max(0, Math.min(h, HUE_MAX));
-
-const isInSrgbGamut = (l: number, c: number, h: number): boolean => {
-  const [r, g, b] = oklchToLinear(l, c, h);
-  return (
-    r >= -GAMUT_TOLERANCE &&
-    r <= 1 + GAMUT_TOLERANCE &&
-    g >= -GAMUT_TOLERANCE &&
-    g <= 1 + GAMUT_TOLERANCE &&
-    b >= -GAMUT_TOLERANCE &&
-    b <= 1 + GAMUT_TOLERANCE
-  );
-};
-
-function getMaxSrgbChroma(l: number, h: number): number {
-  let low = 0;
-  let high = CHROMA_SEARCH_UPPER_BOUND;
-  for (let i = 0; i < CHROMA_SEARCH_ITERATIONS; i++) {
-    const mid = (low + high) / 2;
-    if (isInSrgbGamut(l, mid, h)) {
-      low = mid;
-    } else {
-      high = mid;
-    }
-  }
-  return low;
-}
-
-// Decimal places per mode, keyed by channel scale. Percent (0..100) carries two
-// fewer places than fraction (0..1); hue is coarser than both; rgb is 0..255.
-// Sliders reuse these as steps.
-const DECIMALS = {
-  practical: { channel: 2, percent: 0, hue: 0, rgb: 0 },
-  precise: { channel: 4, percent: 2, hue: 1, rgb: 2 },
-} as const;
-
-const round = (value: number, decimals: number): number => parseFloat(value.toFixed(decimals));
-
-const joinColor = (fn: string, channels: (number | string)[], alpha: number, decimals: number): string => {
-  const suffix = alpha < 1 ? ` / ${round(alpha, decimals)}` : "";
-  return `${fn}(${channels.join(" ")}${suffix})`;
-};
-
-function formatOklch(color: Colordx, precise: boolean): string {
-  const { l, c, h, alpha } = color.toOklch();
-  const d = precise ? DECIMALS.precise : DECIMALS.practical;
-  return joinColor("oklch", [round(l, d.channel), round(c, d.channel), round(h || 0, d.hue)], alpha, d.channel);
-}
-
-// OKHSL/OKHSV native saturation and lightness are 0..1 fractions, but colordx
-// reports percentages; the app prints the decimal form, matching its input normalizer.
-function formatOkhsl(color: Colordx, precise: boolean): string {
-  const { h, s, l, alpha } = color.toOkhsl();
-  const d = precise ? DECIMALS.precise : DECIMALS.practical;
-  return joinColor(
-    "okhsl",
-    [round(h || 0, d.hue), round(s / 100, d.channel), round(l / 100, d.channel)],
-    alpha,
-    d.channel,
-  );
-}
-
-function formatHsl(color: Colordx, precise: boolean): string {
-  const { h, s, l, alpha } = color.toHsl();
-  const d = precise ? DECIMALS.precise : DECIMALS.practical;
-  return joinColor(
-    "hsl",
-    [round(h || 0, d.hue), `${round(s, d.percent)}%`, `${round(l, d.percent)}%`],
-    alpha,
-    d.channel,
-  );
-}
-
-function formatHsv(color: Colordx, precise: boolean): string {
-  const { h, s, v, alpha } = color.toHsv();
-  const d = precise ? DECIMALS.precise : DECIMALS.practical;
-  return joinColor(
-    "hsv",
-    [round(h || 0, d.hue), `${round(s, d.percent)}%`, `${round(v, d.percent)}%`],
-    alpha,
-    d.channel,
-  );
-}
-
-function formatHwb(color: Colordx, precise: boolean): string {
-  const { h, w, b, alpha } = color.toHwb();
-  const d = precise ? DECIMALS.precise : DECIMALS.practical;
-  return joinColor(
-    "hwb",
-    [round(h || 0, d.hue), `${round(w, d.percent)}%`, `${round(b, d.percent)}%`],
-    alpha,
-    d.channel,
-  );
-}
-
-// colordx's toRgbString always rounds to integers, so build the string from
-// toRgb(precision) to honour the requested channel digits.
-const formatRgb = (color: Colordx, precise: boolean): string => {
-  const d = precise ? DECIMALS.precise : DECIMALS.practical;
-  const { r, g, b } = color.toRgb(d.rgb);
-  return joinColor("rgb", [r, g, b], color.alpha(), d.channel);
-};
 
 export class ColorStore {
   #current = $state<Colordx>(ColorStore.#getRandomColor());
@@ -214,14 +117,6 @@ export class ColorStore {
     this.#setCurrent(this.#current.mapSrgb());
   }
 
-  setRgb(channel: "r" | "g" | "b", value: number) {
-    const sr = this.#current.toRgb();
-    const newR = channel === "r" ? value : sr.r;
-    const newG = channel === "g" ? value : sr.g;
-    const newB = channel === "b" ? value : sr.b;
-    this.#setCurrent(colordx({ r: newR, g: newG, b: newB, alpha: this.alpha }));
-  }
-
   setRgbValues(r: number, g: number, b: number) {
     this.#setCurrent(colordx({ r, g, b, alpha: this.alpha }));
   }
@@ -267,7 +162,7 @@ export class ColorStore {
   display = $derived(formatOklch(this.#current, this.#precisionMode() === "precise"));
 
   get #decimals(): { channel: number; percent: number; hue: number; rgb: number } {
-    return this.#precisionMode() === "precise" ? DECIMALS.precise : DECIMALS.practical;
+    return decimalsFor(this.#precisionMode() === "precise");
   }
 
   get channelDecimals(): number {
