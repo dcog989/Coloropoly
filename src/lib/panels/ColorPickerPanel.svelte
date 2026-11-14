@@ -11,6 +11,7 @@ import RgbSliders from "../components/RgbSliders.svelte";
 import Slider from "../components/Slider.svelte";
 import { getApp } from "../context";
 import { getGradient } from "../utils/gradients";
+import { tooltip } from "../utils/tooltip";
 
 const app = getApp();
 const { color, paintbox, toast } = app;
@@ -94,63 +95,41 @@ const handleInput = (e: Event) => {
           placeholder="Paste color..."
         >
         {#if color.isOutOfGamut}
-          <div
-            class="
-                      group absolute top-1/2 right-2 -translate-y-1/2
-                    "
-          >
+          <div class="absolute top-1/2 right-2 -translate-y-1/2">
             <button
               type="button"
               onclick={() => color.mapToSrgb()}
               aria-label="Map color to sRGB"
+              use:tooltip={"Color is outside sRGB. Converted values are approximate. Click to map to the nearest sRGB color."}
               class="
                           cursor-pointer text-amber-500
                         "
             >
               <TriangleAlert class="size-4" />
             </button>
-            <div
-              class="
-                              pointer-events-none absolute top-full right-0 mt-2
-                              w-48 rounded-md border border-amber-500/20
-                              bg-(--ui-card) p-2 text-sm text-amber-500
-                              opacity-0 shadow-xl transition-opacity
-                              group-hover:opacity-100
-                            "
-            >
-              Color is outside sRGB gamut. Converted color values are approximate.<br><br>Click to map to nearest sRGB.
-            </div>
           </div>
         {/if}
       </div>
-      <button type="button" onclick={togglePrecision} class="icon-button group relative">
+      <button
+        type="button"
+        onclick={togglePrecision}
+        class="icon-button"
+        aria-label="Toggle number precision"
+        use:tooltip={app.precision === "precise" ? "Precise → Practical" : "Practical → Precise"}
+      >
         {#if app.precision === "precise"}
           <DecimalsArrowRight
             class="
                           size-5 opacity-60 transition-opacity
-                          group-hover:opacity-100
                         "
           />
         {:else}
           <DecimalsArrowLeft
             class="
                           size-5 opacity-60 transition-opacity
-                          group-hover:opacity-100
                         "
           />
         {/if}
-        <div
-          class="
-                      pointer-events-none absolute top-full left-1/2 z-50
-                      mt-2 -translate-x-1/2 rounded-md border
-                      border-(--ui-border) bg-(--ui-bg) px-3 py-2 text-xs
-                      text-(--ui-text)
-                      whitespace-nowrap opacity-0 shadow-xl transition-opacity
-                      group-hover:opacity-100
-                    "
-        >
-          {app.precision === "precise" ? "Precise → Practical" : "Practical → Precise"}
-        </div>
       </button>
     </div>
 
@@ -220,13 +199,31 @@ const handleInput = (e: Event) => {
                       group-focus-within:translate-y-0 group-focus-within:opacity-100
                     "
         >
-          <button type="button" onclick={(e) => app.copy(inputVal, e)} class="overlay-button" title="Copy {inputVal}">
+          <button
+            type="button"
+            onclick={(e) => app.copy(inputVal, e)}
+            class="overlay-button"
+            use:tooltip={`Copy ${inputVal}`}
+            aria-label="Copy {inputVal}"
+          >
             <Copy class="size-4" />
           </button>
-          <button type="button" onclick={(e) => addToPaintbox(e)} class="overlay-button" title="Add to Paintbox">
+          <button
+            type="button"
+            onclick={(e) => addToPaintbox(e)}
+            class="overlay-button"
+            use:tooltip={"Add to Paintbox"}
+            aria-label="Add to Paintbox"
+          >
             <Plus class="size-4" />
           </button>
-          <button type="button" onclick={(e) => copyLink(e)} class="overlay-button" title="Copy link">
+          <button
+            type="button"
+            onclick={(e) => copyLink(e)}
+            class="overlay-button"
+            use:tooltip={"Copy link"}
+            aria-label="Copy link"
+          >
             <Link class="size-4" />
           </button>
         </div>

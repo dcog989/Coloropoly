@@ -3,6 +3,7 @@ import Copy from "@lucide/svelte/icons/copy";
 import Plus from "@lucide/svelte/icons/plus";
 import { getApp } from "../context";
 import { usesDarkText } from "../utils/text-contrast";
+import { tooltip } from "../utils/tooltip";
 
 const { color, paintbox, toast } = getApp();
 
@@ -44,7 +45,7 @@ const getActionClass = () => {
   <button
     type="button"
     class="absolute inset-0 cursor-pointer"
-    title={color.formatColor(swatchColor)}
+    use:tooltip={color.formatColor(swatchColor)}
     onclick={() => color.set(swatchColor)}
     aria-label="Select swatch {index + 1}"
   ></button>
@@ -70,7 +71,8 @@ const getActionClass = () => {
           toast.showAt("Added", e);
         }}
         class="overlay-button {getActionClass()}"
-        title="Add to paintbox"
+        use:tooltip={"Add to paintbox"}
+        aria-label="Add to paintbox"
         type="button"
       >
         <Plus class="pointer-events-none size-4" />
@@ -81,7 +83,8 @@ const getActionClass = () => {
           copy(e);
         }}
         class="overlay-button {getActionClass()}"
-        title="Copy {color.formatColor(swatchColor)}"
+        use:tooltip={`Copy ${color.formatColor(swatchColor)}`}
+        aria-label="Copy {color.formatColor(swatchColor)}"
         type="button"
       >
         <Copy class="pointer-events-none size-4" />

@@ -4,6 +4,7 @@ import ListMinus from "@lucide/svelte/icons/list-minus";
 import ListPlus from "@lucide/svelte/icons/list-plus";
 import Swatch from "../components/Swatch.svelte";
 import { getApp } from "../context";
+import { tooltip } from "../utils/tooltip";
 
 const { engine, paintbox, toast } = getApp();
 
@@ -71,18 +72,30 @@ const removeRow = () => {
             onclick={removeRow}
             disabled={engine.genSteps <= 4}
             class="icon-button-inset"
-            title="Remove Row"
+            use:tooltip={"Remove Row"}
             aria-label="Decrease steps"
           >
             <ListMinus class="size-4" />
           </button>
-          <button type="button" onclick={addRow} class="icon-button-inset" title="Add Row" aria-label="Increase steps">
+          <button
+            type="button"
+            onclick={addRow}
+            class="icon-button-inset"
+            use:tooltip={"Add Row"}
+            aria-label="Increase steps"
+          >
             <ListPlus class="size-4" />
           </button>
         </div>
       {/if}
 
-      <button type="button" onclick={(e) => addAll(e)} class="icon-button" title="Add all to paintbox">
+      <button
+        type="button"
+        onclick={(e) => addAll(e)}
+        class="icon-button"
+        use:tooltip={"Add all to paintbox"}
+        aria-label="Add all to paintbox"
+      >
         <LayersPlus class="size-4" />
       </button>
     </div>

@@ -7,6 +7,7 @@ import { COLOR_SETS, loadColorSet } from "../data/color-sets";
 import { type ExportFormat, formatColor } from "../utils/formatters";
 import { filterAndSortSetColors, processSetColors, type SetSortOrder } from "../utils/palette-sets";
 import { exportSource, strategies } from "../utils/strategies";
+import { tooltip } from "../utils/tooltip";
 
 const app = getApp();
 
@@ -147,7 +148,7 @@ function handleExport(event: Event) {
         type="button"
         onclick={copyAll}
         class="small-button border-(--ui-border) hover:bg-(--ui-bg)"
-        title="Copy every visible color name and value"
+        use:tooltip={"Copy every visible color name and value"}
       >
         Copy All
       </button>
@@ -195,14 +196,14 @@ function handleExport(event: Event) {
             type="button"
             class="absolute inset-0 cursor-pointer rounded-md"
             onclick={() => app.color.set(color.css)}
-            title="Set as current color"
+            use:tooltip={"Set as current color"}
             aria-label="Set {color.name} as the current color"
           ></button>
           <button
             type="button"
             onclick={(event) => app.copy(color.name, event)}
             class="relative z-10 min-w-0 truncate text-left text-xs font-bold hover:underline"
-            title="Copy name"
+            use:tooltip={"Copy name"}
           >
             {color.name}
           </button>
@@ -214,7 +215,7 @@ function handleExport(event: Event) {
               tracking-wider uppercase
               {color.useDarkText ? "hover:bg-black/15" : "hover:bg-white/20"}
             "
-            title="Copy {color.value}"
+            use:tooltip={`Copy ${color.value}`}
             aria-label="Copy {color.value}"
           >
             {color.value}

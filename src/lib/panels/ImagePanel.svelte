@@ -6,6 +6,7 @@ import Swatch from "../components/Swatch.svelte";
 import { IMAGE_ANALYSIS } from "../constants";
 import { getApp } from "../context";
 import type { SortMode } from "../stores/image.svelte";
+import { tooltip } from "../utils/tooltip";
 
 const { image: imageAnalyzer, paintbox, toast } = getApp();
 
@@ -150,7 +151,8 @@ const sortOptions: { label: string; value: SortMode }[] = [
                           transition-all
                           group-hover:opacity-100
                         "
-            title="Clear Image"
+            use:tooltip={"Clear image"}
+            aria-label="Clear image"
           >
             <div
               class="
@@ -196,7 +198,13 @@ const sortOptions: { label: string; value: SortMode }[] = [
           <h3 class="section-heading">Palette</h3>
           <div class="flex items-center gap-3">
             <span class="font-mono text-xs text-(--ui-text-muted)">Top 24</span>
-            <button type="button" onclick={(e) => addAll(e)} class="icon-button" title="Add All to Paintbox">
+            <button
+              type="button"
+              onclick={(e) => addAll(e)}
+              class="icon-button"
+              use:tooltip={"Add all to paintbox"}
+              aria-label="Add all to paintbox"
+            >
               <LayersPlus class="size-4" />
             </button>
           </div>

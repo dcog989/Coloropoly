@@ -6,6 +6,7 @@ import Sun from "@lucide/svelte/icons/sun";
 import { fade } from "svelte/transition";
 import Title from "../components/Title.svelte";
 import { getApp } from "../context";
+import { tooltip } from "../utils/tooltip";
 
 interface Props {
   onSearch: () => void;
@@ -37,7 +38,7 @@ const { color, engine, theme } = getApp();
       onclick={onSearch}
       class="header-button"
       aria-label="Search colors"
-      title="Search color library"
+      use:tooltip={"Search color library"}
     >
       <Search
         class="
@@ -60,7 +61,7 @@ const { color, engine, theme } = getApp();
       onclick={() => color.randomize()}
       class="header-button"
       aria-label="Random color"
-      title="Generate random color"
+      use:tooltip={"Generate random color"}
     >
       <RefreshCw
         class="
@@ -74,7 +75,7 @@ const { color, engine, theme } = getApp();
       onclick={() => theme.toggle()}
       class="header-button"
       aria-label="Toggle Theme"
-      title="Toggle Light/Dark Mode"
+      use:tooltip={"Toggle Light/Dark Mode"}
     >
       {#if theme.current === "dark"}
         <Moon class="size-5 sm:size-6" />

@@ -221,6 +221,11 @@
   .footer-divider {
     @apply hidden opacity-30 sm:inline;
   }
+
+  /* App tooltip rendered by the tooltip action (utils/tooltip.ts) */
+  .app-tooltip {
+    @apply pointer-events-none fixed z-100 max-w-60 rounded-md border border-(--ui-border) bg-(--ui-bg) px-2 py-1 text-xs font-bold text-(--ui-text) shadow-xl;
+  }
 }
 
 body {

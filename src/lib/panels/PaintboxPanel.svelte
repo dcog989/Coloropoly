@@ -6,6 +6,7 @@ import { getApp } from "../context";
 import type { PaintboxSortMode } from "../stores/paintbox.svelte";
 import { parsePaletteFile } from "../utils/import-strategies";
 import { exportVisual } from "../utils/strategies";
+import { tooltip } from "../utils/tooltip";
 
 interface Props {
   onExport: () => void;
@@ -103,7 +104,8 @@ const sortOptions: { label: string; value: PaintboxSortMode }[] = [
           onclick={() => paintbox.clear()}
           disabled={paintbox.items.length === 0}
           class="icon-button hover:bg-red-500 hover:text-white"
-          title="Clear Paintbox"
+          use:tooltip={"Clear Paintbox"}
+          aria-label="Clear paintbox"
         >
           <CircleX class="size-4" />
         </button>

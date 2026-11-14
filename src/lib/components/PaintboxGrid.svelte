@@ -1,5 +1,6 @@
 <script lang="ts">
 import { getApp } from "../context";
+import { tooltip } from "../utils/tooltip";
 
 const { color, paintbox } = getApp();
 
@@ -36,7 +37,7 @@ const mobileEmptyLimit = $derived(Math.max(mobileCols * minRows, itemCount) - it
                 "
         style:--paintbox-item={item.css}
         onclick={() => color.set(item.css)}
-        title={color.formatColor(item.css)}
+        use:tooltip={color.formatColor(item.css)}
         aria-label="Select saved color"
       ></button>
       <button

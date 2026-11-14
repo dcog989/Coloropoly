@@ -2,6 +2,7 @@
 import CircleAlert from "@lucide/svelte/icons/circle-alert";
 import { onDestroy, onMount } from "svelte";
 import { getApp } from "../context";
+import { tooltip } from "../utils/tooltip";
 import LoadingSpinner from "./LoadingSpinner.svelte";
 
 const { color: colorStore, engine } = getApp();
@@ -222,7 +223,7 @@ $effect(() => {
                                           group-hover:scale-110
                                         "
                   style:--item-bg={color.hex}
-                  title={colorStore.formatColor(color.hex)}
+                  use:tooltip={colorStore.formatColor(color.hex)}
                 ></div>
                 <div class="min-w-0 flex-1">
                   <div

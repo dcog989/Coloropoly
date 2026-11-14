@@ -6,6 +6,7 @@ import Check from "@lucide/svelte/icons/check";
 import X from "@lucide/svelte/icons/x";
 import { getApp } from "../context";
 import { safeColor } from "../utils/formatters";
+import { tooltip } from "../utils/tooltip";
 
 extend([a11y]);
 
@@ -141,7 +142,7 @@ const getApcaRating = (score: number) => {
           }}
           aria-pressed={inverted[m]}
           aria-label="Invert {m} and current color"
-          title={inverted[m]
+          use:tooltip={inverted[m]
             ? `Showing ${m} on the current color — click to invert`
             : `Showing the current color on ${m} — click to invert`}
           class="
