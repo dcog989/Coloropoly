@@ -2,6 +2,23 @@
 All notable changes to this project will be documented in this file. See [conventional commits](https://www.conventionalcommits.org/) for commit guidelines.
 
 - - -
+## v3.11.0 - 2026-11-14
+
+#### Features
+
+- (cf61bd6) add collapse toggles to the secondary panels - dcog989
+
+#### Bug Fixes
+
+- (34de759) hash the color in the picker's current mode - dcog989
+
+- (6e36ad3) title the page Coloropoly Color Toolbox - dcog989
+
+#### Miscellaneous Chores
+
+- (f5ef60e) update screenshot - dcog989
+- - -
+
 ## v3.10.0 - 2026-11-14
 
 #### Features
