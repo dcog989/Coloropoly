@@ -220,6 +220,21 @@ export class ColorStore {
   // P3 channels are 0..1, so they follow the shared channel precision.
   p3 = $derived(this.#current.toP3String(this.channelDecimals));
 
+  // The shared link mirrors the value the picker shows, in whichever space the user
+  // is authoring, so the URL reads the same as the field. It therefore trades the
+  // field's precision: a reload can shift by one 8-bit step. Use cssVar instead if
+  // exact round-trips matter more than the readable match.
+  share = $derived.by(() => {
+    switch (this.mode) {
+      case "okhsl":
+        return this.okhsl;
+      case "rgb":
+        return this.rgb;
+      default:
+        return this.display;
+    }
+  });
+
   cssVar = $derived.by(() => {
     const oklch = this.#oklch;
     const alphaStr = oklch.alpha < 1 ? ` / ${oklch.alpha}` : "";

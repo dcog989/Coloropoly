@@ -49,8 +49,8 @@ const openExport = () => {
 };
 
 // URL hash color sync — a shared link wins on load, then the current color mirrors
-// back. The hash holds the full oklch() string so wide-gamut colors and alpha
-// survive; a plain hex link still works.
+// back. The hash holds the value the picker displays, so the link matches the field;
+// a plain hex link still works.
 const URL_WRITE_DELAY_MS = 250;
 
 const applyHashColor = () => {
@@ -73,7 +73,7 @@ $effect(() => {
   const solid = color.hex;
   const hStr = color.h.toString();
   const c = color.c;
-  const hash = toColorHash(color.cssVar);
+  const hash = toColorHash(color.share);
 
   // Cancel pending update
   if (rafId !== null) {

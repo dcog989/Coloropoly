@@ -1,4 +1,5 @@
-// The hash carries the full oklch() string so wide-gamut colors and alpha survive the trip.
+// The hash holds the picker's value in its current color space, so a shared link
+// reads the same as the color field.
 export const toColorHash = (css: string): string => `#${encodeURIComponent(css)}`;
 
 export function fromColorHash(hash: string): string | null {

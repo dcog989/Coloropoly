@@ -36,7 +36,7 @@ const addToPaintbox = (e?: MouseEvent) => {
 };
 
 const copyLink = (e?: MouseEvent) => {
-  const url = `${location.href.split("#")[0]}${toColorHash(color.cssVar)}`;
+  const url = `${location.href.split("#")[0]}${toColorHash(color.share)}`;
   app.copy(url, e);
 };
 
