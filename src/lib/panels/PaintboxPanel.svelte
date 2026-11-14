@@ -33,12 +33,12 @@ const handleImport = async (e: Event) => {
 
   try {
     const colors = parsePaletteFile(file.name, await file.text());
-    const imported = colors.slice(-PAINTBOX.MAX_COLORS);
-    imported.forEach((css) => {
+    const before = paintbox.items.length;
+    colors.slice(-PAINTBOX.MAX_COLORS).forEach((css) => {
       paintbox.add(css);
     });
     const noun = colors.length === 1 ? "color" : "colors";
-    const capped = colors.length > PAINTBOX.MAX_COLORS || paintbox.items.length === PAINTBOX.MAX_COLORS;
+    const capped = before + colors.length > PAINTBOX.MAX_COLORS;
     toast.show(
       capped
         ? `Imported ${colors.length} ${noun}; paintbox keeps the newest ${PAINTBOX.MAX_COLORS}`
@@ -102,7 +102,9 @@ const sortOptions: { label: string; value: PaintboxSortMode }[] = [
 
         <button
           type="button"
-          onclick={() => paintbox.clear()}
+          onclick={() => {
+            if (confirm("Clear all saved colors?")) paintbox.clear();
+          }}
           disabled={paintbox.items.length === 0}
           class="icon-button hover:bg-red-500 hover:text-white"
           use:tooltip={"Clear Paintbox"}
