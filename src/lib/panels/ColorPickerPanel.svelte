@@ -88,7 +88,7 @@ const handleInput = (e: Event) => {
           id="inputColor"
           onchange={handleInput}
           onfocus={(e) => (e.target as HTMLInputElement).select()}
-          class="text-input py-2 pr-8 pl-3 text-base uppercase {hasError
+          class="text-input rounded-full py-2 pr-8 pl-3 text-lg uppercase {hasError
             ? "border-red-500 ring-2 ring-red-500/20"
             : ""}"
           placeholder="Paste color..."
@@ -153,7 +153,7 @@ const handleInput = (e: Event) => {
       </button>
     </div>
 
-    <div class="control-group flex shrink-0 gap-1">
+    <div class="control-group flex shrink-0 gap-1 p-0">
       {#each ["okhsl", "oklch", "rgb"] as m (m)}
         <button
           type="button"

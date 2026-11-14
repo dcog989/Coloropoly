@@ -65,7 +65,7 @@ const removeRow = () => {
       </select>
 
       {#if !engine.isHarmonyMode}
-        <div class="control-group flex items-center gap-1">
+        <div class="control-group flex items-center gap-1 py-0">
           <button
             type="button"
             onclick={removeRow}
