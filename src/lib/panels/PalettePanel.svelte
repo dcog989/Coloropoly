@@ -80,6 +80,7 @@ const removeRow = () => {
           <button
             type="button"
             onclick={addRow}
+            disabled={engine.genSteps >= 20}
             class="icon-button-inset"
             use:tooltip={"Add Row"}
             aria-label="Increase steps"
