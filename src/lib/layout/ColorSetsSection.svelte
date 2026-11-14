@@ -66,10 +66,9 @@ $effect(() => {
     });
 });
 
-const currentSet = $derived(COLOR_SETS.find((set) => set.id === selectedId));
+const processed = $derived(rawData ? processSetColors(rawData) : []);
 
 const colors = $derived.by(() => {
-  const processed = rawData ? processSetColors(rawData) : [];
   return filterAndSortSetColors(processed, { query, order: sortOrder }).map((color) => ({
     ...color,
     value: formatColor(color.css, exportFormat),
@@ -80,7 +79,6 @@ function setSource() {
   return {
     colors: colors.map((color) => ({ css: color.css, name: color.name })),
     isSingle: false,
-    name: currentSet?.title ?? "Color Set",
   };
 }
 

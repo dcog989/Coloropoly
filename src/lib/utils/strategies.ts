@@ -4,7 +4,7 @@ import { type ExportFormat, formatColor, safeColor } from "./formatters";
 export interface ColorSource {
   colors: Array<{ css: string; name?: string }>;
   isSingle: boolean;
-  name: string;
+  name?: string;
 }
 
 const PENDING_COLOR_NAME = "Searching...";
@@ -36,7 +36,7 @@ export function generateColorName(index: number, source: ColorSource): string {
   const named = source.colors[index]?.name;
   if (named) return toVarName(named) || fallback;
   if (!source.isSingle) return fallback;
-  return toVarName(source.name) || fallback;
+  return toVarName(source.name ?? "") || fallback;
 }
 
 /** Human-readable name for data formats; code formats use the slugified name. */
