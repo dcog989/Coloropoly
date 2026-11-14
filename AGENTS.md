@@ -26,7 +26,7 @@
 - `src/lib/utils/formatters.ts` — color parsing and value formatting
 - `src/lib/utils/palette.ts`, `image-palette.ts`, `color-clusters.ts`, `text-contrast.ts` — pure logic
 - `src/lib/utils/format.test.ts` — tests; every logic util has a colocated `.test.ts`
-- `src/lib/workers/color-analysis.ts` — image analysis worker (K-Means)
+- `src/lib/workers/color-analysis.ts` — image analysis worker (histogram clustering)
 - `src/lib/workers/color-name-search.ts` — color name search worker
 - `src/lib/data/colors.ts` — 30,000+ named colors
 
@@ -34,7 +34,7 @@
 
 - Static SPA: no backend, no router, no API calls. Everything runs in the browser.
 - State lives in runes stores; components read it through `getApp()`.
-- Heavy work (image K-Means, name search) runs in the two workers; the algorithms live in tested utils, not in the worker.
+- Heavy work (image clustering, name search) runs in the two workers; the algorithms live in tested utils, not in the worker.
 - Color Sets load one palette JSON at a time through `import.meta.glob`; the section reads state through `getApp()` like the panels.
 - The current color mirrors to the URL hash and is restored on load.
 
