@@ -7,6 +7,7 @@ import {
   findClosestName,
   getPage,
 } from "../utils/color-search";
+import { readColorIndex, writeColorIndex } from "./color-index-cache";
 
 export type WorkerRequest =
   | { type: "search"; color: { l: number; c: number; h: number; alpha: number } }
@@ -26,8 +27,12 @@ let loadPromise: Promise<void> | null = null;
 
 function prepareData(): Promise<void> {
   loadPromise ??= (async () => {
+    index = await readColorIndex();
+    if (index) return;
+
     try {
       index = buildColorIndex(await loadColorNames());
+      await writeColorIndex(index);
     } catch (error) {
       console.error("Failed to load color name list:", error);
     }

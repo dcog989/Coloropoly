@@ -8,7 +8,7 @@ export interface ColorSource {
   name?: string;
 }
 
-const PENDING_COLOR_NAME = "Searching...";
+export const PENDING_COLOR_NAME = "Searching...";
 
 const XML_ESCAPES: Record<string, string> = {
   "&": "&amp;",

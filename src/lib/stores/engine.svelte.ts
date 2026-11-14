@@ -4,17 +4,14 @@ import type { WorkerRequest, WorkerResponse } from "../workers/color-name-search
 import ColorNameSearchWorker from "../workers/color-name-search.ts?worker";
 import type { ColorStore } from "./color.svelte";
 
-/** Longest the browser may stay busy before the name list starts loading anyway. */
-const NAME_LIST_IDLE_TIMEOUT_MS = 2000;
-
 export class EngineStore {
   closestName = $state("Searching...");
   #managedWorker = new ManagedWorker<WorkerResponse>({ maxRetries: 3, retryDelay: 1000 });
   #debounceHandle: number | null = null;
   #disposeEffect: (() => void) | null = null;
-  #removeStartListeners: (() => void) | null = null;
   #initialized = false;
   #nameWorkerStarted = false;
+  #searchedOnce = false;
   #pendingSearch: { l: number; c: number; h: number; alpha: number } | null = null;
   #colorStore: ColorStore;
 
@@ -47,26 +44,10 @@ export class EngineStore {
     if (this.#initialized) return;
     this.#initialized = true;
 
-    // The name list is ~1.1MB. Start it once the page has loaded and the browser is
-    // idle, so it never delays the first paint; the title shows the hex until the
-    // first name arrives, then fades to the name.
-    const start = () => this.startNameWorker();
-    const scheduleAfterLoad = () => {
-      if (typeof window.requestIdleCallback === "function") {
-        const idleId = window.requestIdleCallback(start, { timeout: NAME_LIST_IDLE_TIMEOUT_MS });
-        this.#removeStartListeners = () => window.cancelIdleCallback(idleId);
-      } else {
-        const timerId = window.setTimeout(start, 0);
-        this.#removeStartListeners = () => window.clearTimeout(timerId);
-      }
-    };
-
-    if (document.readyState === "complete") {
-      scheduleAfterLoad();
-    } else {
-      window.addEventListener("load", scheduleAfterLoad, { once: true });
-      this.#removeStartListeners = () => window.removeEventListener("load", scheduleAfterLoad);
-    }
+    // The worker keeps its index in IndexedDB and only downloads the ~1.1MB name
+    // list on a cold start, so it can start right away; it never blocks the main
+    // thread, and the title gets its name before the first fade completes.
+    this.startNameWorker();
 
     this.#disposeEffect = $effect.root(() => {
       $effect(() => {
@@ -74,6 +55,15 @@ export class EngineStore {
 
         if (this.#debounceHandle !== null) {
           clearTimeout(this.#debounceHandle);
+          this.#debounceHandle = null;
+        }
+
+        // The first search is not a drag, so send it now: the title resolves from the
+        // restored color before the fade is visible.
+        if (!this.#searchedOnce) {
+          this.#searchedOnce = true;
+          this.#searchColorName(current);
+          return;
         }
 
         this.#debounceHandle = window.setTimeout(() => {
@@ -87,8 +77,6 @@ export class EngineStore {
   startNameWorker() {
     if (this.#nameWorkerStarted) return;
     this.#nameWorkerStarted = true;
-    this.#removeStartListeners?.();
-    this.#removeStartListeners = null;
     this.#initWorker();
   }
 
@@ -128,8 +116,6 @@ export class EngineStore {
       clearTimeout(this.#debounceHandle);
       this.#debounceHandle = null;
     }
-    this.#removeStartListeners?.();
-    this.#removeStartListeners = null;
     this.#disposeEffect?.();
     this.#disposeEffect = null;
     this.#managedWorker.destroy();

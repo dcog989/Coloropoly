@@ -31,6 +31,18 @@ let showExport = $state(false);
 let showSearch = $state(false);
 let activeInfo = $state<{ title: string; content: string } | null>(null);
 
+// URL hash color sync — a shared link wins on load, then the current color mirrors
+// back. The hash holds the value the picker displays, so the link matches the field;
+// a plain hex link still works.
+const URL_WRITE_DELAY_MS = 250;
+
+const applyHashColor = () => {
+  const value = fromColorHash(location.hash);
+  if (value) color.set(value);
+};
+// Restore the color before the stores init so the first name search uses it.
+applyHashColor();
+
 // Initialize logic
 app.init();
 
@@ -47,17 +59,6 @@ const openExport = () => {
   activeInfo = null;
   showExport = true;
 };
-
-// URL hash color sync — a shared link wins on load, then the current color mirrors
-// back. The hash holds the value the picker displays, so the link matches the field;
-// a plain hex link still works.
-const URL_WRITE_DELAY_MS = 250;
-
-const applyHashColor = () => {
-  const value = fromColorHash(location.hash);
-  if (value) color.set(value);
-};
-applyHashColor();
 
 // Cleanup
 onDestroy(() => {

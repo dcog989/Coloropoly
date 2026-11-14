@@ -6,7 +6,7 @@ import Sun from "@lucide/svelte/icons/sun";
 import { fade } from "svelte/transition";
 import Title from "../components/Title.svelte";
 import { getApp } from "../context";
-import { resolveClosestName } from "../utils/strategies";
+import { PENDING_COLOR_NAME } from "../utils/strategies";
 import { tooltip } from "../utils/tooltip";
 
 interface Props {
@@ -17,7 +17,9 @@ let { onSearch }: Props = $props();
 
 const { color, engine, theme } = getApp();
 
-const name = $derived(resolveClosestName(engine.closestName, color.hex));
+// No hex placeholder: on reload it paints for a frame and then cross-fades to the
+// name, which reads as a flash. An empty title until the name is known looks cleaner.
+const name = $derived(engine.closestName === PENDING_COLOR_NAME ? "" : engine.closestName);
 </script>
 
 <!-- -webkit-mask-image kept for older WebKit/Safari; unprefixed mask-image serves modern engines -->
@@ -52,7 +54,7 @@ const name = $derived(resolveClosestName(engine.closestName, color.hex));
       />
     </button>
 
-    <div class="grid grid-cols-1 place-items-center min-w-0 overflow-hidden">
+    <div class="grid min-h-10 grid-cols-1 place-items-center overflow-hidden min-w-0 lg:min-h-12">
       {#key name}
         <div class="col-start-1 row-start-1 flex w-full justify-center" transition:fade={{ duration: 500 }}>
           <Title {name} />
