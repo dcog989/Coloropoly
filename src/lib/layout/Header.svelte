@@ -16,6 +16,8 @@ interface Props {
 let { onSearch }: Props = $props();
 
 const { color, engine, theme } = getApp();
+
+const name = $derived(resolveClosestName(engine.closestName, color.hex));
 </script>
 
 <!-- -webkit-mask-image kept for older WebKit/Safari; unprefixed mask-image serves modern engines -->
@@ -50,9 +52,11 @@ const { color, engine, theme } = getApp();
     </button>
 
     <div class="grid grid-cols-1 place-items-center min-w-0 overflow-hidden">
-      <div class="col-start-1 row-start-1 flex w-full justify-center" transition:fade={{ duration: 500 }}>
-        <Title name={resolveClosestName(engine.closestName, color.hex)} />
-      </div>
+      {#key name}
+        <div class="col-start-1 row-start-1 flex w-full justify-center" transition:fade={{ duration: 500 }}>
+          <Title {name} />
+        </div>
+      {/key}
     </div>
 
     <button
