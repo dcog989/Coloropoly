@@ -88,7 +88,7 @@ const handleInput = (e: Event) => {
           id="inputColor"
           onchange={handleInput}
           onfocus={(e) => (e.target as HTMLInputElement).select()}
-          class="text-input rounded-full py-2 pr-8 pl-3 text-lg uppercase {hasError
+          class="text-input rounded-full py-1 pr-8 pl-3 text-lg uppercase {hasError
             ? "border-red-500 ring-2 ring-red-500/20"
             : ""}"
           placeholder="Paste color..."
