@@ -70,10 +70,10 @@
       background-color: #444;
     }
 
-    /* Prevent layout shift during load */
+    /* Prevent layout shift during load.
+       No `contain` here: it would make #app the anchor for fixed modals and toasts. */
     #app {
       min-height: 100vh;
-      contain: layout style paint;
     }
     </style>
   </head>
