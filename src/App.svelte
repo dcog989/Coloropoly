@@ -253,7 +253,7 @@ const showInfo = (key: keyof typeof infoContent) => {
       <span class="footer-divider">|</span>
       <button onclick={() => showInfo("contrast")} type="button" class="footer-link">Good Contrast?</button>
       <span class="footer-divider">|</span>
-      <a href="https://github.com/dcog989/Color-Picker-Palette" class="footer-link">Github</a>
+      <a href="https://github.com/dcog989/Coloropoly" class="footer-link">Github</a>
       <span class="footer-divider">|</span>
       <span class="opacity-30">v{version}</span>
     </div>

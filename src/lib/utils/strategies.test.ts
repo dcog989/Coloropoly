@@ -72,7 +72,7 @@ describe("DTCG export", () => {
     const dtcgName = generateFilename(root, strategies.dtcg.extension ?? "");
 
     expect(dtcgName).not.toBe(jsonName);
-    expect(dtcgName).toBe("Color-Picker-Palette-Fuzzy-Wuzzy.tokens.json");
+    expect(dtcgName).toBe("Coloropoly-Fuzzy-Wuzzy.tokens.json");
   });
 });
 
@@ -81,7 +81,7 @@ describe("GIMP GPL export", () => {
     const lines = strategies.gpl.format(source(["#ff0000", "#00ff00"]), "hex").split("\n");
 
     expect(lines[0]).toBe("GIMP Palette");
-    expect(lines[1]).toBe("Name: Color Picker Palette");
+    expect(lines[1]).toBe("Name: Coloropoly");
     expect(lines[4]).toMatch(/^\s*255\s+0\s+0\s+color-1$/);
     expect(lines[5]).toMatch(/^\s*0\s+255\s+0\s+color-2$/);
   });
@@ -163,7 +163,7 @@ describe("color source helpers", () => {
   });
 
   it("builds a safe filename from the closest name", () => {
-    expect(generateFilename(rootWith([], "Fuzzy Wuzzy!"), "css")).toBe("Color-Picker-Palette-Fuzzy-Wuzzy.css");
+    expect(generateFilename(rootWith([], "Fuzzy Wuzzy!"), "css")).toBe("Coloropoly-Fuzzy-Wuzzy.css");
   });
 });
 

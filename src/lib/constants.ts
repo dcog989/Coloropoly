@@ -1,4 +1,4 @@
-// Design Tokens and Constants for Color Picker Palette
+// Design Tokens and Constants for Coloropoly
 
 // Image Analysis Constants
 export const IMAGE_ANALYSIS = {

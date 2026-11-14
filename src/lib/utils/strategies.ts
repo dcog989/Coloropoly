@@ -59,7 +59,7 @@ export function generateColorLabel(index: number, source: ColorSource): string {
 export function generateFilename(root: RootStore, extension: string): string {
   const name = resolveClosestName(root.engine.closestName, root.color.hex);
   const safeName = name.replace(/\s+/g, "-").replace(/[^a-zA-Z0-9-]/g, "");
-  return `Color-Picker-Palette-${safeName}.${extension}`;
+  return `Coloropoly-${safeName}.${extension}`;
 }
 
 export function downloadFile(content: string | Blob, filename: string, mimeType?: string): void {
@@ -224,7 +224,7 @@ class GplExportStrategy implements ExportStrategy {
   extension = "gpl";
   mimeType = "text/plain";
   format(source: ColorSource): string {
-    const lines = ["GIMP Palette", "Name: Color Picker Palette", "Columns: 0", "#"];
+    const lines = ["GIMP Palette", "Name: Coloropoly", "Columns: 0", "#"];
     source.colors.forEach((item, i) => {
       const parsed = safeColor(item.css);
       const { r, g, b } = parsed ? parsed.toRgb() : { r: 0, g: 0, b: 0 };

@@ -2,7 +2,7 @@
 
 ## Project Specifics
 
-- Name: color-picker-palette
+- Name: coloropoly
 - Description: Color picker, palette generator, image extraction, contrast checker, color set browser SPA
 - Tech: Svelte 5 (Runes API), Vite, TypeScript 6 (strict), Tailwind CSS v4, colordx, Biome, Vitest
   - TypeScript pinned at `6.0.3` via overrides — `svelte-check` peer deps don't allow TS 7 yet

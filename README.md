@@ -1,10 +1,10 @@
-# Color Picker Palette
+# Coloropoly
 
 A color picker with palette generator, image analyser, contrast checker, color set browser, and export options. Author in Okhsl (default, gamut-aware), Oklch (wide gamut), or RGB, then copy or export to whichever format you need.
 
-Visit [Color Picker Palette](https://dcog989.github.io/Color-Picker-Palette/).
+Visit [Coloropoly](https://dcog989.github.io/Coloropoly/).
 
-![Color Picker Palette](assets/screen-1.webp)
+![Coloropoly](assets/screen-1.webp)
 
 ## Features
 
