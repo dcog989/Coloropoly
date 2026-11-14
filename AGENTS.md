@@ -3,20 +3,20 @@
 ## Project Specifics
 
 - Name: color-picker-palette
-- Description: Color picker, palette generator, image extraction, contrast checker SPA
+- Description: Color picker, palette generator, image extraction, contrast checker, color set browser SPA
 - Tech: Svelte 5 (Runes API), Vite, TypeScript 6 (strict), Tailwind CSS v4, colordx, Biome, Vitest
   - TypeScript pinned at `6.0.3` via overrides — `svelte-check` peer deps don't allow TS 7 yet
 
 ### Key Files
 
 - `src/main.ts` — entry point, mounts `App.svelte`
-- `src/App.svelte` — shell, theme bootstrap, URL hash color sync
+- `src/App.svelte` — shell, theme bootstrap, URL hash color sync, Color Sets section mount
 - `src/lib/context.ts` — `getApp()` accessor for the root store
 - `src/lib/stores/*.svelte.ts` — runes state: `root` (app facade), `color`, `engine`, `image`, `paintbox` (localStorage), `theme` (localStorage), `toast`
 - `src/lib/panels/*.svelte` — picker, palette, image, contrast, paintbox panels
 - `src/lib/modals/*.svelte` — export, search, info dialogs
 - `src/lib/components/*.svelte` — sliders, swatches, grid, title, toast
-- `src/lib/utils/strategies.ts` — export targets and PNG/SVG rendering
+- `src/lib/utils/strategies.ts` — export strategies (code + visual) with named palette support
 - `src/lib/utils/palette-sets.ts` — color set parsing, filtering, sorting, APCA text choice
 - `src/lib/data/color-sets.ts` — palette set manifest and lazy loader
 - `src/lib/data/sets/*.json` — 24 curated palette sets
@@ -35,6 +35,7 @@
 - Static SPA: no backend, no router, no API calls. Everything runs in the browser.
 - State lives in runes stores; components read it through `getApp()`.
 - Heavy work (image K-Means, name search) runs in the two workers; the algorithms live in tested utils, not in the worker.
+- Color Sets load one palette JSON at a time through `import.meta.glob`; the section reads state through `getApp()` like the panels.
 - The current color mirrors to the URL hash and is restored on load.
 
 ### Workflow
@@ -54,8 +55,9 @@
 
 ### Common Patterns
 
-- Add feature: pure logic in `src/lib/utils/` with a test, state in the relevant store, UI in a panel.
-- New export format: extend `ExportStrategyName` and the strategy map in `src/lib/utils/strategies.ts`; it is picked up by `exportCode`.
+- Add feature: pure logic in `src/lib/utils/` with a test, state in the relevant store, UI in a panel or section.
+- New export format: extend `ExportStrategyName` and the strategy map in `src/lib/utils/strategies.ts`; it is picked up by `exportCode`/`exportSource` and the Export Modal.
+- Add a color set: drop `{ "colors": { name: hex } }` in `src/lib/data/sets/<id>.json` and add its id and title to `COLOR_SETS` in `src/lib/data/color-sets.ts`.
 - Color parsing/formatting: use `safeColor`/`formatColor` from `formatters.ts`; do not re-implement parsing.
 - Heavy computation: export a pure function from `src/lib/utils/`, call it from the worker.
 - UI state access: `getApp()` from `src/lib/context.ts`, not direct store imports, where a component is involved.

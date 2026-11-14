@@ -1,6 +1,6 @@
 # Color Picker Palette
 
-A color picker with palette generator, image analyser, contrast checker, and export options. Author in Okhsl (default, gamut-aware), Oklch (wide gamut), or RGB, then copy or export to whichever format you need.
+A color picker with palette generator, image analyser, contrast checker, color set browser, and export options. Author in Okhsl (default, gamut-aware), Oklch (wide gamut), or RGB, then copy or export to whichever format you need.
 
 [Live demo](https://dcog989.github.io/Color-Picker-Palette/)
 
@@ -12,42 +12,37 @@ A color picker with palette generator, image analyser, contrast checker, and exp
 - **Palette Engine:** Six harmonies (complementary, split-complementary, analogous, triadic, tetradic, rectangle) and variable scales on lightness, chroma, hue, or alpha.
 - **Image Analysis:** Extract dominant and vibrant palettes locally with K-Means; sort by dominant, vibrant, bright, or dark.
 - **Accessibility:** Real-time APCA (Lc) and WCAG 2.1 contrast checking.
-- **Smart Paintbox:** Persistent palette, import from DTCG JSON or GIMP `.gpl`, export to CSS, Tailwind, SCSS, Less, JSON, CSV, DTCG, Android XML, GPL, or text in OKLCH/HEX/HSL/RGB, plus PNG and SVG images.
+- **Smart Paintbox:** Persistent palette, import from DTCG JSON or GIMP `.gpl`, export to CSS, Tailwind, SCSS, Less, JSON, CSV, DTCG, Android XML, GPL, or text in Oklch/HEX/HSL/RGB, plus PNG and SVG images.
 - **Library:** Search 30,000+ named colors.
-- **Color Sets:** Browse 24 curated palettes (Tailwind, Material, Pantone, Catppuccin, Nord, and more), filter and sort them, copy a set in any export format, and simulate color-vision deficiencies.
+- **Color Sets:** Browse 24 curated palettes (Tailwind, Material, Pantone, Catppuccin, Nord, and more), filter and sort them, copy any swatch or the whole set in any export format, and simulate color-vision deficiencies.
 - **Shareable:** The current color mirrors to the URL hash, so any color is linkable.
 - **Themes:** Light and dark, persisted.
 
 ## Tech Stack
 
-- **Framework:** Svelte 5 (Runes)
-- **Language:** TypeScript 6 (strict)
-- **Styling:** Tailwind CSS v4
-- **Build:** Vite
+- Svelte / TypeScript / Tailwind / Vite / Biome
 - **Color:** colordx
-- **Lint/Format:** Biome 2
-- **Test:** Vitest 5
 
 ## Getting Started
 
-Prerequisites: [bun](https://bun.sh) for runtime and package management. No backend, database, or routing.
+Required: [bun](https://bun.sh).
 
-| Command | Action |
-|---------|--------|
-| `bun install` | Install dependencies (also installs git hooks via lefthook) |
-| `bun run dev` | Start dev server at http://localhost:5173 |
-| `bun run build` | Production build to `dist/` |
-| `bun run preview` | Preview build |
-| `bun run check` | All checks: Biome + typecheck + test with coverage + build |
-| `bun run typecheck` | svelte-check + `bun --check` |
-| `bun run test` | Run tests |
-| `bun run test:coverage` | Tests with coverage (80% floor) |
-| `bun run fix` | All fixes: Biome auto-fix (format/lint/imports) |
-| `bun run changelog` | Print the changelog to stdout |
+| Command                 | Action                                                      |
+| ----------------------- | ----------------------------------------------------------- |
+| `bun install`           | Install dependencies (also installs git hooks via Lefthook) |
+| `bun run dev`           | Start dev server at <http://localhost:5173>                 |
+| `bun run build`         | Production build to `dist/`                                 |
+| `bun run preview`       | Preview build                                               |
+| `bun run check`         | All checks: Biome + typecheck + test with coverage + build  |
+| `bun run typecheck`     | svelte-check + `bun --check`                                |
+| `bun run test`          | Run tests                                                   |
+| `bun run test:coverage` | Tests with coverage (80% floor)                             |
+| `bun run fix`           | All fixes: Biome auto-fix (format/lint/imports)             |
+| `bun run changelog`     | Print the changelog to stdout                               |
 
 ## Releasing
 
-1. Commit with [Conventional Commits](https://www.conventionalcommits.org/); lefthook and CI enforce the format.
+1. Commit with [Conventional Commits](https://www.conventionalcommits.org/); Lefthook and CI enforce the format.
 2. Run `bun run release` (`cog bump --auto`).
 3. The bump runs `bun run check`, syncs the version, commits and tags, pushes, then creates the GitHub release with the tag's changelog section as notes and `CHANGELOG.md` attached as an asset.
 
