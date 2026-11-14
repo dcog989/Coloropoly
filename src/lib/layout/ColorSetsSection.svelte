@@ -99,14 +99,6 @@ function handleExport(event: Event) {
     <h2 class="section-heading shrink-0">Color Sets</h2>
 
     <div class="flex w-full min-w-0 flex-1 flex-wrap items-center gap-2 md:justify-end">
-      <input
-        type="search"
-        bind:value={query}
-        placeholder="Filter colors..."
-        aria-label="Filter colors by name or hex"
-        class="text-input min-w-40 flex-1 px-3 py-1.5 text-xs"
-      >
-
       <label class="flex items-center gap-2 text-xs font-bold text-(--ui-text-muted) uppercase">
         Set
         <select bind:value={selectedId} class="select-control">
@@ -115,6 +107,14 @@ function handleExport(event: Event) {
           {/each}
         </select>
       </label>
+
+      <input
+        type="search"
+        bind:value={query}
+        placeholder="Filter colors..."
+        aria-label="Filter colors by name or hex"
+        class="text-input min-w-40 flex-1 px-3 py-1.5 text-xs"
+      >
 
       <label class="flex items-center gap-2 text-xs font-bold text-(--ui-text-muted) uppercase">
         Sort
