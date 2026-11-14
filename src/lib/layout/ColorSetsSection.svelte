@@ -100,14 +100,11 @@ function handleExport(event: Event) {
     <h2 class="section-heading shrink-0">Color Sets</h2>
 
     <div class="flex w-full min-w-0 flex-1 flex-wrap items-center gap-2 md:justify-end">
-      <label class="flex items-center gap-2 text-xs font-bold text-(--ui-text-muted) uppercase">
-        Set
-        <select bind:value={selectedId} class="select-control">
-          {#each COLOR_SETS as set (set.id)}
-            <option value={set.id}>{set.title}</option>
-          {/each}
-        </select>
-      </label>
+      <select bind:value={selectedId} class="select-control" aria-label="Color set">
+        {#each COLOR_SETS as set (set.id)}
+          <option value={set.id}>{set.title}</option>
+        {/each}
+      </select>
 
       <input
         type="search"

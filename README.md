@@ -2,7 +2,7 @@
 
 A color picker with palette generator, image analyser, contrast checker, color set browser, and export options. Author in Okhsl (default, gamut-aware), Oklch (wide gamut), or RGB, then copy or export to whichever format you need.
 
-[Live demo](https://dcog989.github.io/Color-Picker-Palette/)
+Visit [Color Picker Palette](https://dcog989.github.io/Color-Picker-Palette/).
 
 ![Color Picker Palette](assets/screen-1.webp)
 
