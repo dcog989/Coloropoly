@@ -166,8 +166,8 @@ const infoContent = {
   shortcuts: {
     title: "Keyboard Shortcuts",
     content: `<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div class="p-4 bg-(--ui-bg) rounded-xl border border-(--ui-border) flex justify-between items-center"><span class="section-heading">Search</span><span class="font-mono font-bold bg-(--ui-card) px-2 py-1 rounded text-sm">⌘ + K</span></div>
-                <div class="p-4 bg-(--ui-bg) rounded-xl border border-(--ui-border) flex justify-between items-center"><span class="section-heading">Save Color</span><span class="font-mono font-bold bg-(--ui-card) px-2 py-1 rounded text-sm">⌘ + S</span></div>
+                <div class="p-4 bg-(--ui-bg) rounded-xl border border-(--ui-border) flex justify-between items-center"><span class="section-heading">Search</span><span class="font-mono font-bold bg-(--ui-card) px-2 py-1 rounded text-sm">Ctrl/⌘ + K</span></div>
+                <div class="p-4 bg-(--ui-bg) rounded-xl border border-(--ui-border) flex justify-between items-center"><span class="section-heading">Save Color</span><span class="font-mono font-bold bg-(--ui-card) px-2 py-1 rounded text-sm">Ctrl/⌘ + S</span></div>
                 <div class="p-4 bg-(--ui-bg) rounded-xl border border-(--ui-border) flex justify-between items-center"><span class="section-heading">Close Modal</span><span class="font-mono font-bold bg-(--ui-card) px-2 py-1 rounded text-sm">Esc</span></div>
             </div>`,
   },
