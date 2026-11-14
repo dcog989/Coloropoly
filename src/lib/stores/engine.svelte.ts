@@ -37,7 +37,7 @@ export class EngineStore {
     const axis = this.genAxis;
     if (isHarmonyMode(axis)) {
       const base = this.#getBaseColor();
-      return colordx({ l: base.l, c: base.c, h: base.h })
+      return colordx(base)
         .harmonies(axis)
         .map((c) => c.toHex());
     }
