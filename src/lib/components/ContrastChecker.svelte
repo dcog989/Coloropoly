@@ -262,7 +262,7 @@ const getApcaRating = (score: number) => {
     >
       <div class="flex items-baseline justify-between">
         <span class="section-heading">WCAG</span>
-        <span class="text-xl font-black">{customColorError ? "--" : displayRatio.toFixed(1)}:1</span>
+        <span class="text-xl font-black">{customColorError ? "--" : displayRatio}:1</span>
       </div>
 
       <div
