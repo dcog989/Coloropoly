@@ -17,6 +17,11 @@
 - `src/lib/modals/*.svelte` — export, search, info dialogs
 - `src/lib/components/*.svelte` — sliders, swatches, grid, title, toast
 - `src/lib/utils/strategies.ts` — export targets and PNG/SVG rendering
+- `src/lib/utils/palette-sets.ts` — color set parsing, filtering, sorting, APCA text choice
+- `src/lib/data/color-sets.ts` — palette set manifest and lazy loader
+- `src/lib/data/sets/*.json` — 24 curated palette sets
+- `src/lib/layout/ColorSetsSection.svelte` — color sets browser section
+- `src/lib/components/ColorBlindFilters.svelte` — color-vision simulation SVG filters
 - `src/lib/utils/import-strategies.ts` — DTCG JSON and GPL palette import
 - `src/lib/utils/formatters.ts` — color parsing and value formatting
 - `src/lib/utils/palette.ts`, `image-palette.ts`, `color-clusters.ts`, `text-contrast.ts` — pure logic

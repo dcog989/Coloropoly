@@ -5,6 +5,8 @@ import {
   downloadFile,
   exportCode,
   exportCodeFile,
+  exportSource,
+  generateColorLabel,
   generateColorName,
   generateFilename,
   getColorSource,
@@ -132,6 +134,46 @@ describe("color source helpers", () => {
 
   it("builds a safe filename from the closest name", () => {
     expect(generateFilename(rootWith([], "Fuzzy Wuzzy!"), "css")).toBe("Color-Picker-Palette-Fuzzy-Wuzzy.css");
+  });
+});
+
+describe("named color sources", () => {
+  const named = (entries: Array<[string, string]>): ColorSource => ({
+    colors: entries.map(([name, css]) => ({ name, css })),
+    isSingle: false,
+    name: "Test Set",
+  });
+
+  it("slugifies palette names for code formats", () => {
+    expect(strategies.css.format(named([["Slate 50", "#f8fafc"]]), "hex")).toBe(":root {\n  --slate-50: #f8fafc;\n}");
+    expect(strategies.scss.format(named([["Slate 50", "#f8fafc"]]), "hex")).toBe(
+      "// Color Variables\n$slate-50: #f8fafc;",
+    );
+    expect(strategies.less.format(named([["Slate 50", "#f8fafc"]]), "hex")).toBe("@slate-50: #f8fafc;");
+  });
+
+  it("prefixes names that start with a digit", () => {
+    const output = strategies.css.format(named([["100 C", "#ffffff"]]), "hex");
+    expect(output).toContain("--c-100-c: #ffffff;");
+  });
+
+  it("keeps readable names in data formats", () => {
+    expect(JSON.parse(strategies.json.format(named([["Slate 50", "#f8fafc"]]), "hex"))).toEqual({
+      "Slate 50": "#f8fafc",
+    });
+    expect(strategies.csv.format(named([["Slate 50", "#f8fafc"]]), "hex")).toBe('name,value\n"Slate 50","#f8fafc"');
+    expect(strategies.text.format(named([["Slate 50", "#f8fafc"]]), "hex")).toBe("Slate 50  #f8fafc");
+    expect(generateColorLabel(0, named([["Slate 50", "#f8fafc"]]))).toBe("Slate 50");
+  });
+
+  it("quotes CSV cells that contain commas or quotes", () => {
+    const output = strategies.csv.format(named([['Odd, "name"', "#ff0000"]]), "rgb");
+    expect(output).toBe('name,value\n"Odd, ""name""","rgb(255 0 0)"');
+  });
+
+  it("exports a prepared source directly", () => {
+    expect(exportSource(named([["Red", "#ff0000"]]), "css", "hex")).toContain("--red: #ff0000;");
+    expect(() => exportSource(named([["Red", "#ff0000"]]), "nope")).toThrow(/Unknown export strategy/);
   });
 });
 

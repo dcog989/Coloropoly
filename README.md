@@ -12,8 +12,9 @@ A color picker with palette generator, image analyser, contrast checker, and exp
 - **Palette Engine:** Six harmonies (complementary, split-complementary, analogous, triadic, tetradic, rectangle) and variable scales on lightness, chroma, hue, or alpha.
 - **Image Analysis:** Extract dominant and vibrant palettes locally with K-Means; sort by dominant, vibrant, bright, or dark.
 - **Accessibility:** Real-time APCA (Lc) and WCAG 2.1 contrast checking.
-- **Smart Paintbox:** Persistent palette, import from DTCG JSON or GIMP `.gpl`, export to CSS, Tailwind, SCSS, JSON, DTCG, Android XML, or GPL in OKLCH/HEX/HSL/RGB, plus PNG and SVG images.
+- **Smart Paintbox:** Persistent palette, import from DTCG JSON or GIMP `.gpl`, export to CSS, Tailwind, SCSS, Less, JSON, CSV, DTCG, Android XML, GPL, or text in OKLCH/HEX/HSL/RGB, plus PNG and SVG images.
 - **Library:** Search 30,000+ named colors.
+- **Color Sets:** Browse 24 curated palettes (Tailwind, Material, Pantone, Catppuccin, Nord, and more), filter and sort them, copy a set in any export format, and simulate color-vision deficiencies.
 - **Shareable:** The current color mirrors to the URL hash, so any color is linkable.
 - **Themes:** Light and dark, persisted.
 

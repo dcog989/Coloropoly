@@ -4,6 +4,7 @@ import { onDestroy } from "svelte";
 import { version } from "../package.json";
 import Toast from "./lib/components/Toast.svelte";
 import { setApp } from "./lib/context";
+import ColorSetsSection from "./lib/layout/ColorSetsSection.svelte";
 import Header from "./lib/layout/Header.svelte";
 import ExportModal from "./lib/modals/ExportModal.svelte";
 import InfoModal from "./lib/modals/InfoModal.svelte";
@@ -230,6 +231,10 @@ const showInfo = (key: keyof typeof infoContent) => {
       </div>
     </div>
   </main>
+
+  <div class="mx-auto w-full max-w-[1600px] px-4 pb-4 sm:px-6 sm:pb-6 md:px-8 md:pb-8 min-[1920px]:px-16">
+    <ColorSetsSection />
+  </div>
 
   <footer
     class="

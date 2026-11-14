@@ -2,7 +2,7 @@ import type { RootStore } from "../stores/root.svelte";
 import { type ExportFormat, formatColor, safeColor } from "./formatters";
 
 export interface ColorSource {
-  colors: Array<{ css: string }>;
+  colors: Array<{ css: string; name?: string }>;
   isSingle: boolean;
   name: string;
 }
@@ -23,14 +23,25 @@ export function getColorSource(root: RootStore): ColorSource {
   };
 }
 
+const toVarName = (value: string): string => {
+  const slug = value
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+  return /^\d/.test(slug) ? `c-${slug}` : slug;
+};
+
 export function generateColorName(index: number, source: ColorSource): string {
   const fallback = `color-${index + 1}`;
+  const named = source.colors[index]?.name;
+  if (named) return toVarName(named) || fallback;
   if (!source.isSingle) return fallback;
-  const slug = source.name
-    .toLowerCase()
-    .replace(/\s+/g, "-")
-    .replace(/[^a-z0-9-]/g, "");
-  return slug || fallback;
+  return toVarName(source.name) || fallback;
+}
+
+/** Human-readable name for data formats; code formats use the slugified name. */
+export function generateColorLabel(index: number, source: ColorSource): string {
+  return source.colors[index]?.name ?? generateColorName(index, source);
 }
 
 export function generateFilename(root: RootStore, extension: string): string {
@@ -109,7 +120,7 @@ class JsonExportStrategy implements ExportStrategy {
   format(source: ColorSource, exportFormat: ExportFormat): string {
     const obj: Record<string, string> = {};
     source.colors.forEach((item, i) => {
-      obj[generateColorName(i, source)] = formatColor(item.css, exportFormat);
+      obj[generateColorLabel(i, source)] = formatColor(item.css, exportFormat);
     });
     return JSON.stringify(obj, null, 2);
   }
@@ -123,6 +134,40 @@ class ScssExportStrategy implements ExportStrategy {
       lines.push(`$${generateColorName(i, source)}: ${formatColor(item.css, exportFormat)};`);
     });
     return lines.join("\n");
+  }
+}
+
+class LessExportStrategy implements ExportStrategy {
+  name = "Less Variables";
+  format(source: ColorSource, exportFormat: ExportFormat): string {
+    return source.colors
+      .map((item, i) => `@${generateColorName(i, source)}: ${formatColor(item.css, exportFormat)};`)
+      .join("\n");
+  }
+}
+
+class CsvExportStrategy implements ExportStrategy {
+  name = "CSV";
+  extension = "csv";
+  mimeType = "text/csv";
+  format(source: ColorSource, exportFormat: ExportFormat): string {
+    const rows = source.colors.map((item, i) => {
+      const name = generateColorLabel(i, source).replace(/"/g, '""');
+      const value = formatColor(item.css, exportFormat).replace(/"/g, '""');
+      return `"${name}","${value}"`;
+    });
+    return ["name,value", ...rows].join("\n");
+  }
+}
+
+class TextExportStrategy implements ExportStrategy {
+  name = "Plain Text";
+  extension = "txt";
+  mimeType = "text/plain";
+  format(source: ColorSource, exportFormat: ExportFormat): string {
+    return source.colors
+      .map((item, i) => `${generateColorLabel(i, source)}  ${formatColor(item.css, exportFormat)}`)
+      .join("\n");
   }
 }
 
@@ -188,7 +233,17 @@ class GplExportStrategy implements ExportStrategy {
   }
 }
 
-export type ExportStrategyName = "css" | "tailwind" | "xml" | "json" | "scss" | "dtcg" | "gpl";
+export type ExportStrategyName =
+  | "css"
+  | "tailwind"
+  | "xml"
+  | "json"
+  | "scss"
+  | "less"
+  | "csv"
+  | "text"
+  | "dtcg"
+  | "gpl";
 
 export const strategies: Record<ExportStrategyName, ExportStrategy> = {
   css: new CssExportStrategy(),
@@ -196,19 +251,29 @@ export const strategies: Record<ExportStrategyName, ExportStrategy> = {
   xml: new AndroidXmlExportStrategy(),
   json: new JsonExportStrategy(),
   scss: new ScssExportStrategy(),
+  less: new LessExportStrategy(),
+  csv: new CsvExportStrategy(),
+  text: new TextExportStrategy(),
   dtcg: new DtcgExportStrategy(),
   gpl: new GplExportStrategy(),
 };
 
-export function exportCode(root: RootStore, strategyName: string, format: ExportFormat = "oklch"): string {
+function getStrategy(strategyName: string): ExportStrategy {
   const strategy = strategies[strategyName as ExportStrategyName];
   if (!strategy) throw new Error(`Unknown export strategy: ${strategyName}`);
-  return strategy.format(getColorSource(root), format);
+  return strategy;
+}
+
+export function exportSource(source: ColorSource, strategyName: string, format: ExportFormat = "oklch"): string {
+  return getStrategy(strategyName).format(source, format);
+}
+
+export function exportCode(root: RootStore, strategyName: string, format: ExportFormat = "oklch"): string {
+  return exportSource(getColorSource(root), strategyName, format);
 }
 
 export function exportCodeFile(root: RootStore, strategyName: string, format: ExportFormat = "oklch"): void {
-  const strategy = strategies[strategyName as ExportStrategyName];
-  if (!strategy) throw new Error(`Unknown export strategy: ${strategyName}`);
+  const strategy = getStrategy(strategyName);
   if (!strategy.extension) throw new Error(`Export strategy has no file format: ${strategyName}`);
   downloadFile(
     strategy.format(getColorSource(root), format),
