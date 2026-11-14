@@ -19,6 +19,7 @@ export class PaintboxStore {
     if (this.#initialized) return;
     this.#initialized = true;
     this.#loadFromStorage();
+    window.addEventListener("storage", this.#onStorage);
 
     $effect(() => {
       if (this.#initialized) {
@@ -27,26 +28,39 @@ export class PaintboxStore {
     });
   }
 
+  #onStorage = (event: StorageEvent) => {
+    if (event.key === PAINTBOX.STORAGE_KEY || event.key === null) {
+      this.#loadFromStorage();
+    }
+  };
+
+  destroy() {
+    window.removeEventListener("storage", this.#onStorage);
+  }
+
   #loadFromStorage() {
     try {
       const stored = localStorage.getItem(PAINTBOX.STORAGE_KEY);
-      if (stored) {
-        const parsed = JSON.parse(stored);
-        if (Array.isArray(parsed)) {
-          this.#colors = parsed
-            .filter(
-              (item) =>
-                item &&
-                typeof item === "object" &&
-                typeof item.id === "string" &&
-                typeof item.css === "string" &&
-                typeof item.timestamp === "number",
-            )
-            .map((item) => this.#ensureOklch(item))
-            .slice(-PAINTBOX.MAX_COLORS);
-        } else {
-          this.#colors = [];
-        }
+      if (!stored) {
+        this.#colors = [];
+        return;
+      }
+
+      const parsed = JSON.parse(stored);
+      if (Array.isArray(parsed)) {
+        this.#colors = parsed
+          .filter(
+            (item) =>
+              item &&
+              typeof item === "object" &&
+              typeof item.id === "string" &&
+              typeof item.css === "string" &&
+              typeof item.timestamp === "number",
+          )
+          .map((item) => this.#ensureOklch(item))
+          .slice(-PAINTBOX.MAX_COLORS);
+      } else {
+        this.#colors = [];
       }
     } catch (e) {
       console.error("Failed to load paintbox data:", e);

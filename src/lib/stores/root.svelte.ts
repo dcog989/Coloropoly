@@ -49,6 +49,7 @@ export class RootStore {
   destroy() {
     this.engine.destroy();
     this.image.destroy();
+    this.paintbox.destroy();
   }
 
   async copy(text: string, e?: MouseEvent) {
