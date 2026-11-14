@@ -60,9 +60,14 @@
     /* Critical CSS to prevent FOUC */
     html,
     body {
-      background-color: #444;
+      background-color: #f6f6f6;
       margin: 0;
       padding: 0;
+    }
+
+    html.dark,
+    html.dark body {
+      background-color: #444;
     }
 
     /* Prevent layout shift during load */

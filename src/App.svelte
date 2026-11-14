@@ -25,7 +25,7 @@ const app = new RootStore();
 setApp(app);
 
 // Initial stores access for root logic
-const { color, paintbox, toast } = app;
+const { color, toast } = app;
 
 let showExport = $state(false);
 let showSearch = $state(false);
@@ -145,12 +145,7 @@ const handleKeyboard = (e: KeyboardEvent) => {
   }
   if ((e.metaKey || e.ctrlKey) && e.key === "s") {
     e.preventDefault();
-    paintbox.add(color.cssVar);
-    toast.show("Added to Paintbox");
-  }
-  if ((e.metaKey || e.ctrlKey) && e.key === "r") {
-    e.preventDefault();
-    color.randomize();
+    if (app.addColors([color.cssVar]) !== null) toast.show("Added to Paintbox");
   }
   if (e.key === "Escape") {
     if (showSearch) showSearch = false;
@@ -177,7 +172,6 @@ const infoContent = {
     content: `<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div class="p-4 bg-(--ui-bg) rounded-xl border border-(--ui-border) flex justify-between items-center"><span class="section-heading">Search</span><span class="font-mono font-bold bg-(--ui-card) px-2 py-1 rounded text-sm">⌘ + K</span></div>
                 <div class="p-4 bg-(--ui-bg) rounded-xl border border-(--ui-border) flex justify-between items-center"><span class="section-heading">Save Color</span><span class="font-mono font-bold bg-(--ui-card) px-2 py-1 rounded text-sm">⌘ + S</span></div>
-                <div class="p-4 bg-(--ui-bg) rounded-xl border border-(--ui-border) flex justify-between items-center"><span class="section-heading">Randomize</span><span class="font-mono font-bold bg-(--ui-card) px-2 py-1 rounded text-sm">⌘ + R</span></div>
                 <div class="p-4 bg-(--ui-bg) rounded-xl border border-(--ui-border) flex justify-between items-center"><span class="section-heading">Close Modal</span><span class="font-mono font-bold bg-(--ui-card) px-2 py-1 rounded text-sm">Esc</span></div>
             </div>`,
   },
@@ -245,7 +239,7 @@ const showInfo = (key: keyof typeof infoContent) => {
 
   <footer
     class="
-          text-on-current mx-auto flex w-full flex-wrap items-center
+          bg-(--current-color-solid) text-on-current mx-auto flex w-full flex-wrap items-center
           justify-between gap-4 px-4 py-6 opacity-80 transition-opacity
           hover:opacity-100
           sm:px-8
