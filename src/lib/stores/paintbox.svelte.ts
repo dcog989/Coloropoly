@@ -1,36 +1,46 @@
 ﻿import { colordx } from "@colordx/core";
 import { PAINTBOX } from "../constants";
-import { newestHalf, toColorKey } from "../utils/paintbox";
+import { mergePaintbox, type PaintboxColor } from "../utils/paintbox";
 
-type SavedColor = {
-  id: string;
-  css: string;
-  timestamp: number;
-  oklch: { l: number; c: number; h: number; alpha: number };
-};
 export type PaintboxSortMode = "newest" | "oldest" | "hue" | "lightness" | "chroma";
 
+const oklchOf = (css: string): PaintboxColor["oklch"] => {
+  const parsed = colordx(css);
+  return parsed.isValid() ? parsed.toOklch() : { l: 0, c: 0, h: 0, alpha: 1 };
+};
+
+const isSavedColor = (item: unknown): item is Partial<PaintboxColor> =>
+  typeof item === "object" &&
+  item !== null &&
+  typeof (item as PaintboxColor).id === "string" &&
+  typeof (item as PaintboxColor).css === "string" &&
+  typeof (item as PaintboxColor).timestamp === "number";
+
+const hasOklch = (value: unknown): value is PaintboxColor["oklch"] => {
+  if (typeof value !== "object" || value === null) return false;
+  const { l, c, h, alpha } = value as Record<string, unknown>;
+  return typeof l === "number" && typeof c === "number" && typeof h === "number" && typeof alpha === "number";
+};
+
 export class PaintboxStore {
-  #colors = $state<SavedColor[]>([]);
+  #colors = $state<PaintboxColor[]>([]);
   #initialized = false;
   sortMode = $state<PaintboxSortMode>("newest");
 
   init() {
     if (this.#initialized) return;
     this.#initialized = true;
-    this.#loadFromStorage();
+    this.#colors = this.#readStored();
     window.addEventListener("storage", this.#onStorage);
 
     $effect(() => {
-      if (this.#initialized) {
-        this.#saveToStorage();
-      }
+      this.#saveToStorage();
     });
   }
 
   #onStorage = (event: StorageEvent) => {
     if (event.key === PAINTBOX.STORAGE_KEY || event.key === null) {
-      this.#loadFromStorage();
+      this.#colors = this.#readStored();
     }
   };
 
@@ -38,74 +48,45 @@ export class PaintboxStore {
     window.removeEventListener("storage", this.#onStorage);
   }
 
-  #loadFromStorage() {
+  #readStored(): PaintboxColor[] {
     try {
       const stored = localStorage.getItem(PAINTBOX.STORAGE_KEY);
-      if (!stored) {
-        this.#colors = [];
-        return;
-      }
+      if (!stored) return [];
 
       const parsed = JSON.parse(stored);
-      if (Array.isArray(parsed)) {
-        this.#colors = parsed
-          .filter(
-            (item) =>
-              item &&
-              typeof item === "object" &&
-              typeof item.id === "string" &&
-              typeof item.css === "string" &&
-              typeof item.timestamp === "number",
-          )
-          .map((item) => this.#ensureOklch(item))
-          .slice(-PAINTBOX.MAX_COLORS);
-      } else {
-        this.#colors = [];
-      }
+      if (!Array.isArray(parsed)) return [];
+
+      return parsed
+        .filter(isSavedColor)
+        .map((item) => this.#ensureOklch(item))
+        .slice(-PAINTBOX.MAX_COLORS);
     } catch (e) {
       console.error("Failed to load paintbox data:", e);
-      this.#colors = [];
       try {
         localStorage.removeItem(PAINTBOX.STORAGE_KEY);
       } catch {
         /* Storage removal failed, continue */
       }
+      return [];
     }
   }
 
   #saveToStorage() {
-    const colors = this.#colors;
     try {
-      localStorage.setItem(PAINTBOX.STORAGE_KEY, JSON.stringify(colors));
+      localStorage.setItem(PAINTBOX.STORAGE_KEY, JSON.stringify(this.#colors));
     } catch (e) {
       console.error("Failed to save paintbox data:", e);
-      if (e instanceof Error && e.name === "QuotaExceededError" && colors.length > 0) {
-        const trimmed = newestHalf(colors);
-        try {
-          localStorage.setItem(PAINTBOX.STORAGE_KEY, JSON.stringify(trimmed));
-        } catch {
-          /* Storage write failed, already logged */
-        }
-        // Defer the state update so the persist effect does not mutate the state it just read.
-        queueMicrotask(() => {
-          if (this.#colors === colors) {
-            this.#colors = trimmed;
-          }
-        });
-      }
     }
   }
 
-  #ensureOklch(item: Partial<SavedColor>): SavedColor {
-    if (item.oklch) {
-      return item as SavedColor;
+  #ensureOklch(item: Partial<PaintboxColor>): PaintboxColor {
+    if (hasOklch(item.oklch)) {
+      return item as PaintboxColor;
     }
-    const parsed = colordx(item.css ?? "");
-    const oklch = parsed.isValid() ? parsed.toOklch() : { l: 0, c: 0, h: 0, alpha: 1 };
-    return { ...item, oklch } as SavedColor;
+    return { ...item, oklch: oklchOf(item.css ?? "") } as PaintboxColor;
   }
 
-  #items = $derived.by((): SavedColor[] => {
+  #items = $derived.by((): PaintboxColor[] => {
     const list = [...this.#colors];
 
     switch (this.sortMode) {
@@ -122,42 +103,27 @@ export class PaintboxStore {
     }
   });
 
-  get items(): SavedColor[] {
+  get items(): PaintboxColor[] {
     return this.#items;
   }
 
   add(css: string) {
-    if (!this.#initialized) this.init();
-
-    const parsed = colordx(css);
-    const key = toColorKey(css);
-
-    const existingIndex = this.#colors.findIndex((c) => toColorKey(c.css) === key);
-    if (existingIndex !== -1) {
-      this.#colors.splice(existingIndex, 1);
-    }
-
-    const oklch = parsed.isValid() ? parsed.toOklch() : { l: 0, c: 0, h: 0, alpha: 1 };
-
-    this.#colors.push({
+    const item: PaintboxColor = {
       id: crypto.randomUUID(),
       css,
       timestamp: Date.now(),
-      oklch,
-    });
+      oklch: oklchOf(css),
+    };
 
-    if (this.#colors.length > PAINTBOX.MAX_COLORS) {
-      this.#colors = this.#colors.slice(-PAINTBOX.MAX_COLORS);
-    }
+    // Merge with storage so a color added by another tab in the same moment is not overwritten.
+    this.#colors = mergePaintbox([...this.#colors, item], this.#readStored(), PAINTBOX.MAX_COLORS);
   }
 
   remove(id: string) {
-    if (!this.#initialized) this.init();
     this.#colors = this.#colors.filter((c) => c.id !== id);
   }
 
   clear() {
-    if (!this.#initialized) this.init();
     this.#colors = [];
   }
 }

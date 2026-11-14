@@ -143,7 +143,7 @@ const handleKeyboard = (e: KeyboardEvent) => {
   }
   if ((e.metaKey || e.ctrlKey) && e.key === "s") {
     e.preventDefault();
-    paintbox.add(color.hexa);
+    paintbox.add(color.cssVar);
     toast.show("Added to Paintbox");
   }
   if ((e.metaKey || e.ctrlKey) && e.key === "r") {

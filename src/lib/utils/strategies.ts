@@ -29,7 +29,7 @@ export const resolveClosestName = (closestName: string, hex: string): string => 
 export function getColorSource(root: RootStore): ColorSource {
   const hasColors = root.paintbox.items.length > 0;
   return {
-    colors: hasColors ? root.paintbox.items : [{ css: root.color.hexa }],
+    colors: hasColors ? root.paintbox.items : [{ css: root.color.cssVar }],
     isSingle: !hasColors,
     name: resolveClosestName(root.engine.closestName, root.color.hex),
   };

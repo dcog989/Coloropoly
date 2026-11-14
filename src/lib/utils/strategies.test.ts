@@ -23,7 +23,7 @@ const source = (colors: string[], name = "Test"): ColorSource => ({
 const rootWith = (items: Array<{ css: string }>, name = "Fuzzy Wuzzy"): RootStore =>
   ({
     paintbox: { items },
-    color: { hex: "#abcdef", hexa: "#abcdef80" },
+    color: { hex: "#abcdef", cssVar: "oklch(75% 0.1 250 / 0.5)" },
     engine: { closestName: name },
   }) as unknown as RootStore;
 
@@ -131,7 +131,7 @@ describe("color source helpers", () => {
   it("falls back to the single active color, keeping alpha", () => {
     const result = getColorSource(rootWith([]));
 
-    expect(result.colors).toEqual([{ css: "#abcdef80" }]);
+    expect(result.colors).toEqual([{ css: "oklch(75% 0.1 250 / 0.5)" }]);
     expect(result.isSingle).toBe(true);
   });
 

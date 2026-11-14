@@ -31,7 +31,7 @@ let inputVal = $derived.by(() => {
 });
 
 const addToPaintbox = (e?: MouseEvent) => {
-  paintbox.add(color.hexa);
+  paintbox.add(color.cssVar);
   toast.showAt("Added to Paintbox", e);
 };
 
