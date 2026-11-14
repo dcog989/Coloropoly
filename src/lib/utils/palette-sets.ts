@@ -1,8 +1,5 @@
-import type { Colordx } from "@colordx/core";
-import { colordx, extend } from "@colordx/core";
-import a11y from "@colordx/core/plugins/a11y";
-
-extend([a11y]);
+import { colordx } from "@colordx/core";
+import { usesDarkText } from "./text-contrast";
 
 export type SetSortOrder = "name" | "hue" | "lightness" | "chroma";
 
@@ -15,14 +12,6 @@ export interface SetColor {
   chroma: number;
   /** True when black text has the stronger APCA contrast against the color. */
   useDarkText: boolean;
-}
-
-// APCA Lc is signed, so compare the magnitudes of black and white text on the swatch.
-function prefersDarkText(color: Colordx): boolean {
-  const hex = color.toHex();
-  const dark = Math.abs(colordx("#000").apcaContrast(hex));
-  const light = Math.abs(colordx("#fff").apcaContrast(hex));
-  return dark >= light;
 }
 
 export function processSetColors(colors: Record<string, string>): SetColor[] {
@@ -43,7 +32,7 @@ export function processSetColors(colors: Record<string, string>): SetColor[] {
         saturation: hsl.s,
         lightness: hsl.l,
         chroma: oklch.c,
-        useDarkText: prefersDarkText(color),
+        useDarkText: usesDarkText(color.toHex()),
       },
     ];
   });
