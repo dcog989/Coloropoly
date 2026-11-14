@@ -15,7 +15,7 @@ import { tooltip } from "../utils/tooltip";
 import { toColorHash } from "../utils/url-color";
 
 const app = getApp();
-const { color, paintbox, toast } = app;
+const { color, toast } = app;
 
 let hasError = $state(false);
 
@@ -31,7 +31,7 @@ let inputVal = $derived.by(() => {
 });
 
 const addToPaintbox = (e?: MouseEvent) => {
-  paintbox.add(color.cssVar);
+  if (app.addColors([color.cssVar]) === null) return;
   toast.showAt("Added to Paintbox", e);
 };
 

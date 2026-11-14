@@ -5,7 +5,6 @@ import { PAINTBOX, PALETTE_FILE } from "../constants";
 import { getApp } from "../context";
 import type { PaintboxSortMode } from "../stores/paintbox.svelte";
 import { parsePaletteFile } from "../utils/import-strategies";
-import { evictedCount } from "../utils/paintbox";
 import { exportVisual } from "../utils/strategies";
 import { tooltip } from "../utils/tooltip";
 
@@ -39,8 +38,8 @@ const handleImport = async (e: Event) => {
   try {
     const colors = parsePaletteFile(file.name, await file.text());
     const toAdd = colors.slice(-PAINTBOX.MAX_COLORS);
-    const dropped = evictedCount(paintbox.items, toAdd, PAINTBOX.MAX_COLORS);
-    for (const css of toAdd) paintbox.add(css);
+    const dropped = app.addColors(toAdd);
+    if (dropped === null) return;
 
     const noun = toAdd.length === 1 ? "color" : "colors";
     toast.show(

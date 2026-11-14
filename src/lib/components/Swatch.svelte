@@ -6,7 +6,7 @@ import { usesDarkText } from "../utils/text-contrast";
 import { tooltip } from "../utils/tooltip";
 
 const app = getApp();
-const { color, paintbox, toast } = app;
+const { color, toast } = app;
 
 interface Props {
   color: string;
@@ -60,7 +60,7 @@ const getActionClass = () => {
       <button
         onclick={(e) => {
           e.stopPropagation();
-          paintbox.add(swatchColor);
+          if (app.addColors([swatchColor]) === null) return;
           toast.showAt("Added", e);
         }}
         class="overlay-button {getActionClass()}"

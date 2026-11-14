@@ -17,10 +17,6 @@ export class PaintboxStore {
     this.#initialized = true;
     this.#colors = this.#readStored();
     window.addEventListener("storage", this.#onStorage);
-
-    $effect(() => {
-      this.#saveToStorage();
-    });
   }
 
   #onStorage = (event: StorageEvent) => {
@@ -96,14 +92,19 @@ export class PaintboxStore {
     };
 
     // Merge with storage so a color added by another tab in the same moment is not overwritten.
+    // shortcut: two tabs adding in the same instant can still write the same stale list and lose one color.
+    // Upgrade to one storage key per color if multi-tab editing ever matters.
     this.#colors = mergePaintbox([...this.#colors, item], this.#readStored(), PAINTBOX.MAX_COLORS);
+    this.#saveToStorage();
   }
 
   remove(id: string) {
     this.#colors = this.#colors.filter((c) => c.id !== id);
+    this.#saveToStorage();
   }
 
   clear() {
     this.#colors = [];
+    this.#saveToStorage();
   }
 }

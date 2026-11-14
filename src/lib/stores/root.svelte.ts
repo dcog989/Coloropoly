@@ -1,3 +1,5 @@
+import { PAINTBOX } from "../constants";
+import { evictedCount } from "../utils/paintbox";
 import { ColorStore } from "./color.svelte";
 import { EngineStore } from "./engine.svelte";
 import { ImageStore } from "./image.svelte";
@@ -41,5 +43,22 @@ export class RootStore {
     } catch {
       this.toast.showAt("Copy failed", e);
     }
+  }
+
+  /**
+   * Add colors, asking first when the paintbox cap would drop saved ones.
+   * Returns how many colors the cap dropped, or null when the user cancels.
+   */
+  addColors(colors: readonly string[]): number | null {
+    const dropped = evictedCount(this.paintbox.items, colors, PAINTBOX.MAX_COLORS);
+    if (
+      dropped > 0 &&
+      !confirm(`Adding will remove your ${dropped} oldest saved color${dropped === 1 ? "" : "s"}. Continue?`)
+    ) {
+      return null;
+    }
+
+    for (const css of colors) this.paintbox.add(css);
+    return dropped;
   }
 }

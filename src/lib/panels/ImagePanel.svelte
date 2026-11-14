@@ -3,14 +3,14 @@ import Image from "@lucide/svelte/icons/image";
 import LayersPlus from "@lucide/svelte/icons/layers-plus";
 import X from "@lucide/svelte/icons/x";
 import Swatch from "../components/Swatch.svelte";
-import { IMAGE_ANALYSIS, PAINTBOX } from "../constants";
+import { IMAGE_ANALYSIS } from "../constants";
 import { getApp } from "../context";
 import type { SortMode } from "../stores/image.svelte";
 import { MAX_PALETTE_COLORS } from "../utils/image-palette";
-import { evictedCount } from "../utils/paintbox";
 import { tooltip } from "../utils/tooltip";
 
-const { image: imageAnalyzer, paintbox, toast } = getApp();
+const app = getApp();
+const { image: imageAnalyzer, toast } = app;
 
 let isDragging = $state(false);
 
@@ -60,16 +60,7 @@ const onDrop = (e: DragEvent) => {
 };
 
 const addAll = (e?: MouseEvent) => {
-  const palette = imageAnalyzer.extractedPalette;
-  const dropped = evictedCount(paintbox.items, palette, PAINTBOX.MAX_COLORS);
-  if (
-    dropped > 0 &&
-    !confirm(`Adding all will remove your ${dropped} oldest saved color${dropped === 1 ? "" : "s"}. Continue?`)
-  ) {
-    return;
-  }
-
-  for (const color of palette) paintbox.add(color);
+  if (app.addColors(imageAnalyzer.extractedPalette) === null) return;
   toast.showAt("Added All to Paintbox", e);
 };
 
