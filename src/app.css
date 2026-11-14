@@ -97,7 +97,7 @@
 
   /* Shared panel section heading */
   .section-heading {
-    @apply text-xs font-black tracking-widest text-(--ui-text-muted) uppercase;
+    @apply text-sm font-black tracking-widest text-(--ui-text-muted) uppercase;
   }
 
   /* Shared small-caps sub-label (field/section sub-labels) */

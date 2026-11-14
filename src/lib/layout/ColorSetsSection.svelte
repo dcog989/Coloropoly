@@ -97,74 +97,73 @@ function handleExport(event: Event) {
 </script>
 
 <section class="panel h-auto overflow-visible">
-  <div class="mb-4 flex items-baseline gap-3">
-    <h2 class="section-heading">Color Sets</h2>
-    <span class="text-xs text-(--ui-text-muted)">{colors.length} colors</span>
+  <div class="mb-4 flex flex-col items-start justify-between gap-4 md:flex-row md:items-center">
+    <h2 class="section-heading shrink-0">Color Sets</h2>
+
+    <div class="flex w-full min-w-0 flex-1 flex-wrap items-center gap-2 md:justify-end">
+      <input
+        type="search"
+        bind:value={query}
+        placeholder="Filter colors..."
+        aria-label="Filter colors by name or hex"
+        class="text-input min-w-40 flex-1 px-3 py-1.5 text-xs"
+      >
+
+      <label class="flex items-center gap-2 text-xs font-bold text-(--ui-text-muted) uppercase">
+        Set
+        <select bind:value={selectedId} class="select-control">
+          {#each COLOR_SETS as set (set.id)}
+            <option value={set.id}>{set.title}</option>
+          {/each}
+        </select>
+      </label>
+
+      <label class="flex items-center gap-2 text-xs font-bold text-(--ui-text-muted) uppercase">
+        Sort
+        <select bind:value={sortOrder} class="select-control">
+          {#each SORT_OPTIONS as option (option.value)}
+            <option value={option.value}>{option.label}</option>
+          {/each}
+        </select>
+      </label>
+
+      <label class="flex items-center gap-2 text-xs font-bold text-(--ui-text-muted) uppercase">
+        Format
+        <select bind:value={exportFormat} class="select-control">
+          {#each FORMAT_OPTIONS as option (option.value)}
+            <option value={option.value}>{option.label}</option>
+          {/each}
+        </select>
+      </label>
+
+      <label class="flex items-center gap-2 text-xs font-bold text-(--ui-text-muted) uppercase">
+        Vision
+        <select bind:value={colorBlind} class="select-control">
+          {#each COLOR_BLIND_OPTIONS as option (option.value)}
+            <option value={option.value}>{option.label}</option>
+          {/each}
+        </select>
+      </label>
+
+      <button
+        type="button"
+        onclick={copyAll}
+        class="small-button border-(--ui-border) hover:bg-(--ui-bg)"
+        title="Copy every visible color name and value"
+      >
+        Copy All
+      </button>
+
+      <select onchange={handleExport} aria-label="Copy the set as" class="select-control">
+        <option value="">Copy as...</option>
+        {#each EXPORT_OPTIONS as option (option.id)}
+          <option value={option.id}>{option.name}</option>
+        {/each}
+      </select>
+    </div>
   </div>
 
   <ColorBlindFilters />
-
-  <div class="mb-4 flex w-full flex-wrap items-center gap-2">
-    <input
-      type="search"
-      bind:value={query}
-      placeholder="Filter colors..."
-      aria-label="Filter colors by name or hex"
-      class="text-input min-w-40 flex-1 px-3 py-1.5 text-xs"
-    >
-
-    <label class="flex items-center gap-2 text-xs font-bold text-(--ui-text-muted) uppercase">
-      Set
-      <select bind:value={selectedId} class="select-control">
-        {#each COLOR_SETS as set (set.id)}
-          <option value={set.id}>{set.title}</option>
-        {/each}
-      </select>
-    </label>
-
-    <label class="flex items-center gap-2 text-xs font-bold text-(--ui-text-muted) uppercase">
-      Sort
-      <select bind:value={sortOrder} class="select-control">
-        {#each SORT_OPTIONS as option (option.value)}
-          <option value={option.value}>{option.label}</option>
-        {/each}
-      </select>
-    </label>
-
-    <label class="flex items-center gap-2 text-xs font-bold text-(--ui-text-muted) uppercase">
-      Format
-      <select bind:value={exportFormat} class="select-control">
-        {#each FORMAT_OPTIONS as option (option.value)}
-          <option value={option.value}>{option.label}</option>
-        {/each}
-      </select>
-    </label>
-
-    <label class="flex items-center gap-2 text-xs font-bold text-(--ui-text-muted) uppercase">
-      Vision
-      <select bind:value={colorBlind} class="select-control">
-        {#each COLOR_BLIND_OPTIONS as option (option.value)}
-          <option value={option.value}>{option.label}</option>
-        {/each}
-      </select>
-    </label>
-
-    <button
-      type="button"
-      onclick={copyAll}
-      class="small-button border-(--ui-border) hover:bg-(--ui-bg)"
-      title="Copy every visible color name and value"
-    >
-      Copy All
-    </button>
-
-    <select onchange={handleExport} aria-label="Copy the set as" class="select-control">
-      <option value="">Copy as...</option>
-      {#each EXPORT_OPTIONS as option (option.id)}
-        <option value={option.id}>{option.name}</option>
-      {/each}
-    </select>
-  </div>
 
   {#if loading}
     <div class="flex min-h-40">
@@ -218,5 +217,6 @@ function handleExport(event: Event) {
         </li>
       {/each}
     </ul>
+    <p class="mt-3 text-xs text-(--ui-text-muted)">{colors.length} colors</p>
   {/if}
 </section>
