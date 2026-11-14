@@ -4,6 +4,9 @@ import type { WorkerRequest, WorkerResponse } from "../workers/color-name-search
 import ColorNameSearchWorker from "../workers/color-name-search.ts?worker";
 import type { ColorStore } from "./color.svelte";
 
+/** Longest the browser may stay busy before the name list starts loading anyway. */
+const NAME_LIST_IDLE_TIMEOUT_MS = 2000;
+
 export class EngineStore {
   closestName = $state("Searching...");
   #managedWorker = new ManagedWorker<WorkerResponse>({ maxRetries: 3, retryDelay: 1000 });
@@ -44,15 +47,26 @@ export class EngineStore {
     if (this.#initialized) return;
     this.#initialized = true;
 
-    // The name list is ~1.1MB. Wait for the first interaction so a visitor who only
-    // looks at the page never downloads it.
+    // The name list is ~1.1MB. Start it once the page has loaded and the browser is
+    // idle, so it never delays the first paint; the title shows the hex until the
+    // first name arrives, then fades to the name.
     const start = () => this.startNameWorker();
-    window.addEventListener("pointerdown", start, { once: true, passive: true });
-    window.addEventListener("keydown", start, { once: true });
-    this.#removeStartListeners = () => {
-      window.removeEventListener("pointerdown", start);
-      window.removeEventListener("keydown", start);
+    const scheduleAfterLoad = () => {
+      if (typeof window.requestIdleCallback === "function") {
+        const idleId = window.requestIdleCallback(start, { timeout: NAME_LIST_IDLE_TIMEOUT_MS });
+        this.#removeStartListeners = () => window.cancelIdleCallback(idleId);
+      } else {
+        const timerId = window.setTimeout(start, 0);
+        this.#removeStartListeners = () => window.clearTimeout(timerId);
+      }
     };
+
+    if (document.readyState === "complete") {
+      scheduleAfterLoad();
+    } else {
+      window.addEventListener("load", scheduleAfterLoad, { once: true });
+      this.#removeStartListeners = () => window.removeEventListener("load", scheduleAfterLoad);
+    }
 
     this.#disposeEffect = $effect.root(() => {
       $effect(() => {
