@@ -5,7 +5,8 @@ import { getApp } from "../context";
 import { usesDarkText } from "../utils/text-contrast";
 import { tooltip } from "../utils/tooltip";
 
-const { color, paintbox, toast } = getApp();
+const app = getApp();
+const { color, paintbox, toast } = app;
 
 interface Props {
   color: string;
@@ -15,15 +16,7 @@ interface Props {
 
 let { color: swatchColor, index, dynamicClass = true }: Props = $props();
 
-const copy = async (e: MouseEvent) => {
-  const formatted = color.formatColor(swatchColor);
-  try {
-    await navigator.clipboard.writeText(formatted);
-    toast.showAt("Copied", e);
-  } catch {
-    toast.showAt("Copy failed", e);
-  }
-};
+const copy = (e: MouseEvent) => app.copy(color.formatColor(swatchColor), e);
 
 const getActionClass = () => {
   if (!dynamicClass) return "";

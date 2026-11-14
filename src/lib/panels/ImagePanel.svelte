@@ -6,6 +6,7 @@ import Swatch from "../components/Swatch.svelte";
 import { IMAGE_ANALYSIS } from "../constants";
 import { getApp } from "../context";
 import type { SortMode } from "../stores/image.svelte";
+import { MAX_PALETTE_COLORS } from "../utils/image-palette";
 import { tooltip } from "../utils/tooltip";
 
 const { image: imageAnalyzer, paintbox, toast } = getApp();
@@ -14,7 +15,7 @@ let isDragging = $state(false);
 
 const gridColors = $derived.by(() => {
   const colors = imageAnalyzer.extractedPalette;
-  return Array.from({ length: 24 }, (_, i) => colors[i] ?? null);
+  return Array.from({ length: MAX_PALETTE_COLORS }, (_, i) => colors[i] ?? null);
 });
 
 $effect(() => {
@@ -197,7 +198,7 @@ const sortOptions: { label: string; value: SortMode }[] = [
         <div class="flex items-center justify-between">
           <h3 class="section-heading">Palette</h3>
           <div class="flex items-center gap-3">
-            <span class="font-mono text-xs text-(--ui-text-muted)">Top 24</span>
+            <span class="font-mono text-xs text-(--ui-text-muted)">Top {MAX_PALETTE_COLORS}</span>
             <button
               type="button"
               onclick={(e) => addAll(e)}
