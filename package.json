@@ -19,8 +19,7 @@
     "test:coverage": "vitest run --coverage",
     "test:watch": "vitest",
     "typecheck": "svelte-check --tsconfig ./tsconfig.app.json && bun --check",
-    "update": "bun update --latest",
-    "version": "cog bump --version"
+    "update": "bun update --latest"
   },
   "dependencies": {
     "@colordx/core": "^7.3.0",

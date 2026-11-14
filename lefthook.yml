@@ -5,11 +5,6 @@ pre-commit:
       run: bunx biome check --write --no-errors-on-unmatched {staged_files}
       stage_fixed: true
 
-pre-push:
-  commands:
-    check:
-      run: bun run check
-
 commit-msg:
   commands:
     cog:

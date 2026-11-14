@@ -2,20 +2,11 @@
 set -euo pipefail
 
 version="${1:?usage: sync_version.sh <version>}"
+file="package.json"
 
-apply() {
-  local file="$1"
-  shift
-  local tmp
-  tmp="$(mktemp)"
-  sed "$@" "$file" > "$tmp"
-  if cmp -s "$file" "$tmp"; then
-    echo "error: no version replacement matched in $file" >&2
-    rm -f "$tmp"
-    exit 1
-  fi
-  cp "$tmp" "$file"
-  rm -f "$tmp"
-}
+sed -i "s|\"version\": \"[0-9][0-9.]*\"|\"version\": \"$version\"|" "$file"
 
-apply package.json "s|\"version\": \"[0-9][0-9.]*\"|\"version\": \"$version\"|"
+if ! grep -q "\"version\": \"$version\"" "$file"; then
+  echo "error: no version replacement matched in $file" >&2
+  exit 1
+fi
