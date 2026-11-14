@@ -12,7 +12,9 @@ export class ToastStore {
   }
 
   showAt(message: string, event: MouseEvent | undefined) {
-    this.#emit(message, event);
+    // Keyboard and assistive-tech clicks report 0,0; a cursor toast there would sit off-screen.
+    const at = event && (event.clientX !== 0 || event.clientY !== 0) ? event : undefined;
+    this.#emit(message, at);
   }
 
   #emit(message: string, event?: MouseEvent, duration = 3000) {

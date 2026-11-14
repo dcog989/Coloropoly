@@ -7,18 +7,21 @@ const { toast } = getApp();
 const isCursor = $derived(toast.active?.x !== undefined && toast.active?.y !== undefined);
 </script>
 
-{#if toast.active}
-  <!-- Wrapper handles fixed positioning to avoid transform conflicts with inner animation -->
-  <div
-    role="status"
-    aria-live="polite"
-    class="
-          pointer-events-none fixed z-100
-          {isCursor ? "" : "bottom-8 left-1/2 -translate-x-1/2"}"
-    style:top={isCursor ? `${toast.active.y}px` : undefined}
-    style:left={isCursor ? `${toast.active.x}px` : undefined}
-    style:transform={isCursor ? "translate(-50%, -100%) translateY(-12px)" : undefined}
-  >
+<!--
+  The live region stays mounted so screen readers have it before its text arrives.
+  Wrapper handles fixed positioning to avoid transform conflicts with inner animation.
+-->
+<div
+  role="status"
+  aria-live="polite"
+  class="
+        pointer-events-none fixed z-100
+        {isCursor ? "" : "bottom-8 left-1/2 -translate-x-1/2"}"
+  style:top={isCursor ? `${toast.active?.y}px` : undefined}
+  style:left={isCursor ? `${toast.active?.x}px` : undefined}
+  style:transform={isCursor ? "translate(-50%, -100%) translateY(-12px)" : undefined}
+>
+  {#if toast.active}
     <div
       transition:fly={{
         y: isCursor ? 0 : 16,
@@ -31,5 +34,5 @@ const isCursor = $derived(toast.active?.x !== undefined && toast.active?.y !== u
     >
       {toast.active.message}
     </div>
-  </div>
-{/if}
+  {/if}
+</div>
