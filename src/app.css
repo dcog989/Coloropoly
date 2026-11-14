@@ -137,7 +137,7 @@
 
   /* Shared segmented-control container shell; call sites add display/gap/radius context */
   .control-group {
-    @apply rounded-lg border border-(--ui-border) bg-(--ui-bg) p-1;
+    @apply rounded-lg border border-(--ui-border) bg-(--ui-bg) px-1 py-0;
   }
 
   /* Shared segmented-control item (compact mode/option toggle).
