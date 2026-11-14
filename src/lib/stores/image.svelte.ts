@@ -93,14 +93,13 @@ export class ImageStore {
       this.#managedWorker.post({ imageData, distance: 0.05 }, [imageData.data.buffer]);
     } catch (error) {
       console.error("Image analysis error:", error);
-      if (generation === this.#generation) {
-        this.isProcessing = false;
-        if (this.previewUrl) {
-          URL.revokeObjectURL(this.previewUrl);
-          this.previewUrl = "";
-        }
-        this.#managedWorker.terminate();
+      if (generation !== this.#generation) return;
+      this.isProcessing = false;
+      if (this.previewUrl) {
+        URL.revokeObjectURL(this.previewUrl);
+        this.previewUrl = "";
       }
+      this.#managedWorker.terminate();
       throw error;
     }
   }
