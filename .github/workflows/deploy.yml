@@ -14,17 +14,34 @@ permissions:
 
 concurrency:
   group: pages
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
     timeout-minutes: 10
-    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
+    # Only successful pushes from this repository. A pull request's CI run has a
+    # head branch too, so a fork PR from a branch named "main" would otherwise
+    # pass the branch filter and publish its own commit.
+    if: >-
+      (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main') ||
+      (github.event_name == 'workflow_run' &&
+      github.event.workflow_run.event == 'push' &&
+      github.event.workflow_run.head_repository.full_name == github.repository &&
+      github.event.workflow_run.conclusion == 'success')
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
           ref: ${{ github.event.workflow_run.head_sha || github.sha }}
+
+      - name: Check this commit is still the tip of main
+        env:
+          HEAD_SHA: ${{ github.event.workflow_run.head_sha || github.sha }}
+        run: |
+          if [ "$(git ls-remote origin refs/heads/main | cut -f1)" != "$HEAD_SHA" ]; then
+            echo "::notice::A newer commit is on main; skipping this deploy."
+            exit 1
+          fi
 
       - name: Setup bun
         uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6
