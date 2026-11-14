@@ -7,13 +7,14 @@ interface Props {
 let { message, subtitle }: Props = $props();
 </script>
 
-<div class="flex flex-1 items-center justify-center">
+<div class="flex flex-1 items-center justify-center" role="status" aria-live="polite">
   <div class="text-center">
     <div
       class="
               mx-auto mb-4 size-12 animate-spin rounded-full
               border-4 border-(--ui-border)
               border-t-(--current-color)
+              motion-reduce:animate-none
             "
     ></div>
     <div class="text-sm opacity-60">{message}</div>
