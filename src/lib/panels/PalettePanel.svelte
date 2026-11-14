@@ -2,12 +2,16 @@
 import LayersPlus from "@lucide/svelte/icons/layers-plus";
 import ListMinus from "@lucide/svelte/icons/list-minus";
 import ListPlus from "@lucide/svelte/icons/list-plus";
+import CollapseToggle from "../components/CollapseToggle.svelte";
 import Swatch from "../components/Swatch.svelte";
+import { PANEL_IDS } from "../constants";
 import { getApp } from "../context";
 import { tooltip } from "../utils/tooltip";
 
 const app = getApp();
 const { engine, toast } = app;
+let collapsed = $state(app.panels.isCollapsed(PANEL_IDS.PALETTE));
+$effect(() => app.panels.setCollapsed(PANEL_IDS.PALETTE, collapsed));
 
 const addAll = (e?: MouseEvent) => {
   if (app.addColors(engine.generated) === null) return;
@@ -27,21 +31,17 @@ const removeRow = () => {
   class="
       panel
     "
+  class:h-auto={collapsed}
 >
-  <div
-    class="
-          mb-6 flex flex-col items-center justify-between gap-4
-          md:flex-row
-        "
-  >
-    <h2 class="section-heading shrink-0 self-start md:self-center">Palette</h2>
+  <div class="flex flex-col items-center justify-between gap-4 md:flex-row" class:mb-6={!collapsed}>
+    <div class="flex w-full items-center justify-between gap-4 md:contents">
+      <h2 class="section-heading shrink-0 self-start md:self-center">Palette</h2>
+      <div class="md:order-last">
+        <CollapseToggle bind:collapsed label="Palette" controls="palette-panel-body" />
+      </div>
+    </div>
 
-    <div
-      class="
-              flex w-full flex-wrap items-center justify-end gap-2
-              md:w-auto
-            "
-    >
+    <div class="flex w-full flex-wrap items-center justify-end gap-2 md:order-2 md:ml-auto md:w-auto">
       <select
         id="paletteVariable"
         bind:value={engine.genAxis}
@@ -101,7 +101,7 @@ const removeRow = () => {
     </div>
   </div>
 
-  <div class="grid grid-cols-4 gap-3">
+  <div id="palette-panel-body" class="grid grid-cols-4 gap-3" class:hidden={collapsed}>
     {#each engine.generated as swatch, i (swatch + i)}
       <Swatch color={swatch} index={i} />
     {/each}

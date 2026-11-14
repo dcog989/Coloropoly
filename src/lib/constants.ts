@@ -14,6 +14,17 @@ export const PAINTBOX = {
   STORAGE_KEY: "paintbox",
 } as const;
 
+// Collapsible panel ids and their localStorage key prefix
+export const PANEL_IDS = {
+  IMAGE: "image",
+  CONTRAST: "contrast",
+  COLOR_SETS: "color-sets",
+  PALETTE: "palette",
+  PAINTBOX: "paintbox",
+} as const;
+
+export const PANEL_STORAGE_PREFIX = "collapsed-panel:";
+
 // Export dimensions
 export const EXPORT = {
   PNG_WIDTH: 1200,

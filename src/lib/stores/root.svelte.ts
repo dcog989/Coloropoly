@@ -4,6 +4,7 @@ import { ColorStore } from "./color.svelte";
 import { EngineStore } from "./engine.svelte";
 import { ImageStore } from "./image.svelte";
 import { PaintboxStore } from "./paintbox.svelte";
+import { PanelStore } from "./panels.svelte";
 import { ThemeStore } from "./theme.svelte";
 import { ToastStore } from "./toast.svelte";
 import "../utils/color-plugins";
@@ -13,6 +14,7 @@ export class RootStore {
   color: ColorStore;
   toast = new ToastStore();
   paintbox = new PaintboxStore();
+  panels = new PanelStore();
   image = new ImageStore();
   theme = new ThemeStore();
   engine: EngineStore;

@@ -2,8 +2,9 @@
 import Image from "@lucide/svelte/icons/image";
 import LayersPlus from "@lucide/svelte/icons/layers-plus";
 import X from "@lucide/svelte/icons/x";
+import CollapseToggle from "../components/CollapseToggle.svelte";
 import Swatch from "../components/Swatch.svelte";
-import { IMAGE_ANALYSIS } from "../constants";
+import { IMAGE_ANALYSIS, PANEL_IDS } from "../constants";
 import { getApp } from "../context";
 import type { SortMode } from "../stores/image.svelte";
 import { MAX_PALETTE_COLORS } from "../utils/image-palette";
@@ -13,6 +14,8 @@ const app = getApp();
 const { image: imageAnalyzer, toast } = app;
 
 let isDragging = $state(false);
+let collapsed = $state(app.panels.isCollapsed(PANEL_IDS.IMAGE));
+$effect(() => app.panels.setCollapsed(PANEL_IDS.IMAGE, collapsed));
 
 const gridColors = $derived.by(() => {
   const colors = imageAnalyzer.extractedPalette;
@@ -76,12 +79,14 @@ const sortOptions: { label: string; value: SortMode }[] = [
   class="
       panel flex flex-col
     "
+  class:h-auto={collapsed}
 >
-  <div class="mb-6 flex shrink-0 items-center justify-between">
+  <div class="flex shrink-0 items-center justify-between" class:mb-6={!collapsed}>
     <h2 class="section-heading">Image Analyser</h2>
+    <CollapseToggle bind:collapsed label="Image Analyser" controls="image-panel-body" />
   </div>
 
-  <div class="flex-1 space-y-6">
+  <div id="image-panel-body" class="flex-1 space-y-6" class:hidden={collapsed}>
     {#if !imageAnalyzer.mosaicData.length}
       <div class="relative flex h-full flex-col justify-center">
         <input

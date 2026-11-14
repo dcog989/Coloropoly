@@ -193,7 +193,7 @@ const showInfo = (key: keyof typeof infoContent) => {
 
   <main
     class="
-          grid w-full flex-1 grid-cols-1 content-start gap-4 p-4
+          grid w-full grid-cols-1 content-start gap-4 p-4
           pt-0
           sm:gap-6 sm:p-6 sm:pt-0
           md:gap-8 md:p-8 md:pt-0

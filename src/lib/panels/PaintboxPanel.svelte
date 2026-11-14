@@ -1,7 +1,8 @@
 <script lang="ts">
 import CircleX from "@lucide/svelte/icons/circle-x";
+import CollapseToggle from "../components/CollapseToggle.svelte";
 import PaintboxGrid from "../components/PaintboxGrid.svelte";
-import { PAINTBOX, PALETTE_FILE } from "../constants";
+import { PAINTBOX, PALETTE_FILE, PANEL_IDS } from "../constants";
 import { getApp } from "../context";
 import type { PaintboxSortMode } from "../stores/paintbox.svelte";
 import { parsePaletteFile } from "../utils/import-strategies";
@@ -19,6 +20,8 @@ const { paintbox, toast } = app;
 
 let fileInput = $state<HTMLInputElement | null>(null);
 let exporting = $state<"png" | "svg" | null>(null);
+let collapsed = $state(app.panels.isCollapsed(PANEL_IDS.PAINTBOX));
+$effect(() => app.panels.setCollapsed(PANEL_IDS.PAINTBOX, collapsed));
 
 $effect(() => {
   if (paintbox.saveError) toast.show(paintbox.saveError);
@@ -76,69 +79,75 @@ const sortOptions: { label: string; value: PaintboxSortMode }[] = [
   class="
       panel flex flex-col
     "
+  class:h-auto={collapsed}
 >
-  <div class="space-y-6">
-    <div
-      class="
-              flex flex-col items-start justify-between gap-4
-              sm:flex-row sm:items-center
-            "
-    >
+  <div class="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center" class:mb-6={!collapsed}>
+    <div class="flex w-full items-center justify-between gap-4 sm:contents">
       <h2 class="section-heading shrink-0">Paintbox</h2>
-
-      <div
-        class="
-                  flex w-full flex-wrap items-center gap-2
-                  sm:w-auto
-                "
-      >
-        <select
-          id="paintboxSort"
-          bind:value={paintbox.sortMode}
-          aria-label="Sort paintbox by"
-          class="select-control flex-1 sm:flex-none"
-        >
-          {#each sortOptions as option (option.value)}
-            <option value={option.value}>{option.label}</option>
-          {/each}
-        </select>
-
-        <button
-          type="button"
-          onclick={() => {
-            if (confirm("Clear all saved colors?")) paintbox.clear();
-          }}
-          disabled={paintbox.items.length === 0}
-          class="icon-button hover:bg-red-500 hover:text-white"
-          use:tooltip={"Clear Paintbox"}
-          aria-label="Clear paintbox"
-        >
-          <CircleX class="size-4" />
-        </button>
+      <div class="sm:order-last">
+        <CollapseToggle bind:collapsed label="Paintbox" controls="paintbox-panel-body" />
       </div>
     </div>
 
-    <PaintboxGrid />
-  </div>
+    <div class="flex w-full flex-wrap items-center gap-2 sm:order-2 sm:ml-auto sm:w-auto">
+      <select
+        id="paintboxSort"
+        bind:value={paintbox.sortMode}
+        aria-label="Sort paintbox by"
+        class="select-control flex-1 sm:flex-none"
+      >
+        {#each sortOptions as option (option.value)}
+          <option value={option.value}>{option.label}</option>
+        {/each}
+      </select>
 
-  <!-- Export Options -->
-  <div class="mt-6 space-y-3">
-    <h3 class="section-heading">Export</h3>
-    <div class="grid grid-cols-3 gap-3">
-      <button type="button" onclick={() => runVisualExport("png")} disabled={exporting !== null} class="action-button">
-        {exporting === "png" ? "..." : "PNG"}
+      <button
+        type="button"
+        onclick={() => {
+          if (confirm("Clear all saved colors?")) paintbox.clear();
+        }}
+        disabled={paintbox.items.length === 0}
+        class="icon-button hover:bg-red-500 hover:text-white"
+        use:tooltip={"Clear Paintbox"}
+        aria-label="Clear paintbox"
+      >
+        <CircleX class="size-4" />
       </button>
-      <button type="button" onclick={() => runVisualExport("svg")} disabled={exporting !== null} class="action-button">
-        {exporting === "svg" ? "..." : "SVG"}
-      </button>
-      <button type="button" onclick={onExport} class="action-button">Code...</button>
     </div>
   </div>
 
-  <!-- Import Options -->
-  <div class="mt-6 space-y-3">
-    <h3 class="section-heading">Import</h3>
-    <input bind:this={fileInput} type="file" accept={PALETTE_FILE.ACCEPT} class="hidden" onchange={handleImport}>
-    <button type="button" onclick={() => fileInput?.click()} class="action-button">DTCG JSON / GIMP GPL</button>
+  <div id="paintbox-panel-body" class="space-y-6" class:hidden={collapsed}>
+    <PaintboxGrid />
+
+    <!-- Export Options -->
+    <div class="space-y-3">
+      <h3 class="section-heading">Export</h3>
+      <div class="grid grid-cols-3 gap-3">
+        <button
+          type="button"
+          onclick={() => runVisualExport("png")}
+          disabled={exporting !== null}
+          class="action-button"
+        >
+          {exporting === "png" ? "..." : "PNG"}
+        </button>
+        <button
+          type="button"
+          onclick={() => runVisualExport("svg")}
+          disabled={exporting !== null}
+          class="action-button"
+        >
+          {exporting === "svg" ? "..." : "SVG"}
+        </button>
+        <button type="button" onclick={onExport} class="action-button">Code...</button>
+      </div>
+    </div>
+
+    <!-- Import Options -->
+    <div class="space-y-3">
+      <h3 class="section-heading">Import</h3>
+      <input bind:this={fileInput} type="file" accept={PALETTE_FILE.ACCEPT} class="hidden" onchange={handleImport}>
+      <button type="button" onclick={() => fileInput?.click()} class="action-button">DTCG JSON / GIMP GPL</button>
+    </div>
   </div>
 </section>

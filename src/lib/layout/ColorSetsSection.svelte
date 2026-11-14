@@ -1,7 +1,9 @@
 <script lang="ts">
 import CircleAlert from "@lucide/svelte/icons/circle-alert";
+import CollapseToggle from "../components/CollapseToggle.svelte";
 import ColorBlindFilters from "../components/ColorBlindFilters.svelte";
 import LoadingSpinner from "../components/LoadingSpinner.svelte";
+import { PANEL_IDS } from "../constants";
 import { getApp } from "../context";
 import { COLOR_BLIND_MODES } from "../data/color-blind";
 import { COLOR_SETS, loadColorSet } from "../data/color-sets";
@@ -29,6 +31,8 @@ const FORMAT_OPTIONS: Array<{ label: string; value: ExportFormat }> = [
 const EXPORT_OPTIONS = Object.entries(strategies).map(([id, strategy]) => ({ id, name: strategy.name }));
 
 let selectedId = $state(COLOR_SETS[0]?.id ?? "");
+let collapsed = $state(app.panels.isCollapsed(PANEL_IDS.COLOR_SETS));
+$effect(() => app.panels.setCollapsed(PANEL_IDS.COLOR_SETS, collapsed));
 let sortOrder = $state<SetSortOrder>("name");
 let exportFormat = $state<ExportFormat>("hex");
 let colorBlind = $state("none");
@@ -86,10 +90,15 @@ function handleExport(event: Event) {
 </script>
 
 <section class="panel h-auto overflow-visible">
-  <div class="mb-6 flex flex-col items-start justify-between gap-4 md:flex-row md:items-center">
-    <h2 class="section-heading shrink-0">Color Sets</h2>
+  <div class="flex flex-col items-start justify-between gap-4 md:flex-row md:items-center" class:mb-6={!collapsed}>
+    <div class="flex w-full items-center justify-between gap-4 md:contents">
+      <h2 class="section-heading shrink-0">Color Sets</h2>
+      <div class="md:order-last">
+        <CollapseToggle bind:collapsed label="Color Sets" controls="color-sets-body" />
+      </div>
+    </div>
 
-    <div class="flex w-full min-w-0 flex-1 flex-wrap items-center gap-2 md:justify-end">
+    <div class="flex w-full min-w-0 flex-1 flex-wrap items-center gap-2 md:order-2 md:justify-end">
       <select bind:value={selectedId} class="select-control" aria-label="Color set">
         {#each COLOR_SETS as set (set.id)}
           <option value={set.id}>{set.title}</option>
@@ -155,68 +164,70 @@ function handleExport(event: Event) {
     </div>
   </div>
 
-  <ColorBlindFilters />
+  <div id="color-sets-body" class:hidden={collapsed}>
+    <ColorBlindFilters />
 
-  {#if loading}
-    <div class="flex min-h-40">
-      <LoadingSpinner message="Loading color set..." />
-    </div>
-  {:else if loadError}
-    <div class="flex min-h-40 items-center justify-center text-center text-(--ui-text-muted)">
-      <div>
-        <CircleAlert class="mx-auto mb-3 size-10" />
-        <p class="text-sm">Could not load this color set. Try reloading the page.</p>
+    {#if loading}
+      <div class="flex min-h-40">
+        <LoadingSpinner message="Loading color set..." />
       </div>
-    </div>
-  {:else if colors.length === 0}
-    <div class="flex min-h-40 items-center justify-center text-sm text-(--ui-text-muted)">No colors found</div>
-  {:else}
-    <ul
-      class="grid grid-cols-[repeat(auto-fill,minmax(16rem,1fr))] gap-3"
-      style:filter={colorBlind === "none" ? "" : `url(#cb-${colorBlind})`}
-    >
-      {#each colors as color (color.name)}
-        <li
-          class="
+    {:else if loadError}
+      <div class="flex min-h-40 items-center justify-center text-center text-(--ui-text-muted)">
+        <div>
+          <CircleAlert class="mx-auto mb-3 size-10" />
+          <p class="text-sm">Could not load this color set. Try reloading the page.</p>
+        </div>
+      </div>
+    {:else if colors.length === 0}
+      <div class="flex min-h-40 items-center justify-center text-sm text-(--ui-text-muted)">No colors found</div>
+    {:else}
+      <ul
+        class="grid grid-cols-[repeat(auto-fill,minmax(16rem,1fr))] gap-3"
+        style:filter={colorBlind === "none" ? "" : `url(#cb-${colorBlind})`}
+      >
+        {#each colors as color (color.name)}
+          <li
+            class="
             group relative flex min-w-0 items-center justify-between gap-2 rounded-md
             px-2.5 py-2
             [contain-intrinsic-size:auto_2.5rem] [content-visibility:auto]
             {color.useDarkText ? "text-black" : "text-white"}
           "
-          style:background-color={color.css}
-        >
-          <button
-            type="button"
-            class="absolute inset-0 cursor-pointer rounded-md"
-            onclick={() => app.color.set(color.css)}
-            use:tooltip={"Set as current color"}
-            aria-label="Set {color.name} as the current color"
-          ></button>
-          <button
-            type="button"
-            onclick={(event) => app.copy(color.name, event)}
-            aria-label="Copy {color.name}"
-            use:tooltip={`Copy ${color.name}`}
-            class="relative z-10 min-w-0 truncate text-left text-xs font-bold hover:underline"
+            style:background-color={color.css}
           >
-            {color.name}
-          </button>
-          <button
-            type="button"
-            onclick={(event) => app.copy(color.value, event)}
-            class="
+            <button
+              type="button"
+              class="absolute inset-0 cursor-pointer rounded-md"
+              onclick={() => app.color.set(color.css)}
+              use:tooltip={"Set as current color"}
+              aria-label="Set {color.name} as the current color"
+            ></button>
+            <button
+              type="button"
+              onclick={(event) => app.copy(color.name, event)}
+              aria-label="Copy {color.name}"
+              use:tooltip={`Copy ${color.name}`}
+              class="relative z-10 min-w-0 truncate text-left text-xs font-bold hover:underline"
+            >
+              {color.name}
+            </button>
+            <button
+              type="button"
+              onclick={(event) => app.copy(color.value, event)}
+              class="
               relative z-10 shrink-0 rounded px-1.5 py-0.5 font-mono text-[0.7rem]
               tracking-wider
               {color.useDarkText ? "hover:bg-black/15" : "hover:bg-white/20"}
             "
-            aria-label="Copy {color.value}"
-            use:tooltip={`Copy ${color.value}`}
-          >
-            {color.value}
-          </button>
-        </li>
-      {/each}
-    </ul>
-    <p class="mt-3 text-xs text-(--ui-text-muted)">{colors.length} colors</p>
-  {/if}
+              aria-label="Copy {color.value}"
+              use:tooltip={`Copy ${color.value}`}
+            >
+              {color.value}
+            </button>
+          </li>
+        {/each}
+      </ul>
+      <p class="mt-3 text-xs text-(--ui-text-muted)">{colors.length} colors</p>
+    {/if}
+  </div>
 </section>
