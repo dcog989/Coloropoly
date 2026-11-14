@@ -5,18 +5,19 @@ import Check from "@lucide/svelte/icons/check";
 import X from "@lucide/svelte/icons/x";
 import { getApp } from "../context";
 import { safeColor } from "../utils/formatters";
+import { flattenColor } from "../utils/text-contrast";
 import { tooltip } from "../utils/tooltip";
 import "../utils/color-plugins";
 
-const { color } = getApp();
+const { color, theme } = getApp();
 
 type ContrastMode = "white" | "black" | "custom";
-type WcagLevel = "AA Large" | "AA" | "AAA";
 
+const DEFAULT_CUSTOM = "#888888";
 const modes: ContrastMode[] = ["white", "black", "custom"];
 
 let mode = $state<ContrastMode>("white");
-let customColor = $state("#888888");
+let customColor = $state(DEFAULT_CUSTOM);
 // Per mode: false = target color as background, true = current color as background
 let inverted = $state<Record<ContrastMode, boolean>>({
   white: true,
@@ -24,9 +25,19 @@ let inverted = $state<Record<ContrastMode, boolean>>({
   custom: true,
 });
 
-const parsedCustom = $derived(safeColor(customColor));
+let rootEl = $state<HTMLDivElement>();
+// The preview sits on the panel card, so that is the surface a translucent
+// current color is painted over.
+const surface = $derived.by(() => {
+  const fallback = theme.current === "dark" ? "#000000" : "#ffffff";
+  const panel = rootEl?.closest(".panel");
+  return panel ? getComputedStyle(panel).backgroundColor : fallback;
+});
 
-let customColorError = $derived(mode === "custom" && !parsedCustom);
+const parsedCustom = $derived(safeColor(customColor));
+const customInvalid = $derived(!parsedCustom);
+
+let customColorError = $derived(mode === "custom" && customInvalid);
 
 const getTargetColor = (m: ContrastMode): string => {
   switch (m) {
@@ -35,27 +46,27 @@ const getTargetColor = (m: ContrastMode): string => {
     case "black":
       return "#000000";
     case "custom":
-      return parsedCustom?.toHex() ?? "#888888";
+      return parsedCustom?.toHex() ?? DEFAULT_CUSTOM;
   }
 };
 
 // Derived Stats
 let currentTarget = $derived(getTargetColor(mode));
 let isInverted = $derived(inverted[mode]);
-let fg = $derived(isInverted ? currentTarget : color.hex);
-let bg = $derived(isInverted ? color.hex : currentTarget);
+let bg = $derived(flattenColor(isInverted ? color.cssVar : currentTarget, surface));
+let fg = $derived(flattenColor(isInverted ? currentTarget : color.cssVar, bg));
 
 const toggleInvert = (m: ContrastMode) => {
   inverted[m] = !inverted[m];
 };
 
 const apcaFor = (m: ContrastMode): number => {
-  if (m === "custom" && customColorError) return 0;
+  if (m === "custom" && customInvalid) return 0;
   const target = getTargetColor(m);
-  const foreground = inverted[m] ? target : color.hex;
-  const background = inverted[m] ? color.hex : target;
+  const flatBg = flattenColor(inverted[m] ? color.cssVar : target, surface);
+  const flatFg = flattenColor(inverted[m] ? target : color.cssVar, flatBg);
   try {
-    return Math.round(Math.abs(colordx(foreground).apcaContrast(background)));
+    return Math.round(Math.abs(colordx(flatFg).apcaContrast(flatBg)));
   } catch {
     return 0;
   }
@@ -64,7 +75,7 @@ const apcaFor = (m: ContrastMode): number => {
 let currentApca = $derived(apcaFor(mode));
 
 let currentWcag = $derived.by((): number => {
-  if (mode === "custom" && customColorError) return 0;
+  if (customColorError) return 0;
   try {
     const ratio = colordx(fg).contrast(bg);
     return !Number.isNaN(ratio) && Number.isFinite(ratio) ? ratio : 0;
@@ -73,22 +84,17 @@ let currentWcag = $derived.by((): number => {
   }
 });
 
-const readableAt = (level: WcagLevel): boolean => {
-  if (mode === "custom" && customColorError) return false;
+const wcagScore = $derived.by((): "AAA" | "AA" | "AA large" | "fail" => {
+  if (customColorError) return "fail";
   try {
-    const parsed = colordx(fg);
-    switch (level) {
-      case "AA Large":
-        return parsed.isReadable(bg, { size: "large" });
-      case "AA":
-        return parsed.isReadable(bg);
-      case "AAA":
-        return parsed.isReadable(bg, { level: "AAA" });
-    }
+    return colordx(fg).readableScore(bg);
   } catch {
-    return false;
+    return "fail";
   }
-};
+});
+
+// Round down so a 4.48:1 pair never reads as a passing 4.5:1.
+let displayRatio = $derived(Math.floor(currentWcag * 10) / 10);
 
 const getApcaRating = (score: number) => {
   if (score >= 90) return "Excellent for all.";
@@ -100,7 +106,7 @@ const getApcaRating = (score: number) => {
 };
 </script>
 
-<div class="flex h-full flex-col gap-6">
+<div class="flex h-full flex-col gap-6" bind:this={rootEl}>
   <!-- 1. Context Switcher Tabs -->
   <div class="control-group grid grid-cols-3 gap-2">
     {#each modes as m (m)}
@@ -113,7 +119,7 @@ const getApcaRating = (score: number) => {
         >
           <span class="section-heading">{m}</span>
           <div class="flex items-baseline gap-1">
-            {#if m === "custom" && customColorError}
+            {#if m === "custom" && customInvalid}
               <span class="text-lg font-black text-red-500">--</span>
               <span class="font-mono text-xs text-red-500/70">!</span>
             {:else}
@@ -164,6 +170,8 @@ const getApcaRating = (score: number) => {
         type="text"
         bind:value={customColor}
         aria-label="Custom contrast color"
+        aria-invalid={customColorError}
+        aria-describedby={customColorError ? "contrastColorError" : undefined}
         class="text-input py-2 pr-4 pl-10 text-sm uppercase {customColorError ? "border-red-500" : ""}"
       >
       <div
@@ -178,7 +186,13 @@ const getApcaRating = (score: number) => {
         {/if}
       </div>
       {#if customColorError}
-        <div class="absolute top-full left-0 mt-1 text-xs font-medium text-red-500">Invalid color format</div>
+        <div
+          id="contrastColorError"
+          role="alert"
+          class="absolute top-full left-0 mt-1 text-xs font-medium text-red-500"
+        >
+          Invalid color format
+        </div>
       {/if}
     </div>
   {/if}
@@ -209,7 +223,7 @@ const getApcaRating = (score: number) => {
     </h3>
     <p
       class="
-              max-w-[80%] text-[0.65rem] font-medium leading-tight opacity-90
+              max-w-[80%] text-[0.65rem] font-medium leading-tight
               sm:text-xs
               md:text-sm
             "
@@ -228,7 +242,7 @@ const getApcaRating = (score: number) => {
     >
       <div class="flex items-baseline justify-between">
         <span class="section-heading">APCA</span>
-        <span class="text-xl font-black">{customColorError && mode === "custom" ? "--" : currentApca}</span>
+        <span class="text-xl font-black">{customColorError ? "--" : currentApca}</span>
       </div>
       <div
         class="
@@ -236,7 +250,7 @@ const getApcaRating = (score: number) => {
                   opacity-70
                 "
       >
-        {customColorError && mode === "custom" ? "Invalid color format" : getApcaRating(currentApca)}
+        {customColorError ? "Invalid color format" : getApcaRating(currentApca)}
       </div>
     </div>
 
@@ -248,9 +262,7 @@ const getApcaRating = (score: number) => {
     >
       <div class="flex items-baseline justify-between">
         <span class="section-heading">WCAG</span>
-        <span class="text-xl font-black"
-          >{customColorError && mode === "custom" ? "--" : currentWcag.toFixed(1)}:1</span
-        >
+        <span class="text-xl font-black">{customColorError ? "--" : displayRatio.toFixed(1)}:1</span>
       </div>
 
       <div
@@ -258,45 +270,30 @@ const getApcaRating = (score: number) => {
                   mt-1 flex justify-between border-t border-(--ui-border) pt-2
                 "
       >
-        {#if customColorError && mode === "custom"}
-          <div class="flex flex-col items-center gap-1">
-            <span class="sub-label">AA Lg</span>
-            <X class="size-4 text-gray-400 opacity-70" />
-          </div>
-          <div class="flex flex-col items-center gap-1">
-            <span class="sub-label">AA</span>
-            <X class="size-4 text-gray-400 opacity-70" />
-          </div>
-          <div class="flex flex-col items-center gap-1">
-            <span class="sub-label">AAA</span>
-            <X class="size-4 text-gray-400 opacity-70" />
-          </div>
-        {:else}
-          <div class="flex flex-col items-center gap-1">
-            <span class="sub-label">AA Lg</span>
-            {#if readableAt("AA Large")}
-              <Check class="size-4 text-green-500" />
-            {:else}
-              <X class="size-4 text-red-500 opacity-70" />
-            {/if}
-          </div>
-          <div class="flex flex-col items-center gap-1">
-            <span class="sub-label">AA</span>
-            {#if readableAt("AA")}
-              <Check class="size-4 text-green-500" />
-            {:else}
-              <X class="size-4 text-red-500 opacity-70" />
-            {/if}
-          </div>
-          <div class="flex flex-col items-center gap-1">
-            <span class="sub-label">AAA</span>
-            {#if readableAt("AAA")}
-              <Check class="size-4 text-green-500" />
-            {:else}
-              <X class="size-4 text-red-500 opacity-70" />
-            {/if}
-          </div>
-        {/if}
+        <div class="flex flex-col items-center gap-1">
+          <span class="sub-label">AA Lg</span>
+          {#if wcagScore !== "fail"}
+            <Check class="size-4 text-green-500" />
+          {:else}
+            <X class="size-4 text-red-500 opacity-70" />
+          {/if}
+        </div>
+        <div class="flex flex-col items-center gap-1">
+          <span class="sub-label">AA</span>
+          {#if wcagScore === "AA" || wcagScore === "AAA"}
+            <Check class="size-4 text-green-500" />
+          {:else}
+            <X class="size-4 text-red-500 opacity-70" />
+          {/if}
+        </div>
+        <div class="flex flex-col items-center gap-1">
+          <span class="sub-label">AAA</span>
+          {#if wcagScore === "AAA"}
+            <Check class="size-4 text-green-500" />
+          {:else}
+            <X class="size-4 text-red-500 opacity-70" />
+          {/if}
+        </div>
       </div>
     </div>
   </div>

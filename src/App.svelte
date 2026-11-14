@@ -73,6 +73,7 @@ let hashWriteTimer: number | null = null;
 $effect(() => {
   // Read reactive values
   const cssVar = color.cssVar;
+  const solid = color.hex;
   const hStr = color.h.toString();
   const c = color.c;
   const hash = toColorHash(color.cssVar);
@@ -88,6 +89,7 @@ $effect(() => {
 
     // Batch all style changes together to minimize reflows
     root.style.setProperty("--current-color", cssVar);
+    root.style.setProperty("--current-color-solid", solid);
     root.style.setProperty("--current-ui-chroma-scale", String(Math.min(1, c / 0.06)));
     if (c > 0.001) {
       root.style.setProperty("--current-hue", hStr);
@@ -98,8 +100,8 @@ $effect(() => {
       root.setAttribute("data-achromatic", "");
     }
 
-    // Set data attribute for contrast-dependent styling
-    const needsDarkText = usesDarkText(cssVar);
+    // The on-current text is paired with the opaque solid background above.
+    const needsDarkText = usesDarkText(solid);
     root.setAttribute("data-color-contrast", needsDarkText ? "dark" : "light");
 
     // Mirror the color to the URL after the slider settles. One write per frame trips

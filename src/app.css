@@ -18,6 +18,8 @@
   color-scheme: light dark;
 
   --current-color: oklch(0.6 0.15 250);
+  /* Opaque twin used wherever on-current text sits on the color, so alpha can't break the pairing. */
+  --current-color-solid: oklch(0.6 0.15 250);
   --checker-light: #aaa;
   --checker-dark: #666;
   --current-hue: 250;
@@ -107,17 +109,17 @@
 
   /* Shared small icon action button (rounded-lg, subtle); call sites may override hover colour */
   .icon-button {
-    @apply shrink-0 rounded-lg border border-(--ui-border) bg-(--ui-bg) p-2 text-(--ui-text-muted) shadow-sm transition-all hover:bg-(--current-color) hover:text-on-current;
+    @apply shrink-0 rounded-lg border border-(--ui-border) bg-(--ui-bg) p-2 text-(--ui-text-muted) shadow-sm transition-all hover:bg-(--current-color-solid) hover:text-on-current;
   }
 
   /* Shared inset icon action button for use inside .control-group (shell supplies border/bg) */
   .icon-button-inset {
-    @apply shrink-0 rounded-md p-1.5 text-(--ui-text-muted) transition-all hover:bg-(--current-color) hover:text-on-current;
+    @apply shrink-0 rounded-md p-1.5 text-(--ui-text-muted) transition-all hover:bg-(--current-color-solid) hover:text-on-current;
   }
 
   /* Shared large action button (rounded-2xl) */
   .action-button {
-    @apply cursor-pointer rounded-2xl border border-(--ui-border) bg-(--ui-bg) px-6 py-4 text-xs font-black uppercase shadow-sm transition duration-200 hover:scale-105 hover:bg-(--current-color) hover:text-on-current;
+    @apply cursor-pointer rounded-2xl border border-(--ui-border) bg-(--ui-bg) px-6 py-4 text-xs font-black uppercase shadow-sm transition duration-200 hover:scale-105 hover:bg-(--current-color-solid) hover:text-on-current;
   }
 
   /* Shared select control (radius, border, bg, padding, type, transition); call sites add layout only */
@@ -148,7 +150,7 @@
 
   .segment-button[aria-pressed="true"],
   .segment-button[aria-checked="true"] {
-    @apply bg-(--current-color) text-on-current;
+    @apply bg-(--current-color-solid) text-on-current;
   }
 
   .segment-button[aria-pressed="false"]:hover,
@@ -201,7 +203,7 @@
 
   /* Shared circular header button */
   .header-button {
-    @apply hover:text-on-current cursor-pointer rounded-full border border-(--ui-border) bg-(--ui-card) p-2 shadow-lg transition duration-300 hover:scale-110 hover:bg-(--current-color) sm:p-3;
+    @apply hover:text-on-current cursor-pointer rounded-full border border-(--ui-border) bg-(--ui-card) p-2 shadow-lg transition duration-300 hover:scale-110 hover:bg-(--current-color-solid) sm:p-3;
   }
 
   /* Shared modal backdrop */

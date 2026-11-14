@@ -2,7 +2,7 @@ import { EXPORT } from "../constants";
 import type { RootStore } from "../stores/root.svelte";
 import { safeColor } from "./formatters";
 import { type ColorSource, escapeXml, resolveClosestName, type VisualExportStrategy } from "./strategies";
-import { usesDarkText } from "./text-contrast";
+import { flattenColor, usesDarkText } from "./text-contrast";
 
 /** Black or white text, by the same rule the on-screen swatches use. */
 const readableText = (background: string): string => (usesDarkText(background) ? "#000000" : "#ffffff");
@@ -37,11 +37,11 @@ class PngExportStrategy implements VisualExportStrategy {
     ctx.textAlign = "left";
 
     if (isSingle) {
-      ctx.fillStyle = colors[0]?.css ?? root.color.hex;
+      const fill = flattenColor(colors[0]?.css ?? root.color.hexa);
+      ctx.fillStyle = fill;
       ctx.fillRect(0, 0, EXPORT.PNG_WIDTH, EXPORT.PNG_HEIGHT);
 
-      const textColor = readableText(root.color.hex);
-      ctx.fillStyle = textColor;
+      ctx.fillStyle = readableText(fill);
       const title = resolveClosestName(root.engine.closestName, root.color.hex).toUpperCase();
       fitTitle(ctx, title, EXPORT.PNG_WIDTH - TEXT_EDGE * 2);
       ctx.fillText(title, TEXT_EDGE, 150);
@@ -65,13 +65,13 @@ class PngExportStrategy implements VisualExportStrategy {
         const x = col * swatchWidth;
         const y = row * swatchHeight;
         if (item) {
-          ctx.fillStyle = item.css;
+          const fill = flattenColor(item.css);
+          ctx.fillStyle = fill;
           ctx.fillRect(x, y, swatchWidth, swatchHeight);
           if (swatchHeight > 80) {
             const parsed = safeColor(item.css);
             if (parsed) {
-              const textColor = readableText(parsed.toHex());
-              ctx.fillStyle = textColor;
+              ctx.fillStyle = readableText(fill);
               ctx.font = `bold ${Math.min(swatchHeight / 4, 32)}px ui-monospace, monospace`;
               ctx.textAlign = "center";
               ctx.fillText(parsed.toHex().toUpperCase(), x + swatchWidth / 2, y + swatchHeight / 2 + 8);
@@ -107,13 +107,14 @@ class SvgExportStrategy implements VisualExportStrategy {
     let svg: string;
 
     if (isSingle) {
-      const textFill = readableText(root.color.hex);
+      const fill = flattenColor(root.color.hexa);
+      const textFill = readableText(fill);
       const title = resolveClosestName(root.engine.closestName, root.color.hex).toUpperCase();
       // Rough sans-serif bold advance width (0.6em), floored so long names stay legible.
       const titleSize = Math.max(10, Math.min(24, Math.floor((EXPORT.SVG_SIZE - 40) / (title.length * 0.6))));
       svg = `<?xml version="1.0" encoding="UTF-8"?>
 <svg width="${EXPORT.SVG_SIZE}" height="${EXPORT.SVG_SIZE}" viewBox="0 0 ${EXPORT.SVG_SIZE} ${EXPORT.SVG_SIZE}" xmlns="http://www.w3.org/2000/svg">
-  <rect width="${EXPORT.SVG_SIZE}" height="${EXPORT.SVG_SIZE}" fill="${root.color.hexa}" />
+  <rect width="${EXPORT.SVG_SIZE}" height="${EXPORT.SVG_SIZE}" fill="${fill}" />
   <text x="20" y="40" font-family="sans-serif" font-weight="bold" font-size="${titleSize}" fill="${textFill}">${escapeXml(title)}</text>
   <text x="20" y="70" font-family="monospace" font-size="14" fill="${textFill}">${root.color.display}</text>
   ${root.color.alpha < 1 ? `<text x="20" y="90" font-family="monospace" font-size="12" fill="${textFill}">Alpha: ${(root.color.alpha * 100).toFixed(0)}%</text>` : ""}
@@ -132,12 +133,12 @@ class SvgExportStrategy implements VisualExportStrategy {
           const y = row * swatchHeight;
 
           const parsed = safeColor(item.css);
-          const fill = item.css;
+          const fill = flattenColor(item.css);
           const label = (parsed ? parsed.toHex() : item.css).toUpperCase();
 
           let colorText = "";
           if (swatchHeight > 50 && parsed) {
-            const textColor = readableText(parsed.toHex());
+            const textColor = readableText(fill);
             const fontSize = Math.min(swatchHeight / 5, 14);
             colorText = `<text x="${x + swatchWidth / 2}" y="${y + swatchHeight / 2 + fontSize / 3}" font-family="monospace" font-size="${fontSize}" font-weight="bold" fill="${textColor}" text-anchor="middle">${label}</text>`;
           }
