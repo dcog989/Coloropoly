@@ -127,7 +127,7 @@
 
   /* Shared compact button chrome; call sites add border/bg colour + hover state only */
   .small-button {
-    @apply cursor-pointer rounded-md border px-3 py-1 text-xs font-bold text-(--ui-text) uppercase transition-all duration-200;
+    @apply cursor-pointer rounded-md border px-3 py-1.5 text-xs font-bold text-(--ui-text) uppercase transition-all duration-200;
   }
 
   /* Shared text-field chrome (radius, border, bg, mono, transition); call sites add size/spacing/state only */
