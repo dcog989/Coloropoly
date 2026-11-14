@@ -2,6 +2,7 @@
 import CircleAlert from "@lucide/svelte/icons/circle-alert";
 import { onDestroy, onMount } from "svelte";
 import { getApp } from "../context";
+import { FILTER_LIMIT } from "../utils/color-search";
 import { tooltip } from "../utils/tooltip";
 import LoadingSpinner from "./LoadingSpinner.svelte";
 
@@ -12,6 +13,7 @@ let searchInput = $state<HTMLInputElement>();
 
 let workerFilteredColors: Array<{ name: string; hex: string }> = $state([]);
 let totalColors = $state(0);
+let filterCapped = $state(false);
 
 let isLoading = $state(true);
 let isFiltering = $state(false);
@@ -31,6 +33,7 @@ onMount(() => {
   unsubscribe = engine.subscribeToWorker((msg) => {
     if (msg.type === "filterResult") {
       workerFilteredColors = msg.colors || [];
+      filterCapped = msg.capped === true;
       isFiltering = false;
     } else if (msg.type === "pageResult") {
       const colors = msg.colors || [];
@@ -73,6 +76,8 @@ $effect(() => {
     clearTimeout(searchDebounceTimeout);
   }
 
+  filterCapped = false;
+
   if (searchQuery.trim()) {
     isFiltering = true;
     searchDebounceTimeout = window.setTimeout(() => {
@@ -94,7 +99,7 @@ $effect(() => {
     engine.postToWorker({
       type: "filter",
       query: debouncedQuery,
-      limit: 500,
+      limit: FILTER_LIMIT,
     });
   }
 });
@@ -180,6 +185,12 @@ $effect(() => {
       placeholder="Search 30,000+ colors..."
       class="text-input mb-4 shrink-0 bg-(--ui-card) p-4 text-sm shadow-inner"
     >
+
+    {#if filterCapped}
+      <p class="mb-2 shrink-0 text-xs opacity-60">
+        Showing the first {FILTER_LIMIT} matches. Refine the search to narrow it down.
+      </p>
+    {/if}
 
     {#if isLoading}
       <LoadingSpinner message="Loading color library..." subtitle="30,000+ colors" />

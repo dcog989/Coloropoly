@@ -1,4 +1,12 @@
-﻿import { buildColorIndex, type ColorIndex, filterColors, findClosestName, getPage } from "../utils/color-search";
+﻿import { loadColorNames } from "../data/colors";
+import {
+  buildColorIndex,
+  type ColorIndex,
+  FILTER_LIMIT,
+  filterColors,
+  findClosestName,
+  getPage,
+} from "../utils/color-search";
 
 interface WorkerMessage {
   type: "search" | "filter" | "get-page";
@@ -13,53 +21,38 @@ interface WorkerResponse {
   name?: string;
   colors?: Array<{ name: string; hex: string }>;
   total?: number;
+  capped?: boolean;
 }
 
 let index: ColorIndex | null = null;
+let loadPromise: Promise<void> | null = null;
 
-let isLoading = false;
-let loadError: Error | null = null;
-
-const DATA_POLL_INTERVAL_MS = 10;
-const DATA_WAIT_TIMEOUT_MS = 15_000;
-
-async function prepareData(): Promise<void> {
-  if (index !== null || isLoading) return;
-
-  isLoading = true;
-
-  try {
-    const module = await import("../data/colors");
-    const list = await module.loadColorNames();
-    index = buildColorIndex(list);
-  } catch (error) {
-    loadError = error instanceof Error ? error : new Error("Failed to load color names");
-    console.error("Failed to load color name list:", loadError);
-  } finally {
-    isLoading = false;
-  }
+function prepareData(): Promise<void> {
+  loadPromise ??= (async () => {
+    try {
+      index = buildColorIndex(await loadColorNames());
+    } catch (error) {
+      console.error("Failed to load color name list:", error);
+    }
+  })();
+  return loadPromise;
 }
 
 self.onmessage = async (e: MessageEvent<WorkerMessage>) => {
-  if (e.data.type === "search" && e.data.color) {
-    if (index === null || isLoading) {
-      await waitForData();
-    }
+  await prepareData();
 
+  if (e.data.type === "search" && e.data.color) {
     const result = index ? findClosestName(e.data.color, index) : "Custom Color";
     self.postMessage({ type: "result", name: result } as WorkerResponse);
   } else if (e.data.type === "filter") {
-    if (index === null || isLoading) {
-      await waitForData();
-    }
-
-    const results = index ? filterColors(index, e.data.query || "", e.data.limit || 500) : [];
-    self.postMessage({ type: "filterResult", colors: results } as WorkerResponse);
+    // Ask for one extra row so the UI can say when the result list is capped.
+    const results = index ? filterColors(index, e.data.query || "", FILTER_LIMIT + 1) : [];
+    self.postMessage({
+      type: "filterResult",
+      colors: results.slice(0, FILTER_LIMIT),
+      capped: results.length > FILTER_LIMIT,
+    } as WorkerResponse);
   } else if (e.data.type === "get-page") {
-    if (index === null || isLoading) {
-      await waitForData();
-    }
-
     const results = index ? getPage(index, e.data.offset || 0, e.data.limit || 100) : [];
     self.postMessage({
       type: "pageResult",
@@ -69,16 +62,4 @@ self.onmessage = async (e: MessageEvent<WorkerMessage>) => {
   }
 };
 
-async function waitForData(): Promise<void> {
-  const deadline = Date.now() + DATA_WAIT_TIMEOUT_MS;
-  while (!loadError && (index === null || isLoading)) {
-    if (Date.now() >= deadline) {
-      // Give up waiting; callers fall back to empty results instead of hanging.
-      console.warn("Color name data did not finish loading in time");
-      return;
-    }
-    await new Promise((resolve) => setTimeout(resolve, DATA_POLL_INTERVAL_MS));
-  }
-}
-
-prepareData();
+void prepareData();

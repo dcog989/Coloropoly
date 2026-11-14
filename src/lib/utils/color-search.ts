@@ -1,6 +1,9 @@
 import { colordx } from "@colordx/core";
 import { parseHex, rgbToOklab } from "@colordx/core/fn";
 
+/** Most names the search returns at once; the UI notes when more matches exist. */
+export const FILTER_LIMIT = 500;
+
 export interface ColorEntry {
   name: string;
   hex: string;

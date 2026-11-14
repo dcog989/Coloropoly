@@ -9,6 +9,7 @@ export type WorkerMessageData = {
   name?: string;
   colors?: Array<{ name: string; hex: string }>;
   total?: number;
+  capped?: boolean;
 };
 
 export class EngineStore {
