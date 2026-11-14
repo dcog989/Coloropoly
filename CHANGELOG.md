@@ -2,6 +2,207 @@
 All notable changes to this project will be documented in this file. See [conventional commits](https://www.conventionalcommits.org/) for commit guidelines.
 
 - - -
+## v3.10.0 - 2026-11-14
+
+#### Features
+
+- (2798e20) load the color name list once the app is idle - dcog989
+
+- (6683637) download plain JSON - dcog989
+
+- (f428123) replace native tooltips with app-styled tooltips - dcog989
+
+- (619e9a5) select the current color when a swatch is clicked - dcog989
+
+- (fe14f75) enlarge the color input text - dcog989
+
+- (037f9ad) integrate curated palette browser into the app - dcog989
+
+#### Bug Fixes
+
+- (912204e) restore the swatch name and value tooltips - dcog989
+
+- (2e7dcc4) drop the trailing zero from whole WCAG ratios - dcog989
+
+- (b498689) deploy only trusted pushes on main - dcog989
+
+- (e15a62c) show both modifier keys in the shortcut help - dcog989
+
+- (d2425c4) crossfade the title when the color name changes - dcog989
+
+- (04a5b64) keep the focus ring visible on transparent colors - dcog989
+
+- (b5bdfd3) announce loading and stop the spinner for reduced motion - dcog989
+
+- (de3b14d) anchor fixed modals and toasts to the viewport - dcog989
+
+- (dda7e63) show keyboard-triggered toasts and announce them - dcog989
+
+- (6b6700e) tidy the filter and the swatch row - dcog989
+
+- (4d27b4f) keep footer text readable and Ctrl+R reloading - dcog989
+
+- (7fec20e) reject oversized rasters before decoding - dcog989
+
+- (985f21e) ask before evicting and save on every change - dcog989
+
+- (d0f5267) parse string tokens with the app color normalizer - dcog989
+
+- (9786fe8) disable copying when the filter matches nothing - dcog989
+
+- (7617180) make every export complete and uniquely named - dcog989
+
+- (53acacf) flatten alpha and tighten the checker - dcog989
+
+- (2f9c573) fit long titles and fold duplicate strategies - dcog989
+
+- (dc4af45) keep the preview aspect and cover the supersede guard - dcog989
+
+- (efda1fa) keep palette and slider values truthful - dcog989
+
+- (36a80a2) stop silent colour loss - dcog989
+
+- (06bdfe0) drop the redundant Set label - dcog989
+
+- (9d6362e) keep pixel specks out of the extracted palette - dcog989
+
+- (2ee9803) warn before Add All evicts saved paintbox colors - dcog989
+
+- (883b5a3) decode SVG uploads through an image element - dcog989
+
+- (0f52592) confirm clearing and report the import cap honestly - dcog989
+
+- (3976e77) keep saved colors in full gamut and across tabs - dcog989
+
+- (1bec6e0) keep the remove button off touch targets - dcog989
+
+- (57d2b10) disable add row at the step limit - dcog989
+
+- (9c46e6a) stop the title marquee for reduced motion and keep it mounted - dcog989
+
+- (33dd377) type worker messages and reuse the palette util - dcog989
+
+- (e63f4bd) keep generated steps distinct and in gamut - dcog989
+
+- (8b704e3) draw rgb ramps from the current color - dcog989
+
+- (9e56e51) show values on focus, label the input, and keep shared links exact - dcog989
+
+- (ee2310e) keep an explicitly set hue on neutral colors - dcog989
+
+- (915680f) reveal hover controls on focus and label fields - dcog989
+
+- (0db551b) ignore errors from superseded uploads - dcog989
+
+- (eabe3c6) cap imported colors before adding them - dcog989
+
+- (85b66e5) say when the color search is capped - dcog989
+
+- (1219283) keep the current alpha in harmony palettes - dcog989
+
+- (94eeb69) restore the full color from the hash - dcog989
+
+- (102845a) escape color names in SVG exports - dcog989
+
+- (f97e1cd) show a single focus ring on text inputs - dcog989
+
+- (b80dac2) pick on-color text with APCA instead of the WCAG ratio - dcog989
+
+- (8805189) move the color set picker before the filter input - dcog989
+
+- (61fe078) reduce the color input padding to match the other fields - dcog989
+
+- (14040b1) announce toasts and show overlay controls on focus - dcog989
+
+- (98e47ea) tell the color library when the search worker fails - dcog989
+
+- (b019873) match the app text contrast rule and keep SVG alpha - dcog989
+
+- (ba1ded9) drop stale palettes, decode smaller, and allow retry - dcog989
+
+- (bc75cfe) reload saved colors when another tab changes them - dcog989
+
+- (f1eb4a3) handle blocked storage and follow OS changes - dcog989
+
+- (af89a50) guard storage access and debounce hash writes - dcog989
+
+- (ae2c9a4) match control group height to the select controls - dcog989
+
+- (45dc75b) match small button height to the select controls - dcog989
+
+- (2d42dc1) ui refined - dcog989
+
+- (cf0b2a8) include the copied value in swatch copy tooltips - dcog989
+
+#### Performance Improvements
+
+- (7bac07a) reuse one collator for the name sort - dcog989
+
+- (9541c6c) share one viewport listener across tooltips - dcog989
+
+- (bb69cf9) register plugins once and defer the name list - dcog989
+
+- (8ac9e6f) cache processed colors and drop the unused set name - dcog989
+
+#### Refactoring
+
+- (a5318c8) simplify version sync and drop the duplicate pre-push check - dcog989
+
+- (7793a3b) drop the duplicate hue memory - dcog989
+
+- (ce3d4ab) drop duplicated dark-mode media queries - dcog989
+
+- (b3889ac) drive vision filters from one shared list - dcog989
+
+- (27723f3) drop the unused extensions field and a no-op alpha check - dcog989
+
+- (6c4af8c) drop unreachable mode guards - dcog989
+
+- (074b24e) reuse the shared copy helper and palette limit - dcog989
+
+- (ce3f8f1) move formatting and name search into tested utils - dcog989
+
+#### Documentation
+
+- (26f5191) note that cog is needed for the installed git hooks - dcog989
+
+- (7d9728a) describe the image clusterer as histogram clustering - dcog989
+
+- (65022a1) document the color sets integration - dcog989
+
+#### Continuous Integration
+
+- (d7f5a70) pin bun and drop the node_modules cache - dcog989
+
+- (e62613d) install from the lockfile - dcog989
+
+#### Tests
+
+- (264cac6) cover saved, system and toggle theme rules - dcog989
+
+- (844918a) cover the palette loader - dcog989
+
+- (aaaaf88) cover parsing, gamut mapping and formatting - dcog989
+
+#### Style
+
+- (2266ffb) center the section title with the controls - dcog989
+
+- (5785c17) consistency! - dcog989
+
+#### Miscellaneous Chores
+
+- (933df9b) rebrand to Coloropoly - dcog989
+
+- (4ee5176) pin the local bun, keep the lockfile and trim the TypeScript config - dcog989
+
+- (b14e586) drop redundant @tailwindcss/node devDependency - dcog989
+
+- (c0855a3) drop redundant @tailwindcss/node devDependency - dcog989
+
+- (7384004) package updates, agents.md refined - dcog989
+- - -
+
 ## v3.9.5 - 2026-11-05
 
 #### Bug Fixes
