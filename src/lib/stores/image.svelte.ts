@@ -1,6 +1,6 @@
 import { IMAGE_ANALYSIS } from "../constants";
 import { orderPalette, type PaletteEntry, type PaletteSortMode } from "../utils/image-palette";
-import { validateImageFile } from "../utils/validate-image";
+import { assertImagePixelBudget, validateImageFile } from "../utils/validate-image";
 import { ManagedWorker } from "../utils/worker-manager";
 import ColorAnalysisWorker from "../workers/color-analysis.ts?worker";
 
@@ -65,8 +65,9 @@ export class ImageStore {
 
     try {
       const canvas = new OffscreenCanvas(size, size);
-      // Resize during decode: the bitmap keeps its aspect ratio at 256px wide, so a
-      // full-size image never costs its decoded memory (a 10 MB PNG can be hundreds of MB).
+      // Resize during decode: the bitmap keeps its aspect ratio at 256px wide.
+      // The pixel budget check above rejects huge rasters before they are decoded.
+      await assertImagePixelBudget(file);
       const bitmap = await loadBitmap(file);
 
       if (generation !== this.#generation) {
