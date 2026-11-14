@@ -5,6 +5,7 @@ import { PAINTBOX, PALETTE_FILE } from "../constants";
 import { getApp } from "../context";
 import type { PaintboxSortMode } from "../stores/paintbox.svelte";
 import { parsePaletteFile } from "../utils/import-strategies";
+import { evictedCount } from "../utils/paintbox";
 import { exportVisual } from "../utils/strategies";
 import { tooltip } from "../utils/tooltip";
 
@@ -20,6 +21,10 @@ const { paintbox, toast } = app;
 let fileInput = $state<HTMLInputElement | null>(null);
 let exporting = $state<"png" | "svg" | null>(null);
 
+$effect(() => {
+  if (paintbox.saveError) toast.show(paintbox.saveError);
+});
+
 const handleImport = async (e: Event) => {
   const input = e.target as HTMLInputElement;
   const file = input.files?.[0];
@@ -33,16 +38,15 @@ const handleImport = async (e: Event) => {
 
   try {
     const colors = parsePaletteFile(file.name, await file.text());
-    const before = paintbox.items.length;
-    colors.slice(-PAINTBOX.MAX_COLORS).forEach((css) => {
-      paintbox.add(css);
-    });
-    const noun = colors.length === 1 ? "color" : "colors";
-    const capped = before + colors.length > PAINTBOX.MAX_COLORS;
+    const toAdd = colors.slice(-PAINTBOX.MAX_COLORS);
+    const dropped = evictedCount(paintbox.items, toAdd, PAINTBOX.MAX_COLORS);
+    for (const css of toAdd) paintbox.add(css);
+
+    const noun = toAdd.length === 1 ? "color" : "colors";
     toast.show(
-      capped
-        ? `Imported ${colors.length} ${noun}; paintbox keeps the newest ${PAINTBOX.MAX_COLORS}`
-        : `Imported ${colors.length} ${noun}`,
+      dropped > 0
+        ? `Imported ${toAdd.length} ${noun}; dropped ${dropped} oldest saved color${dropped === 1 ? "" : "s"}`
+        : `Imported ${toAdd.length} ${noun}`,
     );
   } catch (err) {
     toast.show(err instanceof Error ? err.message : "Failed to import palette");

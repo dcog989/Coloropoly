@@ -3,15 +3,24 @@ import LayersPlus from "@lucide/svelte/icons/layers-plus";
 import ListMinus from "@lucide/svelte/icons/list-minus";
 import ListPlus from "@lucide/svelte/icons/list-plus";
 import Swatch from "../components/Swatch.svelte";
+import { PAINTBOX } from "../constants";
 import { getApp } from "../context";
+import { evictedCount } from "../utils/paintbox";
 import { tooltip } from "../utils/tooltip";
 
 const { engine, paintbox, toast } = getApp();
 
 const addAll = (e?: MouseEvent) => {
-  engine.generated.forEach((c: string) => {
-    paintbox.add(c);
-  });
+  const palette = engine.generated;
+  const dropped = evictedCount(paintbox.items, palette, PAINTBOX.MAX_COLORS);
+  if (
+    dropped > 0 &&
+    !confirm(`Adding all will remove your ${dropped} oldest saved color${dropped === 1 ? "" : "s"}. Continue?`)
+  ) {
+    return;
+  }
+
+  for (const color of palette) paintbox.add(color);
   toast.showAt("Added All to Paintbox", e);
 };
 

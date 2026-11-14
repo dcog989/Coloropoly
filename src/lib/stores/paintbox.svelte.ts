@@ -1,31 +1,16 @@
-﻿import { colordx } from "@colordx/core";
-import { PAINTBOX } from "../constants";
-import { mergePaintbox, type PaintboxColor } from "../utils/paintbox";
+﻿import { PAINTBOX } from "../constants";
+import { mergePaintbox, oklchOf, type PaintboxColor, parsePaintbox } from "../utils/paintbox";
 
 export type PaintboxSortMode = "newest" | "oldest" | "hue" | "lightness" | "chroma";
 
-const oklchOf = (css: string): PaintboxColor["oklch"] => {
-  const parsed = colordx(css);
-  return parsed.isValid() ? parsed.toOklch() : { l: 0, c: 0, h: 0, alpha: 1 };
-};
-
-const isSavedColor = (item: unknown): item is Partial<PaintboxColor> =>
-  typeof item === "object" &&
-  item !== null &&
-  typeof (item as PaintboxColor).id === "string" &&
-  typeof (item as PaintboxColor).css === "string" &&
-  typeof (item as PaintboxColor).timestamp === "number";
-
-const hasOklch = (value: unknown): value is PaintboxColor["oklch"] => {
-  if (typeof value !== "object" || value === null) return false;
-  const { l, c, h, alpha } = value as Record<string, unknown>;
-  return typeof l === "number" && typeof c === "number" && typeof h === "number" && typeof alpha === "number";
-};
+// A corrupt value must survive the failed load so the palette can be recovered by hand.
+const CORRUPT_KEY = `${PAINTBOX.STORAGE_KEY}.corrupt`;
 
 export class PaintboxStore {
   #colors = $state<PaintboxColor[]>([]);
   #initialized = false;
   sortMode = $state<PaintboxSortMode>("newest");
+  saveError = $state<string | null>(null);
 
   init() {
     if (this.#initialized) return;
@@ -49,41 +34,36 @@ export class PaintboxStore {
   }
 
   #readStored(): PaintboxColor[] {
+    const raw = this.#readRaw();
     try {
-      const stored = localStorage.getItem(PAINTBOX.STORAGE_KEY);
-      if (!stored) return [];
-
-      const parsed = JSON.parse(stored);
-      if (!Array.isArray(parsed)) return [];
-
-      return parsed
-        .filter(isSavedColor)
-        .map((item) => this.#ensureOklch(item))
-        .slice(-PAINTBOX.MAX_COLORS);
+      return parsePaintbox(raw, PAINTBOX.MAX_COLORS);
     } catch (e) {
       console.error("Failed to load paintbox data:", e);
       try {
-        localStorage.removeItem(PAINTBOX.STORAGE_KEY);
+        if (raw) localStorage.setItem(CORRUPT_KEY, raw);
       } catch {
-        /* Storage removal failed, continue */
+        /* Nothing left to back the value up with. */
       }
       return [];
+    }
+  }
+
+  #readRaw(): string | null {
+    try {
+      return localStorage.getItem(PAINTBOX.STORAGE_KEY);
+    } catch {
+      return null;
     }
   }
 
   #saveToStorage() {
     try {
       localStorage.setItem(PAINTBOX.STORAGE_KEY, JSON.stringify(this.#colors));
+      this.saveError = null;
     } catch (e) {
       console.error("Failed to save paintbox data:", e);
+      this.saveError = "Could not save the paintbox; storage may be full.";
     }
-  }
-
-  #ensureOklch(item: Partial<PaintboxColor>): PaintboxColor {
-    if (hasOklch(item.oklch)) {
-      return item as PaintboxColor;
-    }
-    return { ...item, oklch: oklchOf(item.css ?? "") } as PaintboxColor;
   }
 
   #items = $derived.by((): PaintboxColor[] => {

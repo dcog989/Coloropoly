@@ -7,6 +7,7 @@ import { IMAGE_ANALYSIS, PAINTBOX } from "../constants";
 import { getApp } from "../context";
 import type { SortMode } from "../stores/image.svelte";
 import { MAX_PALETTE_COLORS } from "../utils/image-palette";
+import { evictedCount } from "../utils/paintbox";
 import { tooltip } from "../utils/tooltip";
 
 const { image: imageAnalyzer, paintbox, toast } = getApp();
@@ -60,8 +61,13 @@ const onDrop = (e: DragEvent) => {
 
 const addAll = (e?: MouseEvent) => {
   const palette = imageAnalyzer.extractedPalette;
-  const overflows = paintbox.items.length + palette.length > PAINTBOX.MAX_COLORS;
-  if (overflows && !confirm("Adding all will remove your oldest saved colors. Continue?")) return;
+  const dropped = evictedCount(paintbox.items, palette, PAINTBOX.MAX_COLORS);
+  if (
+    dropped > 0 &&
+    !confirm(`Adding all will remove your ${dropped} oldest saved color${dropped === 1 ? "" : "s"}. Continue?`)
+  ) {
+    return;
+  }
 
   for (const color of palette) paintbox.add(color);
   toast.showAt("Added All to Paintbox", e);
