@@ -12,7 +12,6 @@ extend([hwb, lab, lch, p3, a98rgb, prophoto, rec2020, srgbLinear]);
 
 export interface ImportStrategy {
   name: string;
-  extensions: string[];
   parse(text: string): string[];
 }
 
@@ -30,8 +29,7 @@ const isRecord = (value: unknown): value is Record<string, unknown> =>
 
 const toCss = (css: string): string | null => {
   const parsed = colordx(css);
-  if (!parsed.isValid()) return null;
-  return parsed.alpha() < 1 ? parsed.toHex8() : parsed.toHex();
+  return parsed.isValid() ? parsed.toHex() : null;
 };
 
 const component = (value: DtcgComponent): number => (typeof value === "number" ? value : 0);
@@ -90,7 +88,7 @@ const dtcgValueToCss = (value: unknown): string | null => {
   const input = dtcgToInput(value.colorSpace, components, alpha);
   if (input) {
     const parsed = colordx(input);
-    if (parsed.isValid()) return parsed.alpha() < 1 ? parsed.toHex8() : parsed.toHex();
+    if (parsed.isValid()) return parsed.toHex();
   }
   if (typeof value.hex === "string") {
     return toCss(value.hex);
@@ -144,8 +142,8 @@ const parseGpl = (text: string): string[] => {
 };
 
 export const importStrategies = {
-  dtcg: { name: "DTCG Design Tokens", extensions: [".json"], parse: parseDtcg },
-  gpl: { name: "GIMP Palette", extensions: [".gpl"], parse: parseGpl },
+  dtcg: { name: "DTCG Design Tokens", parse: parseDtcg },
+  gpl: { name: "GIMP Palette", parse: parseGpl },
 } satisfies Record<string, ImportStrategy>;
 
 export function resolveImportStrategy(filename: string, text: string): ImportStrategy | null {
