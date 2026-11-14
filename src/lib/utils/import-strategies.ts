@@ -1,4 +1,5 @@
 import { type AnyColor, colordx } from "@colordx/core";
+import { safeColor } from "./formatters";
 import "./color-plugins";
 
 export interface ImportStrategy {
@@ -18,10 +19,8 @@ type DtcgColorValue = {
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null && !Array.isArray(value);
 
-const toCss = (css: string): string | null => {
-  const parsed = colordx(css);
-  return parsed.isValid() ? parsed.toHex() : null;
-};
+// Same parser as the color input, so a token holding the app's Okhsl or comma syntax is not read as black.
+const toCss = (css: string): string | null => safeColor(css)?.toHex() ?? null;
 
 const component = (value: DtcgComponent): number => (typeof value === "number" ? value : 0);
 

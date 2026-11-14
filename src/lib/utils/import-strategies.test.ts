@@ -40,6 +40,17 @@ describe("DTCG design tokens import", () => {
     expect(importStrategies.dtcg.parse(tokens)).toEqual(["#00ff0080"]);
   });
 
+  it("reads the app's own string formats instead of turning them black", () => {
+    const tokens = JSON.stringify({
+      color: {
+        okhsl: { $value: "okhsl(45 1 0.69)" },
+        comma: { $value: "oklch(0.7, 0.1, 300)" },
+      },
+    });
+
+    expect(importStrategies.dtcg.parse(tokens)).toEqual(["#ff7f3f", "#a890d4"]);
+  });
+
   it("supports every registered color space and normalizes odd components", () => {
     const tokens = JSON.stringify({
       color: {
