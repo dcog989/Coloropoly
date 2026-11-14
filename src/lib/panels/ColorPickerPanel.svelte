@@ -102,6 +102,7 @@ const handleInput = (e: Event) => {
             <button
               type="button"
               onclick={() => color.mapToSrgb()}
+              aria-label="Map color to sRGB"
               class="
                           cursor-pointer text-amber-500
                         "
@@ -216,6 +217,7 @@ const handleInput = (e: Event) => {
                       gap-2
                       translate-y-8 opacity-0 transition-all duration-300
                       group-hover:translate-y-0 group-hover:opacity-100
+                      group-focus-within:translate-y-0 group-focus-within:opacity-100
                     "
         >
           <button type="button" onclick={(e) => app.copy(inputVal, e)} class="overlay-button" title="Copy {inputVal}">

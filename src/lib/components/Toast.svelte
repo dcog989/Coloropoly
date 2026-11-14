@@ -10,6 +10,8 @@ const isCursor = $derived(toast.active?.x !== undefined && toast.active?.y !== u
 {#if toast.active}
   <!-- Wrapper handles fixed positioning to avoid transform conflicts with inner animation -->
   <div
+    role="status"
+    aria-live="polite"
     class="
           pointer-events-none fixed z-100
           {isCursor ? "" : "bottom-8 left-1/2 -translate-x-1/2"}"
