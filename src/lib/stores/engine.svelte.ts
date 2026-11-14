@@ -1,20 +1,12 @@
-import { colordx } from "@colordx/core";
-import { type GenerationMode, generatePalette, isHarmonyMode } from "../utils/palette";
+import { type GenerationMode, generateHarmony, generatePalette, isHarmonyMode } from "../utils/palette";
 import { ManagedWorker } from "../utils/worker-manager";
+import type { WorkerRequest, WorkerResponse } from "../workers/color-name-search";
 import ColorNameSearchWorker from "../workers/color-name-search.ts?worker";
 import type { ColorStore } from "./color.svelte";
 
-export type WorkerMessageData = {
-  type: string;
-  name?: string;
-  colors?: Array<{ name: string; hex: string }>;
-  total?: number;
-  capped?: boolean;
-};
-
 export class EngineStore {
   closestName = $state("Searching...");
-  #managedWorker = new ManagedWorker<WorkerMessageData>({ maxRetries: 3, retryDelay: 1000 });
+  #managedWorker = new ManagedWorker<WorkerResponse>({ maxRetries: 3, retryDelay: 1000 });
   #debounceHandle: number | null = null;
   #disposeEffect: (() => void) | null = null;
   #initialized = false;
@@ -37,10 +29,7 @@ export class EngineStore {
   #generated = $derived.by((): string[] => {
     const axis = this.genAxis;
     if (isHarmonyMode(axis)) {
-      const base = this.#getBaseColor();
-      return colordx(base)
-        .harmonies(axis)
-        .map((c) => c.toHex());
+      return generateHarmony(this.#getBaseColor(), axis);
     }
     return generatePalette(this.#getBaseColor(), axis, this.genSteps);
   });
@@ -57,12 +46,7 @@ export class EngineStore {
 
     this.#disposeEffect = $effect.root(() => {
       $effect(() => {
-        const current = {
-          l: this.#colorStore.l,
-          c: this.#colorStore.c,
-          h: this.#colorStore.h,
-          alpha: this.#colorStore.alpha,
-        };
+        const current = this.#getBaseColor();
 
         if (this.#debounceHandle !== null) {
           clearTimeout(this.#debounceHandle);
@@ -116,11 +100,11 @@ export class EngineStore {
     this.#managedWorker.destroy();
   }
 
-  subscribeToWorker(handler: (msg: WorkerMessageData) => void): () => void {
+  subscribeToWorker(handler: (msg: WorkerResponse) => void): () => void {
     return this.#managedWorker.subscribe(handler);
   }
 
-  postToWorker(data: Record<string, unknown>): void {
+  postToWorker(data: WorkerRequest): void {
     if (!this.#managedWorker.post(data)) {
       this.#managedWorker.notify({ type: "error" });
     }

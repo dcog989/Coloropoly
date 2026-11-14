@@ -8,16 +8,13 @@ import {
   getPage,
 } from "../utils/color-search";
 
-interface WorkerMessage {
-  type: "search" | "filter" | "get-page";
-  color?: { l: number; c: number; h: number; alpha: number };
-  query?: string;
-  limit?: number;
-  offset?: number;
-}
+export type WorkerRequest =
+  | { type: "search"; color: { l: number; c: number; h: number; alpha: number } }
+  | { type: "filter"; query?: string; limit?: number }
+  | { type: "get-page"; offset?: number; limit?: number };
 
-interface WorkerResponse {
-  type: "result" | "filterResult" | "pageResult";
+export interface WorkerResponse {
+  type: "result" | "filterResult" | "pageResult" | "error";
   name?: string;
   colors?: Array<{ name: string; hex: string }>;
   total?: number;
@@ -38,7 +35,7 @@ function prepareData(): Promise<void> {
   return loadPromise;
 }
 
-self.onmessage = async (e: MessageEvent<WorkerMessage>) => {
+self.onmessage = async (e: MessageEvent<WorkerRequest>) => {
   await prepareData();
 
   if (e.data.type === "search" && e.data.color) {
