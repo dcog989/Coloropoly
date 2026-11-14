@@ -33,11 +33,12 @@ const handleImport = async (e: Event) => {
 
   try {
     const colors = parsePaletteFile(file.name, await file.text());
-    colors.forEach((css) => {
+    const imported = colors.slice(-PAINTBOX.MAX_COLORS);
+    imported.forEach((css) => {
       paintbox.add(css);
     });
     const noun = colors.length === 1 ? "color" : "colors";
-    const capped = paintbox.items.length === PAINTBOX.MAX_COLORS;
+    const capped = colors.length > PAINTBOX.MAX_COLORS || paintbox.items.length === PAINTBOX.MAX_COLORS;
     toast.show(
       capped
         ? `Imported ${colors.length} ${noun}; paintbox keeps the newest ${PAINTBOX.MAX_COLORS}`
