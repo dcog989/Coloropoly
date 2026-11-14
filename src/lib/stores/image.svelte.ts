@@ -11,8 +11,8 @@ type ImageWorkerMessage = {
 };
 
 const BITMAP_OPTIONS = {
+  // Width only: giving both dimensions stretches the bitmap and squashes the preview.
   resizeWidth: IMAGE_ANALYSIS.DOWNSAMPLE_SIZE,
-  resizeHeight: IMAGE_ANALYSIS.DOWNSAMPLE_SIZE,
   resizeQuality: "low",
 } as const;
 
@@ -65,8 +65,8 @@ export class ImageStore {
 
     try {
       const canvas = new OffscreenCanvas(size, size);
-      // Resize during decode: the canvas is 256² anyway, so a full-size bitmap
-      // only costs memory (a 10 MB PNG can be hundreds of MB once decoded).
+      // Resize during decode: the bitmap keeps its aspect ratio at 256px wide, so a
+      // full-size image never costs its decoded memory (a 10 MB PNG can be hundreds of MB).
       const bitmap = await loadBitmap(file);
 
       if (generation !== this.#generation) {
@@ -81,7 +81,9 @@ export class ImageStore {
         return;
       }
 
-      ctx.drawImage(bitmap, 0, 0, size, size);
+      // Center-crop the aspect-preserving bitmap instead of stretching it into the square.
+      const side = Math.min(bitmap.width, bitmap.height);
+      ctx.drawImage(bitmap, (bitmap.width - side) / 2, (bitmap.height - side) / 2, side, side, 0, 0, size, size);
 
       const imageData = ctx.getImageData(0, 0, size, size);
 
