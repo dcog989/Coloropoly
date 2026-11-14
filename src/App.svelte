@@ -51,15 +51,34 @@ const openExport = () => {
 // sessionStorage persists across reloads (same tab) but not new tabs, so an
 // F5 refresh gets a fresh random color while opening a shared link still loads it.
 const URL_COLOR_KEY = "color-picker-palette:url-color";
+const URL_WRITE_DELAY_MS = 250;
+
+// Storage can be blocked by browser settings; the app still works without it.
+const readUrlColor = (): string | null => {
+  try {
+    return sessionStorage.getItem(URL_COLOR_KEY);
+  } catch {
+    return null;
+  }
+};
+
+const writeUrlColor = (value: string | null) => {
+  try {
+    if (value === null) sessionStorage.removeItem(URL_COLOR_KEY);
+    else sessionStorage.setItem(URL_COLOR_KEY, value);
+  } catch {
+    /* Storage blocked; the hash still carries the color. */
+  }
+};
 
 const applyHashColor = () => {
-  const stored = sessionStorage.getItem(URL_COLOR_KEY);
+  const stored = readUrlColor();
   const hash = location.hash;
   if (hash && hash !== stored) {
     color.set(hash);
-    sessionStorage.setItem(URL_COLOR_KEY, hash);
+    writeUrlColor(hash);
   } else {
-    sessionStorage.removeItem(URL_COLOR_KEY);
+    writeUrlColor(null);
   }
 };
 applyHashColor();
@@ -74,6 +93,7 @@ let prevHue = 0;
 
 // Global CSS variable sync with optimized batching
 let rafId: number | null = null;
+let hashWriteTimer: number | null = null;
 $effect(() => {
   // Read reactive values
   const cssVar = color.cssVar;
@@ -106,10 +126,16 @@ $effect(() => {
     const needsDarkText = usesDarkText(cssVar);
     root.setAttribute("data-color-contrast", needsDarkText ? "dark" : "light");
 
-    // Mirror the color to the URL at most once per frame, not once per input event.
+    // Mirror the color to the URL after the slider settles. One write per frame trips
+    // Safari's history limit (100 calls per 30 s) and throws. The hash always holds
+    // the last color: each change reschedules this timer.
     if (location.hash !== hash) {
-      history.replaceState(null, "", hash);
-      sessionStorage.setItem(URL_COLOR_KEY, hash);
+      if (hashWriteTimer !== null) clearTimeout(hashWriteTimer);
+      hashWriteTimer = window.setTimeout(() => {
+        hashWriteTimer = null;
+        history.replaceState(null, "", hash);
+        writeUrlColor(hash);
+      }, URL_WRITE_DELAY_MS);
     }
 
     rafId = null;
@@ -119,6 +145,10 @@ $effect(() => {
   return () => {
     if (rafId !== null) {
       cancelAnimationFrame(rafId);
+    }
+    if (hashWriteTimer !== null) {
+      clearTimeout(hashWriteTimer);
+      hashWriteTimer = null;
     }
   };
 });
