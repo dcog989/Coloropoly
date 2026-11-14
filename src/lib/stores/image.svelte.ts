@@ -16,7 +16,6 @@ export class ImageStore {
   sortMode = $state<SortMode>("dominant");
   isProcessing = $state(false);
   previewUrl = $state<string>("");
-  currentFile = $state<File | null>(null);
 
   analysisError = $state<string | null>(null);
 
@@ -34,23 +33,30 @@ export class ImageStore {
 
     this.isProcessing = true;
     this.analysisError = null;
-    this.currentFile = file;
+    // Drop the old palette so the new image is never shown next to old colors.
+    this.mosaicData = [];
 
     if (this.previewUrl) {
       URL.revokeObjectURL(this.previewUrl);
     }
     this.previewUrl = URL.createObjectURL(file);
 
+    const width = IMAGE_ANALYSIS.DOWNSAMPLE_SIZE;
+    const height = IMAGE_ANALYSIS.DOWNSAMPLE_SIZE;
+
     try {
-      const bitmap = await createImageBitmap(file);
+      // Resize during decode: the canvas is 256² anyway, so a full-size bitmap
+      // only costs memory (a 10 MB PNG can be hundreds of MB once decoded).
+      const bitmap = await createImageBitmap(file, {
+        resizeWidth: width,
+        resizeHeight: height,
+        resizeQuality: "low",
+      });
 
       if (generation !== this.#generation) {
         bitmap.close();
         return;
       }
-
-      const width = IMAGE_ANALYSIS.DOWNSAMPLE_SIZE;
-      const height = IMAGE_ANALYSIS.DOWNSAMPLE_SIZE;
 
       const canvas = new OffscreenCanvas(width, height);
       const ctx = canvas.getContext("2d");
@@ -89,6 +95,10 @@ export class ImageStore {
       console.error("Image analysis error:", error);
       if (generation === this.#generation) {
         this.isProcessing = false;
+        if (this.previewUrl) {
+          URL.revokeObjectURL(this.previewUrl);
+          this.previewUrl = "";
+        }
         this.#managedWorker.terminate();
       }
       throw error;
@@ -100,7 +110,6 @@ export class ImageStore {
     this.isProcessing = false;
     this.analysisError = null;
     this.mosaicData = [];
-    this.currentFile = null;
     if (this.previewUrl) {
       URL.revokeObjectURL(this.previewUrl);
       this.previewUrl = "";

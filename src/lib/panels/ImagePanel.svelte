@@ -22,19 +22,20 @@ $effect(() => {
   }
 });
 
-const handleFiles = async (files: FileList | null) => {
-  if (files?.[0]) {
-    try {
-      await imageAnalyzer.analyze(files[0]);
-    } catch (err) {
-      toast.show(err instanceof Error ? err.message : "Failed to analyze image");
-    }
+const analyzeFile = async (file: File) => {
+  try {
+    await imageAnalyzer.analyze(file);
+  } catch (err) {
+    toast.show(err instanceof Error ? err.message : "Failed to analyze image");
   }
 };
 
 const handleInput = (e: Event) => {
   const input = e.target as HTMLInputElement;
-  handleFiles(input.files);
+  const file = input.files?.[0];
+  // Clear first so picking the same file again still fires a change event.
+  input.value = "";
+  if (file) analyzeFile(file);
 };
 
 const onDragOver = (e: DragEvent) => {
@@ -49,8 +50,9 @@ const onDragLeave = () => {
 const onDrop = (e: DragEvent) => {
   e.preventDefault();
   isDragging = false;
-  if (e.dataTransfer?.files) {
-    handleFiles(e.dataTransfer.files);
+  const file = e.dataTransfer?.files?.[0];
+  if (file) {
+    analyzeFile(file);
   }
 };
 
