@@ -181,11 +181,22 @@
 
   /* Shared hover value reveal: content expands from 0 width and fades in */
   .value-reveal {
-    @apply grid grid-cols-[0fr] transition-[grid-template-columns] duration-300 group-hover:grid-cols-[1fr];
+    @apply grid grid-cols-[0fr] transition-[grid-template-columns] duration-300 group-hover:grid-cols-[1fr] group-focus-within:grid-cols-[1fr];
   }
 
   .value-reveal-inner {
-    @apply overflow-hidden opacity-0 transition-opacity duration-300 group-hover:opacity-100;
+    @apply overflow-hidden opacity-0 transition-opacity duration-300 group-hover:opacity-100 group-focus-within:opacity-100;
+  }
+
+  /* Touch devices have no hover, so keep the value visible. */
+  @media (hover: none) {
+    .value-reveal {
+      grid-template-columns: 1fr;
+    }
+
+    .value-reveal-inner {
+      opacity: 1;
+    }
   }
 
   /* Shared circular header button */

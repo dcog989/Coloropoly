@@ -36,7 +36,7 @@ const addToPaintbox = (e?: MouseEvent) => {
 };
 
 const copyLink = (e?: MouseEvent) => {
-  const url = `${location.href.split("#")[0]}${toColorHash(color.display)}`;
+  const url = `${location.href.split("#")[0]}${toColorHash(color.cssVar)}`;
   app.copy(url, e);
 };
 
@@ -88,6 +88,7 @@ const handleInput = (e: Event) => {
           type="text"
           value={inputVal}
           id="inputColor"
+          aria-label="Color value"
           onchange={handleInput}
           onfocus={(e) => (e.target as HTMLInputElement).select()}
           class="text-input rounded-full py-1 pr-8 pl-3 text-lg uppercase {hasError
@@ -139,7 +140,10 @@ const handleInput = (e: Event) => {
         <button
           type="button"
           aria-pressed={color.mode === m}
-          onclick={() => (color.mode = m as "okhsl" | "oklch" | "rgb")}
+          onclick={() => {
+            color.mode = m as "okhsl" | "oklch" | "rgb";
+            hasError = false;
+          }}
           class="segment-button px-4 py-2 text-xs font-black uppercase"
         >
           {m}

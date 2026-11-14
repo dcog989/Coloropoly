@@ -75,7 +75,7 @@ $effect(() => {
   const cssVar = color.cssVar;
   const hStr = color.h.toString();
   const c = color.c;
-  const hash = toColorHash(color.display);
+  const hash = toColorHash(color.cssVar);
 
   // Cancel pending update
   if (rafId !== null) {
