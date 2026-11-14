@@ -64,9 +64,6 @@ onDestroy(() => {
   app.destroy();
 });
 
-// Achromatic hue fix — preserve previous hue for near-neutral colors
-let prevHue = 0;
-
 // Global CSS variable sync with optimized batching
 let rafId: number | null = null;
 let hashWriteTimer: number | null = null;
@@ -91,12 +88,11 @@ $effect(() => {
     root.style.setProperty("--current-color", cssVar);
     root.style.setProperty("--current-color-solid", solid);
     root.style.setProperty("--current-ui-chroma-scale", String(Math.min(1, c / 0.06)));
+    // color.h already remembers the last hue with real chroma, so a neutral keeps it.
+    root.style.setProperty("--current-hue", hStr);
     if (c > 0.001) {
-      root.style.setProperty("--current-hue", hStr);
-      prevHue = color.h;
       root.removeAttribute("data-achromatic");
     } else {
-      root.style.setProperty("--current-hue", prevHue.toString());
       root.setAttribute("data-achromatic", "");
     }
 
