@@ -2,6 +2,19 @@
 All notable changes to this project will be documented in this file. See [conventional commits](https://www.conventionalcommits.org/) for commit guidelines.
 
 - - -
+## v3.11.2 - 2026-11-14
+
+#### Bug Fixes
+
+- (c7348f8) use the theme text colour for the spinning arc - dcog989
+
+- (9decbeb) keep search results visible and focus the query field - dcog989
+
+#### Performance Improvements
+
+- (d2a577b) cache the built color-name index in IndexedDB - dcog989
+- - -
+
 ## v3.11.1 - 2026-11-14
 
 #### Bug Fixes
