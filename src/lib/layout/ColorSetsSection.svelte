@@ -86,7 +86,7 @@ function handleExport(event: Event) {
 </script>
 
 <section class="panel h-auto overflow-visible">
-  <div class="mb-6 flex flex-col items-start justify-between gap-4 md:flex-row md:items-start">
+  <div class="mb-6 flex flex-col items-start justify-between gap-4 md:flex-row md:items-center">
     <h2 class="section-heading shrink-0">Color Sets</h2>
 
     <div class="flex w-full min-w-0 flex-1 flex-wrap items-center gap-2 md:justify-end">
