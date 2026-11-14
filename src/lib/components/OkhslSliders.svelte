@@ -24,7 +24,7 @@ $effect(() => {
   // Mutate in place so each channel keeps its identity; a wholesale reassignment
   // would invalidate every gradient ramp, including ones whose channels did not change.
   local.h = hasHue ? h : prev.h;
-  local.s = l > EDGE_L_THRESHOLD && l < 100 - EDGE_L_THRESHOLD ? s : prev.s;
+  local.s = s;
   local.l = l;
 });
 

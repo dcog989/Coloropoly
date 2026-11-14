@@ -24,6 +24,12 @@ describe("generatePalette", () => {
     expect(new Set(steps).size).toBeGreaterThan(10);
   });
 
+  it("keeps a visible hue ramp for a neutral base", () => {
+    const steps = generatePalette({ l: 0.5, c: 0, h: 100 }, "h", 8);
+
+    expect(new Set(steps).size).toBe(8);
+  });
+
   it("keeps every lightness step distinct at high chroma", () => {
     const steps = generatePalette({ l: 0.5, c: 0.37, h: 270 }, "l", 20);
     const parsed = steps.map(toOklch);

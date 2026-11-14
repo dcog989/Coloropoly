@@ -1,8 +1,6 @@
-import { colordx, extend } from "@colordx/core";
-import harmonies from "@colordx/core/plugins/harmonies";
+import { colordx } from "@colordx/core";
 import { getMaxSrgbChroma } from "./color-format";
-
-extend([harmonies]);
+import "./color-plugins";
 
 export type PaletteAxis = "l" | "c" | "h" | "a";
 
@@ -55,11 +53,13 @@ export function generatePalette(baseColor: PaletteColor, axis: PaletteAxis, step
 
     const l = axis === "l" ? LIGHTNESS_MIN + fraction * LIGHTNESS_SPAN : baseColor.l;
     const h = axis === "h" ? i * (360 / steps) : (baseColor.h ?? 0);
+    // Keep non-chroma steps in sRGB; clipped steps collapse into near-copies. A hue ramp
+    // also needs some chroma, or a neutral base returns the same gray for every step.
+    const baseC = axis === "h" ? Math.max(baseColor.c, CHROMA_MIN_SPAN) : baseColor.c;
     const c =
       axis === "c"
         ? CHROMA_MIN + fraction * Math.min(CHROMA_MAX, Math.max(CHROMA_MIN_SPAN, baseColor.c * CHROMA_BASE_FACTOR))
-        : // Keep non-chroma steps in sRGB; clipped steps collapse into near-copies.
-          Math.min(baseColor.c, getMaxSrgbChroma(l, h));
+        : Math.min(baseC, getMaxSrgbChroma(l, h));
     const alpha = axis === "a" ? fraction : (baseColor.alpha ?? 1);
 
     // toHex8 keeps every step at a uniform 8-digit width; toHex drops alpha when opaque.
