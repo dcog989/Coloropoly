@@ -1,7 +1,5 @@
-import { colordx, extend } from "@colordx/core";
-import okhsl from "@colordx/core/plugins/okhsl";
-
-extend([okhsl]);
+import { colordx } from "@colordx/core";
+import "./color-plugins";
 
 const OKHSL_HUE_STOPS = 24;
 const OKHSL_CHANNEL_STOPS = 12;

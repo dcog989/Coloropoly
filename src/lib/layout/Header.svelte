@@ -6,6 +6,7 @@ import Sun from "@lucide/svelte/icons/sun";
 import { fade } from "svelte/transition";
 import Title from "../components/Title.svelte";
 import { getApp } from "../context";
+import { resolveClosestName } from "../utils/strategies";
 import { tooltip } from "../utils/tooltip";
 
 interface Props {
@@ -50,7 +51,7 @@ const { color, engine, theme } = getApp();
 
     <div class="grid grid-cols-1 place-items-center min-w-0 overflow-hidden">
       <div class="col-start-1 row-start-1 flex w-full justify-center" transition:fade={{ duration: 500 }}>
-        <Title name={engine.closestName} />
+        <Title name={resolveClosestName(engine.closestName, color.hex)} />
       </div>
     </div>
 

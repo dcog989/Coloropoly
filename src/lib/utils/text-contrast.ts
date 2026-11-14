@@ -1,7 +1,5 @@
-import { colordx, extend } from "@colordx/core";
-import a11y from "@colordx/core/plugins/a11y";
-
-extend([a11y]);
+import { colordx } from "@colordx/core";
+import "./color-plugins";
 
 /**
  * True when black text has the stronger APCA contrast against the color.

@@ -1,5 +1,6 @@
 import type { Colordx } from "@colordx/core";
 import { colordx, inGamutSrgb } from "@colordx/core";
+import "../utils/color-plugins";
 import {
   clampHue,
   decimalsFor,

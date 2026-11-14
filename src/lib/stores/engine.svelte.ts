@@ -9,7 +9,9 @@ export class EngineStore {
   #managedWorker = new ManagedWorker<WorkerResponse>({ maxRetries: 3, retryDelay: 1000 });
   #debounceHandle: number | null = null;
   #disposeEffect: (() => void) | null = null;
+  #removeStartListeners: (() => void) | null = null;
   #initialized = false;
+  #nameWorkerStarted = false;
   #pendingSearch: { l: number; c: number; h: number; alpha: number } | null = null;
   #colorStore: ColorStore;
 
@@ -42,7 +44,15 @@ export class EngineStore {
     if (this.#initialized) return;
     this.#initialized = true;
 
-    this.#initWorker();
+    // The name list is ~1.1MB. Wait for the first interaction so a visitor who only
+    // looks at the page never downloads it.
+    const start = () => this.startNameWorker();
+    window.addEventListener("pointerdown", start, { once: true, passive: true });
+    window.addEventListener("keydown", start, { once: true });
+    this.#removeStartListeners = () => {
+      window.removeEventListener("pointerdown", start);
+      window.removeEventListener("keydown", start);
+    };
 
     this.#disposeEffect = $effect.root(() => {
       $effect(() => {
@@ -58,6 +68,14 @@ export class EngineStore {
         }, 150);
       });
     });
+  }
+
+  startNameWorker() {
+    if (this.#nameWorkerStarted) return;
+    this.#nameWorkerStarted = true;
+    this.#removeStartListeners?.();
+    this.#removeStartListeners = null;
+    this.#initWorker();
   }
 
   #initWorker() {
@@ -87,7 +105,8 @@ export class EngineStore {
 
   #searchColorName(color: { l: number; c: number; h: number; alpha: number }) {
     this.#pendingSearch = color;
-    this.#managedWorker.post({ type: "search", color });
+    // Queued until the first interaction starts the worker; onReady then posts it.
+    if (this.#nameWorkerStarted) this.#managedWorker.post({ type: "search", color });
   }
 
   destroy() {
@@ -95,16 +114,20 @@ export class EngineStore {
       clearTimeout(this.#debounceHandle);
       this.#debounceHandle = null;
     }
+    this.#removeStartListeners?.();
+    this.#removeStartListeners = null;
     this.#disposeEffect?.();
     this.#disposeEffect = null;
     this.#managedWorker.destroy();
   }
 
   subscribeToWorker(handler: (msg: WorkerResponse) => void): () => void {
+    this.startNameWorker();
     return this.#managedWorker.subscribe(handler);
   }
 
   postToWorker(data: WorkerRequest): void {
+    this.startNameWorker();
     if (!this.#managedWorker.post(data)) {
       this.#managedWorker.notify({ type: "error" });
     }

@@ -1,14 +1,5 @@
-import { type AnyColor, colordx, extend } from "@colordx/core";
-import a98rgb from "@colordx/core/plugins/a98rgb";
-import hwb from "@colordx/core/plugins/hwb";
-import lab from "@colordx/core/plugins/lab";
-import lch from "@colordx/core/plugins/lch";
-import p3 from "@colordx/core/plugins/p3";
-import prophoto from "@colordx/core/plugins/prophoto";
-import rec2020 from "@colordx/core/plugins/rec2020";
-import srgbLinear from "@colordx/core/plugins/srgb-linear";
-
-extend([hwb, lab, lch, p3, a98rgb, prophoto, rec2020, srgbLinear]);
+import { type AnyColor, colordx } from "@colordx/core";
+import "./color-plugins";
 
 export interface ImportStrategy {
   name: string;

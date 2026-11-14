@@ -1,4 +1,5 @@
 import { colordx, getFormat } from "@colordx/core";
+import "./color-plugins";
 
 export type ExportFormat = "hex" | "rgb" | "hsl" | "oklch";
 
