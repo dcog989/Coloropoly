@@ -2,4 +2,3 @@
 [Dd]ist/
 coverage/
 node_modules/
-vite.config.d.ts

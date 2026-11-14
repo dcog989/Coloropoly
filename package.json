@@ -4,11 +4,12 @@
   "version": "3.9.5",
   "private": true,
   "type": "module",
+  "packageManager": "bun@1.4.4",
   "scripts": {
     "build": "vite build",
     "changelog": "cog changelog",
     "check": "biome check . && bun run typecheck && bun run test:coverage && bun run build",
-    "clean": "rm -rf bun.lock coverage dist node_modules .vitest",
+    "clean": "rm -rf coverage dist node_modules",
     "dev": "vite",
     "fix": "biome check --write .",
     "postinstall": "lefthook install",

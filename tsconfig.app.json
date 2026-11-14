@@ -12,18 +12,9 @@
     "allowImportingTsExtensions": true,
     "declaration": true,
     "emitDeclarationOnly": true,
-    "allowJs": true,
-    "checkJs": true,
 
     /* Strict Type Checking */
     "strict": true,
-    "noImplicitAny": true,
-    "strictNullChecks": true,
-    "strictFunctionTypes": true,
-    "strictBindCallApply": true,
-    "strictPropertyInitialization": true,
-    "noImplicitThis": true,
-    "alwaysStrict": true,
 
     /* Additional Checks */
     "noUnusedLocals": true,
@@ -40,6 +31,6 @@
     "moduleDetection": "force",
     "exactOptionalPropertyTypes": true
   },
-  "include": ["src/**/*.ts", "src/**/*.js", "src/**/*.svelte", "src/ambient.d.ts"],
+  "include": ["src/**/*.ts", "src/**/*.svelte", "src/ambient.d.ts"],
   "exclude": ["node_modules", "dist", "build"]
 }
