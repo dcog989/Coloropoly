@@ -12,6 +12,7 @@ import Slider from "../components/Slider.svelte";
 import { getApp } from "../context";
 import { getGradient } from "../utils/gradients";
 import { tooltip } from "../utils/tooltip";
+import { toColorHash } from "../utils/url-color";
 
 const app = getApp();
 const { color, paintbox, toast } = app;
@@ -35,7 +36,7 @@ const addToPaintbox = (e?: MouseEvent) => {
 };
 
 const copyLink = (e?: MouseEvent) => {
-  const url = `${location.href.split("#")[0]}#${color.hexa}`;
+  const url = `${location.href.split("#")[0]}${toColorHash(color.display)}`;
   app.copy(url, e);
 };
 

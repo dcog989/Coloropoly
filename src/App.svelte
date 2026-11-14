@@ -16,6 +16,7 @@ import PaintboxPanel from "./lib/panels/PaintboxPanel.svelte";
 import PalettePanel from "./lib/panels/PalettePanel.svelte";
 import { RootStore } from "./lib/stores/root.svelte";
 import { usesDarkText } from "./lib/utils/text-contrast";
+import { fromColorHash, toColorHash } from "./lib/utils/url-color";
 
 // Create Root Store
 const app = new RootStore();
@@ -47,39 +48,14 @@ const openExport = () => {
   showExport = true;
 };
 
-// URL hash color sync — load color from hash, mirror current color to hash.
-// sessionStorage persists across reloads (same tab) but not new tabs, so an
-// F5 refresh gets a fresh random color while opening a shared link still loads it.
-const URL_COLOR_KEY = "color-picker-palette:url-color";
+// URL hash color sync — a shared link wins on load, then the current color mirrors
+// back. The hash holds the full oklch() string so wide-gamut colors and alpha
+// survive; a plain hex link still works.
 const URL_WRITE_DELAY_MS = 250;
 
-// Storage can be blocked by browser settings; the app still works without it.
-const readUrlColor = (): string | null => {
-  try {
-    return sessionStorage.getItem(URL_COLOR_KEY);
-  } catch {
-    return null;
-  }
-};
-
-const writeUrlColor = (value: string | null) => {
-  try {
-    if (value === null) sessionStorage.removeItem(URL_COLOR_KEY);
-    else sessionStorage.setItem(URL_COLOR_KEY, value);
-  } catch {
-    /* Storage blocked; the hash still carries the color. */
-  }
-};
-
 const applyHashColor = () => {
-  const stored = readUrlColor();
-  const hash = location.hash;
-  if (hash && hash !== stored) {
-    color.set(hash);
-    writeUrlColor(hash);
-  } else {
-    writeUrlColor(null);
-  }
+  const value = fromColorHash(location.hash);
+  if (value) color.set(value);
 };
 applyHashColor();
 
@@ -99,7 +75,7 @@ $effect(() => {
   const cssVar = color.cssVar;
   const hStr = color.h.toString();
   const c = color.c;
-  const hash = color.hexa;
+  const hash = toColorHash(color.display);
 
   // Cancel pending update
   if (rafId !== null) {
@@ -134,7 +110,6 @@ $effect(() => {
       hashWriteTimer = window.setTimeout(() => {
         hashWriteTimer = null;
         history.replaceState(null, "", hash);
-        writeUrlColor(hash);
       }, URL_WRITE_DELAY_MS);
     }
 
