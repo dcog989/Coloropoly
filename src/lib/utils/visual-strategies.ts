@@ -7,8 +7,22 @@ import { usesDarkText } from "./text-contrast";
 /** Black or white text, by the same rule the on-screen swatches use. */
 const readableText = (background: string): string => (usesDarkText(background) ? "#000000" : "#ffffff");
 
+const TEXT_EDGE = 60;
+const TITLE_MAX_PX = 80;
+const TITLE_MIN_PX = 24;
+
+/** Largest bold font size that keeps the title on one line inside `maxWidth`. */
+const fitTitle = (ctx: CanvasRenderingContext2D, text: string, maxWidth: number): number => {
+  let fontSize = TITLE_MAX_PX;
+  ctx.font = `bold ${fontSize}px system-ui, -apple-system, sans-serif`;
+  while (fontSize > TITLE_MIN_PX && ctx.measureText(text).width > maxWidth) {
+    fontSize -= 2;
+    ctx.font = `bold ${fontSize}px system-ui, -apple-system, sans-serif`;
+  }
+  return fontSize;
+};
+
 class PngExportStrategy implements VisualExportStrategy {
-  name = "PNG";
   extension = "png";
   mimeType = "image/png";
 
@@ -28,14 +42,15 @@ class PngExportStrategy implements VisualExportStrategy {
 
       const textColor = readableText(root.color.hex);
       ctx.fillStyle = textColor;
-      ctx.font = "bold 80px system-ui, -apple-system, sans-serif";
-      ctx.fillText(resolveClosestName(root.engine.closestName, root.color.hex).toUpperCase(), 60, 150);
+      const title = resolveClosestName(root.engine.closestName, root.color.hex).toUpperCase();
+      fitTitle(ctx, title, EXPORT.PNG_WIDTH - TEXT_EDGE * 2);
+      ctx.fillText(title, TEXT_EDGE, 150);
       ctx.font = "40px ui-monospace, monospace";
-      ctx.fillText(root.color.display, 60, 230);
-      ctx.fillText(`HEX: ${root.color.hex.toUpperCase()}`, 60, 290);
-      ctx.fillText(`RGB: ${root.color.rgb}`, 60, 350);
+      ctx.fillText(root.color.display, TEXT_EDGE, 230);
+      ctx.fillText(`HEX: ${root.color.hex.toUpperCase()}`, TEXT_EDGE, 290);
+      ctx.fillText(`RGB: ${root.color.rgb}`, TEXT_EDGE, 350);
       if (root.color.alpha < 1) {
-        ctx.fillText(`Alpha: ${(root.color.alpha * 100).toFixed(0)}%`, 60, 410);
+        ctx.fillText(`Alpha: ${(root.color.alpha * 100).toFixed(0)}%`, TEXT_EDGE, 410);
       }
     } else {
       const titleHeight = 60;
@@ -84,7 +99,6 @@ class PngExportStrategy implements VisualExportStrategy {
 }
 
 class SvgExportStrategy implements VisualExportStrategy {
-  name = "SVG";
   extension = "svg";
   mimeType = "image/svg+xml";
 
@@ -94,10 +108,13 @@ class SvgExportStrategy implements VisualExportStrategy {
 
     if (isSingle) {
       const textFill = readableText(root.color.hex);
+      const title = resolveClosestName(root.engine.closestName, root.color.hex).toUpperCase();
+      // Rough sans-serif bold advance width (0.6em), floored so long names stay legible.
+      const titleSize = Math.max(10, Math.min(24, Math.floor((EXPORT.SVG_SIZE - 40) / (title.length * 0.6))));
       svg = `<?xml version="1.0" encoding="UTF-8"?>
 <svg width="${EXPORT.SVG_SIZE}" height="${EXPORT.SVG_SIZE}" viewBox="0 0 ${EXPORT.SVG_SIZE} ${EXPORT.SVG_SIZE}" xmlns="http://www.w3.org/2000/svg">
   <rect width="${EXPORT.SVG_SIZE}" height="${EXPORT.SVG_SIZE}" fill="${root.color.hexa}" />
-  <text x="20" y="40" font-family="sans-serif" font-weight="bold" font-size="24" fill="${textFill}">${escapeXml(resolveClosestName(root.engine.closestName, root.color.hex).toUpperCase())}</text>
+  <text x="20" y="40" font-family="sans-serif" font-weight="bold" font-size="${titleSize}" fill="${textFill}">${escapeXml(title)}</text>
   <text x="20" y="70" font-family="monospace" font-size="14" fill="${textFill}">${root.color.display}</text>
   ${root.color.alpha < 1 ? `<text x="20" y="90" font-family="monospace" font-size="12" fill="${textFill}">Alpha: ${(root.color.alpha * 100).toFixed(0)}%</text>` : ""}
 </svg>`;

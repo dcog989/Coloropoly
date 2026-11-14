@@ -79,24 +79,31 @@ interface ExportStrategy {
 }
 
 export interface VisualExportStrategy {
-  name: string;
   extension: string;
   mimeType: string;
   render(source: ColorSource, root: RootStore): Blob | Promise<Blob>;
 }
 
-class CssExportStrategy implements ExportStrategy {
-  name = "CSS Variables";
-  format(source: ColorSource, exportFormat: ExportFormat): string {
-    const lines: string[] = [":root {"];
-    source.colors.forEach((item, i) => {
-      const name = generateColorName(i, source);
-      lines.push(`  --${name}: ${formatColor(item.css, exportFormat)};`);
-    });
-    lines.push("}");
-    return lines.join("\n");
-  }
+interface VariablesOptions {
+  header?: string;
+  wrapper?: [open: string, close: string];
 }
+
+const variablesStrategy = (
+  name: string,
+  prefix: string,
+  { header, wrapper }: VariablesOptions = {},
+): ExportStrategy => ({
+  name,
+  format(source, exportFormat) {
+    const lines = header ? [header] : [];
+    const body = source.colors.map(
+      (item, i) => `${prefix}${generateColorName(i, source)}: ${formatColor(item.css, exportFormat)};`,
+    );
+    lines.push(...(wrapper ? [wrapper[0], ...body.map((line) => `  ${line}`), wrapper[1]] : body));
+    return lines.join("\n");
+  },
+});
 
 class TailwindExportStrategy implements ExportStrategy {
   name = "Tailwind Config";
@@ -135,26 +142,6 @@ class JsonExportStrategy implements ExportStrategy {
       obj[generateColorLabel(i, source)] = formatColor(item.css, exportFormat);
     });
     return JSON.stringify(obj, null, 2);
-  }
-}
-
-class ScssExportStrategy implements ExportStrategy {
-  name = "SCSS Variables";
-  format(source: ColorSource, exportFormat: ExportFormat): string {
-    const lines = ["// Color Variables"];
-    source.colors.forEach((item, i) => {
-      lines.push(`$${generateColorName(i, source)}: ${formatColor(item.css, exportFormat)};`);
-    });
-    return lines.join("\n");
-  }
-}
-
-class LessExportStrategy implements ExportStrategy {
-  name = "Less Variables";
-  format(source: ColorSource, exportFormat: ExportFormat): string {
-    return source.colors
-      .map((item, i) => `@${generateColorName(i, source)}: ${formatColor(item.css, exportFormat)};`)
-      .join("\n");
   }
 }
 
@@ -256,12 +243,12 @@ export type ExportStrategyName =
   | "gpl";
 
 export const strategies: Record<ExportStrategyName, ExportStrategy> = {
-  css: new CssExportStrategy(),
+  css: variablesStrategy("CSS Variables", "--", { wrapper: [":root {", "}"] }),
   tailwind: new TailwindExportStrategy(),
   xml: new AndroidXmlExportStrategy(),
   json: new JsonExportStrategy(),
-  scss: new ScssExportStrategy(),
-  less: new LessExportStrategy(),
+  scss: variablesStrategy("SCSS Variables", "$", { header: "// Color Variables" }),
+  less: variablesStrategy("Less Variables", "@"),
   csv: new CsvExportStrategy(),
   text: new TextExportStrategy(),
   dtcg: new DtcgExportStrategy(),
