@@ -210,7 +210,7 @@ const sortOptions: { label: string; value: SortMode }[] = [
           </div>
         </div>
 
-        <div class="grid grid-cols-6 gap-2">
+        <div class="grid grid-cols-6 gap-3">
           {#each gridColors as swatch, i (i)}
             {#if swatch !== null}
               <Swatch color={swatch} index={i} dynamicClass={false} />

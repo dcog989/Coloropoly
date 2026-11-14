@@ -60,9 +60,7 @@ const handleInput = (e: Event) => {
 
 <section
   class="
-      panel overflow-x-hidden space-y-4
-      sm:space-y-6
-      md:space-y-8
+      panel overflow-x-hidden space-y-6
     "
   style:--picker-l={color.l}
   style:--picker-c={color.c}
@@ -160,7 +158,7 @@ const handleInput = (e: Event) => {
         "
   >
     <!-- Sliders -->
-    <div class="space-y-6">
+    <div class="space-y-5">
       {#if color.mode === "okhsl"}
         <OkhslSliders />
       {:else if color.mode === "oklch"}

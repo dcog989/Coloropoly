@@ -194,8 +194,9 @@ const showInfo = (key: keyof typeof infoContent) => {
   <main
     class="
           grid w-full flex-1 grid-cols-1 content-start gap-4 p-4
-          sm:gap-6 sm:p-6
-          md:gap-8 md:p-8
+          pt-0
+          sm:gap-6 sm:p-6 sm:pt-0
+          md:gap-8 md:p-8 md:pt-0
           min-[1920px]:grid-cols-[1fr_500px_500px] min-[1920px]:grid-rows-[auto_auto]
           min-[1920px]:px-16
         "

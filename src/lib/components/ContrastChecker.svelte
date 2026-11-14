@@ -106,7 +106,7 @@ const getApcaRating = (score: number) => {
 };
 </script>
 
-<div class="flex h-full flex-col gap-6" bind:this={rootEl}>
+<div class="flex h-full flex-col gap-3" bind:this={rootEl}>
   <!-- 1. Context Switcher Tabs -->
   <div class="control-group grid grid-cols-3 gap-2">
     {#each modes as m (m)}

@@ -86,7 +86,7 @@ function handleExport(event: Event) {
 </script>
 
 <section class="panel h-auto overflow-visible">
-  <div class="mb-4 flex flex-col items-start justify-between gap-4 md:flex-row md:items-center">
+  <div class="mb-6 flex flex-col items-start justify-between gap-4 md:flex-row md:items-start">
     <h2 class="section-heading shrink-0">Color Sets</h2>
 
     <div class="flex w-full min-w-0 flex-1 flex-wrap items-center gap-2 md:justify-end">
@@ -172,7 +172,7 @@ function handleExport(event: Event) {
     <div class="flex min-h-40 items-center justify-center text-sm text-(--ui-text-muted)">No colors found</div>
   {:else}
     <ul
-      class="grid grid-cols-[repeat(auto-fill,minmax(16rem,1fr))] gap-2"
+      class="grid grid-cols-[repeat(auto-fill,minmax(16rem,1fr))] gap-3"
       style:filter={colorBlind === "none" ? "" : `url(#cb-${colorBlind})`}
     >
       {#each colors as color (color.name)}

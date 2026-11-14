@@ -122,7 +122,7 @@ const sortOptions: { label: string; value: PaintboxSortMode }[] = [
   </div>
 
   <!-- Export Options -->
-  <div class="mt-8 space-y-3">
+  <div class="mt-6 space-y-3">
     <h3 class="section-heading">Export</h3>
     <div class="grid grid-cols-3 gap-3">
       <button type="button" onclick={() => runVisualExport("png")} disabled={exporting !== null} class="action-button">
@@ -136,7 +136,7 @@ const sortOptions: { label: string; value: PaintboxSortMode }[] = [
   </div>
 
   <!-- Import Options -->
-  <div class="mt-4 space-y-3">
+  <div class="mt-6 space-y-3">
     <h3 class="section-heading">Import</h3>
     <input bind:this={fileInput} type="file" accept={PALETTE_FILE.ACCEPT} class="hidden" onchange={handleImport}>
     <button type="button" onclick={() => fileInput?.click()} class="action-button">DTCG JSON / GIMP GPL</button>

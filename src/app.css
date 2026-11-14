@@ -75,7 +75,7 @@
 @layer components {
   /* Shared panel shell: visual + scroll container; call sites add spacing/layout */
   .panel {
-    @apply h-full overflow-y-auto rounded-xl border border-(--ui-border) bg-(--ui-card) p-4 shadow-xl sm:p-6 md:p-8;
+    @apply h-full overflow-y-auto rounded-xl border border-(--ui-border) bg-(--ui-card) p-2 shadow-xl sm:p-4 md:p-6;
   }
 
   /* Shared panel section heading */

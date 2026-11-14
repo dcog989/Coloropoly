@@ -32,8 +32,9 @@ const name = $derived(resolveClosestName(engine.closestName, color.hex));
   <div
     class="
           grid w-full grid-cols-[auto_1fr_auto_auto] items-center gap-2 sm:gap-4
-          p-4 pb-12
+          p-4
           sm:px-8 sm:py-6
+          md:pb-8
         "
   >
     <button

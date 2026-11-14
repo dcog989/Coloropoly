@@ -101,7 +101,7 @@ const removeRow = () => {
     </div>
   </div>
 
-  <div class="grid grid-cols-4 gap-2">
+  <div class="grid grid-cols-4 gap-3">
     {#each engine.generated as swatch, i (swatch + i)}
       <Swatch color={swatch} index={i} />
     {/each}
