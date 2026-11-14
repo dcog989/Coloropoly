@@ -8,10 +8,8 @@ const { color } = getApp();
 let localRgb = $state({ r: 0, g: 0, b: 0 });
 
 $effect(() => {
-  if (color.mode === "rgb") {
-    const rgb = color.rgbComp;
-    localRgb = { r: rgb.r, g: rgb.g, b: rgb.b };
-  }
+  const rgb = color.rgbComp;
+  localRgb = { r: rgb.r, g: rgb.g, b: rgb.b };
 });
 
 const updateRgbFromLocal = () => color.setRgbValues(localRgb.r, localRgb.g, localRgb.b);

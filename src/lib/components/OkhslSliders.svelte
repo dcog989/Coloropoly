@@ -18,7 +18,6 @@ let local = $state(
 );
 
 $effect(() => {
-  if (color.mode !== "okhsl") return;
   const { h, s, l } = color.okhslComp;
   const prev = untrack(() => local);
   const hasHue = s > ACHROMATIC_S_THRESHOLD && l > EDGE_L_THRESHOLD && l < 100 - EDGE_L_THRESHOLD;
