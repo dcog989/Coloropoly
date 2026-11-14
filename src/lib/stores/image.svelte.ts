@@ -10,6 +10,27 @@ type ImageWorkerMessage = {
   clusters: { color: string; pixels: number }[];
 };
 
+const BITMAP_OPTIONS = {
+  resizeWidth: IMAGE_ANALYSIS.DOWNSAMPLE_SIZE,
+  resizeHeight: IMAGE_ANALYSIS.DOWNSAMPLE_SIZE,
+  resizeQuality: "low",
+} as const;
+
+async function loadBitmap(file: File): Promise<ImageBitmap> {
+  if (file.type !== "image/svg+xml") return createImageBitmap(file, BITMAP_OPTIONS);
+
+  // No browser decodes an SVG blob into an ImageBitmap; an <img> can (Chromium 40269670).
+  const url = URL.createObjectURL(file);
+  try {
+    const image = new Image();
+    image.src = url;
+    await image.decode();
+    return await createImageBitmap(image, BITMAP_OPTIONS);
+  } finally {
+    URL.revokeObjectURL(url);
+  }
+}
+
 export class ImageStore {
   mosaicData = $state<PaletteEntry[]>([]);
 
@@ -33,32 +54,26 @@ export class ImageStore {
 
     this.isProcessing = true;
     this.analysisError = null;
-    // Drop the old palette so the new image is never shown next to old colors.
+    // Drop the old palette and preview so the new image is never shown next to old colors.
     this.mosaicData = [];
-
     if (this.previewUrl) {
       URL.revokeObjectURL(this.previewUrl);
+      this.previewUrl = "";
     }
-    this.previewUrl = URL.createObjectURL(file);
 
-    const width = IMAGE_ANALYSIS.DOWNSAMPLE_SIZE;
-    const height = IMAGE_ANALYSIS.DOWNSAMPLE_SIZE;
+    const size = IMAGE_ANALYSIS.DOWNSAMPLE_SIZE;
 
     try {
+      const canvas = new OffscreenCanvas(size, size);
       // Resize during decode: the canvas is 256² anyway, so a full-size bitmap
       // only costs memory (a 10 MB PNG can be hundreds of MB once decoded).
-      const bitmap = await createImageBitmap(file, {
-        resizeWidth: width,
-        resizeHeight: height,
-        resizeQuality: "low",
-      });
+      const bitmap = await loadBitmap(file);
 
       if (generation !== this.#generation) {
         bitmap.close();
         return;
       }
 
-      const canvas = new OffscreenCanvas(width, height);
       const ctx = canvas.getContext("2d");
       if (!ctx) {
         bitmap.close();
@@ -66,31 +81,44 @@ export class ImageStore {
         return;
       }
 
-      ctx.drawImage(bitmap, 0, 0, width, height);
+      ctx.drawImage(bitmap, 0, 0, size, size);
 
-      const imageData = ctx.getImageData(0, 0, width, height);
+      const imageData = ctx.getImageData(0, 0, size, size);
 
       bitmap.close();
+
+      // The thumbnail is 256px, so preview the canvas instead of pinning the source file.
+      const preview = await canvas.convertToBlob();
+      if (generation !== this.#generation) return;
+      this.previewUrl = URL.createObjectURL(preview);
 
       this.#managedWorker.init(
         () => new ColorAnalysisWorker(),
         {
           onMessage: (data) => {
             if (generation !== this.#generation) return;
-            this.mosaicData = data.clusters;
             this.isProcessing = false;
             this.#managedWorker.terminate();
+
+            if (!data.clusters.length) {
+              this.analysisError = "No visible colors found in this image.";
+              URL.revokeObjectURL(this.previewUrl);
+              this.previewUrl = "";
+              return;
+            }
+
+            this.mosaicData = data.clusters;
           },
           onError: () => {
             if (generation !== this.#generation) return;
             this.isProcessing = false;
-            this.analysisError = "Image analysis failed. Reload the page and try again.";
+            this.analysisError = "Image analysis failed. Try again.";
           },
         },
         "Image analysis worker",
       );
 
-      this.#managedWorker.post({ imageData, distance: 0.05 }, [imageData.data.buffer]);
+      this.#managedWorker.post({ imageData, distance: IMAGE_ANALYSIS.MERGE_DISTANCE }, [imageData.data.buffer]);
     } catch (error) {
       console.error("Image analysis error:", error);
       if (generation !== this.#generation) return;
