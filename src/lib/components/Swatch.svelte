@@ -81,7 +81,7 @@ const getActionClass = () => {
           copy(e);
         }}
         class="overlay-button {getActionClass()}"
-        title="Copy"
+        title="Copy {color.formatColor(swatchColor)}"
         type="button"
       >
         <Copy class="pointer-events-none size-4" />

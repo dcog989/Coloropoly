@@ -218,12 +218,7 @@ const handleInput = (e: Event) => {
                       group-hover:translate-y-0 group-hover:opacity-100
                     "
         >
-          <button
-            type="button"
-            onclick={(e) => app.copy(inputVal, e)}
-            class="overlay-button"
-            title="Copy {color.mode.toUpperCase()}"
-          >
+          <button type="button" onclick={(e) => app.copy(inputVal, e)} class="overlay-button" title="Copy {inputVal}">
             <Copy class="size-4" />
           </button>
           <button type="button" onclick={(e) => addToPaintbox(e)} class="overlay-button" title="Add to Paintbox">

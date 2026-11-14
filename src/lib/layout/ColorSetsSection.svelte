@@ -96,7 +96,7 @@ function handleExport(event: Event) {
 }
 </script>
 
-<section data-mono class="panel h-auto overflow-visible bg-white dark:bg-neutral-900">
+<section class="panel h-auto overflow-visible">
   <div class="mb-4 flex items-baseline gap-3">
     <h2 class="section-heading">Color Sets</h2>
     <span class="text-xs text-(--ui-text-muted)">{colors.length} colors</span>
@@ -210,6 +210,7 @@ function handleExport(event: Event) {
               tracking-wider uppercase
               {color.useDarkText ? "hover:bg-black/15" : "hover:bg-white/20"}
             "
+            title="Copy {color.value}"
             aria-label="Copy {color.value}"
           >
             {color.value}
