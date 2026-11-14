@@ -144,13 +144,19 @@ function handleExport(event: Event) {
       <button
         type="button"
         onclick={copyAll}
+        disabled={colors.length === 0}
         class="small-button border-(--ui-border) hover:bg-(--ui-bg)"
         use:tooltip={"Copy every visible color name and value"}
       >
         Copy All
       </button>
 
-      <select onchange={handleExport} aria-label="Copy the set as" class="select-control">
+      <select
+        onchange={handleExport}
+        disabled={colors.length === 0}
+        aria-label="Copy the set as"
+        class="select-control disabled:cursor-not-allowed disabled:opacity-40"
+      >
         <option value="">Copy as...</option>
         {#each EXPORT_OPTIONS as option (option.id)}
           <option value={option.id}>{option.name}</option>
