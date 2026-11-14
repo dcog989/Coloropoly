@@ -52,7 +52,7 @@ const exports = $derived.by(() =>
                   md:gap-4
                 "
       >
-        <select bind:value={exportFormat} class="select-control">
+        <select bind:value={exportFormat} aria-label="Export color format" class="select-control">
           <option value="oklch">OKLCH</option>
           <option value="hex">HEX</option>
           <option value="hsl">HSL</option>

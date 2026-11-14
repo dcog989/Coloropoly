@@ -165,6 +165,7 @@ const getApcaRating = (score: number) => {
         id="contrastColor"
         type="text"
         bind:value={customColor}
+        aria-label="Custom contrast color"
         class="text-input py-2 pr-4 pl-10 text-sm uppercase {customColorError ? "border-red-500" : ""}"
       >
       <div

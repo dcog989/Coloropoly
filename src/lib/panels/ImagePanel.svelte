@@ -149,7 +149,7 @@ const sortOptions: { label: string; value: SortMode }[] = [
                           absolute inset-0 flex cursor-pointer items-center
                           justify-center rounded-lg bg-black/40 opacity-0
                           transition-all
-                          group-hover:opacity-100
+                          group-hover:opacity-100 group-focus-within:opacity-100
                         "
             use:tooltip={"Clear image"}
             aria-label="Clear image"
