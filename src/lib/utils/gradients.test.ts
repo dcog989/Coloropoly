@@ -8,10 +8,16 @@ describe("getGradient", () => {
     expect(getGradient("h", { r: 0, g: 0, b: 0 })).toEqual({ gradientClass: "gradient-oklch-h" });
   });
 
-  it("builds rgb and alpha gradients", () => {
-    expect(getGradient("r", { r: 1, g: 2, b: 3 }).gradientStyle).toContain("rgb(255,0,0)");
-    expect(getGradient("g", { r: 1, g: 2, b: 3 }).gradientStyle).toContain("rgb(0,255,0)");
-    expect(getGradient("b", { r: 1, g: 2, b: 3 }).gradientStyle).toContain("rgb(0,0,255)");
+  it("builds rgb ramps from the current colour's other channels", () => {
+    expect(getGradient("r", { r: 1, g: 2, b: 3 }).gradientStyle).toContain("rgb(0,2,3)");
+    expect(getGradient("r", { r: 1, g: 2, b: 3 }).gradientStyle).toContain("rgb(255,2,3)");
+    expect(getGradient("g", { r: 1, g: 2, b: 3 }).gradientStyle).toContain("rgb(1,0,3)");
+    expect(getGradient("g", { r: 1, g: 2, b: 3 }).gradientStyle).toContain("rgb(1,255,3)");
+    expect(getGradient("b", { r: 1, g: 2, b: 3 }).gradientStyle).toContain("rgb(1,2,0)");
+    expect(getGradient("b", { r: 1, g: 2, b: 3 }).gradientStyle).toContain("rgb(1,2,255)");
+  });
+
+  it("builds the alpha ramp from the current colour", () => {
     expect(getGradient("alpha", { r: 10, g: 20, b: 30 }).gradientStyle).toContain("rgba(10,20,30,1)");
   });
 
