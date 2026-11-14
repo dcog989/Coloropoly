@@ -3,6 +3,8 @@ import { usesDarkText } from "./text-contrast";
 
 export type SetSortOrder = "name" | "hue" | "lightness" | "chroma";
 
+const nameCollator = new Intl.Collator(undefined, { numeric: true });
+
 export interface SetColor {
   name: string;
   css: string;
@@ -60,7 +62,7 @@ export function sortSetColors(colors: SetColor[], order: SetSortOrder): SetColor
         if (a.lightness !== b.lightness) return a.lightness - b.lightness;
         return a.saturation - b.saturation;
       default:
-        return a.name.localeCompare(b.name, undefined, { numeric: true });
+        return nameCollator.compare(a.name, b.name);
     }
   });
   return sorted;
