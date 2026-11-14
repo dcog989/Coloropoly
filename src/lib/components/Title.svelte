@@ -17,6 +17,8 @@ let letters = $derived(name.toUpperCase().split(""));
 let container: HTMLDivElement;
 let content: HTMLDivElement;
 let overflow = $state(false);
+// A looping scroll is motion the user did not ask for; respect the OS setting.
+const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 const getBlockStyle = (index: number) => {
   const l = color.l;
@@ -57,7 +59,8 @@ $effect(() => {
 });
 
 $effect(() => {
-  if (!overflow || !container || !content) return;
+  name;
+  if (reduceMotion || !overflow || !container || !content) return;
 
   const maxOffset = content.scrollWidth - container.clientWidth + 20;
   let startTime: number | null = null;
@@ -92,7 +95,13 @@ $effect(() => {
 });
 </script>
 
-<div bind:this={container} class="w-full overflow-hidden flex" class:justify-center={!overflow}>
+<div
+  bind:this={container}
+  class="w-full flex"
+  class:overflow-x-auto={reduceMotion}
+  class:overflow-hidden={!reduceMotion}
+  class:justify-center={!overflow}
+>
   <div bind:this={content} class="inline-flex whitespace-nowrap {gapSize}">
     {#each letters as letter, i}
       {#if letter === " "}
