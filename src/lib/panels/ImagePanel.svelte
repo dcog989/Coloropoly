@@ -3,7 +3,7 @@ import Image from "@lucide/svelte/icons/image";
 import LayersPlus from "@lucide/svelte/icons/layers-plus";
 import X from "@lucide/svelte/icons/x";
 import Swatch from "../components/Swatch.svelte";
-import { IMAGE_ANALYSIS } from "../constants";
+import { IMAGE_ANALYSIS, PAINTBOX } from "../constants";
 import { getApp } from "../context";
 import type { SortMode } from "../stores/image.svelte";
 import { MAX_PALETTE_COLORS } from "../utils/image-palette";
@@ -59,9 +59,11 @@ const onDrop = (e: DragEvent) => {
 };
 
 const addAll = (e?: MouseEvent) => {
-  imageAnalyzer.extractedPalette.forEach((c) => {
-    paintbox.add(c);
-  });
+  const palette = imageAnalyzer.extractedPalette;
+  const overflows = paintbox.items.length + palette.length > PAINTBOX.MAX_COLORS;
+  if (overflows && !confirm("Adding all will remove your oldest saved colors. Continue?")) return;
+
+  for (const color of palette) paintbox.add(color);
   toast.showAt("Added All to Paintbox", e);
 };
 
