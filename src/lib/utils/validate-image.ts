@@ -93,7 +93,7 @@ export function validateImageFile(file: File): void {
 }
 
 /**
- * The 10 MB byte cap does not bound pixels: a flat-colour PNG can declare
+ * The 10 MB byte cap does not bound pixels: a flat-color PNG can declare
  * 30000x30000 in a few hundred KB. Read the header first so the browser never
  * allocates the full decoded bitmap. shortcut: SVG is skipped, it rasterises small.
  */

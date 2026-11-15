@@ -65,7 +65,7 @@
 }
 
 /* Low-contrast checker: a pure black/white pattern leaks ~2.5 levels per channel at 99% alpha,
-   enough to see the grid on a nearly opaque colour. A #ccc/#fff pair leaks ~0.5 (below 8-bit rounding). */
+   enough to see the grid on a nearly opaque color. A #ccc/#fff pair leaks ~0.5 (below 8-bit rounding). */
 .checkerboard {
   background-color: var(--checker-light);
   background-image: repeating-conic-gradient(var(--checker-dark) 0% 25%, var(--checker-light) 0% 50%);
@@ -88,7 +88,7 @@
     @apply text-xs font-bold text-(--ui-text-muted) uppercase;
   }
 
-  /* Shared small icon action button (rounded-lg, subtle); call sites may override hover colour */
+  /* Shared small icon action button (rounded-lg, subtle); call sites may override hover color */
   .icon-button {
     @apply shrink-0 rounded-lg border border-(--ui-border) bg-(--ui-bg) p-2 text-(--ui-text-muted) shadow-sm transition-all hover:bg-(--current-color-solid) hover:text-on-current;
   }
@@ -108,7 +108,7 @@
     @apply cursor-pointer rounded-lg border border-(--ui-border) bg-(--ui-bg) px-3 py-1.5 text-xs font-bold text-(--ui-text) uppercase transition-colors duration-200;
   }
 
-  /* Shared compact button chrome; call sites add border/bg colour + hover state only */
+  /* Shared compact button chrome; call sites add border/bg color + hover state only */
   .small-button {
     @apply cursor-pointer rounded-md border px-3 py-1.5 text-xs font-bold text-(--ui-text) uppercase transition-all duration-200;
   }
@@ -157,7 +157,7 @@
     @apply cursor-pointer rounded-full bg-white/30 p-3 text-white shadow-lg backdrop-blur-md transition-transform duration-200 hover:scale-110 hover:bg-white/40;
   }
 
-  /* Shared copy-value button host (pairs with .value-reveal); call sites add `group` + radius/colour */
+  /* Shared copy-value button host (pairs with .value-reveal); call sites add `group` + radius/color */
   .value-button {
     @apply flex items-center overflow-hidden;
   }
