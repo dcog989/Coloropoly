@@ -64,3 +64,11 @@ typecheck:
 # Verify commit messages in a range (`just commits origin/main..HEAD`).
 commits range="origin/main..HEAD":
     cog check {{range}}
+
+# Biome over a file list, as the pre-commit hook passes it.
+format-staged *files:
+    bunx biome check --write --no-errors-on-unmatched --files-ignore-unknown=true {{files}}
+
+# Verify a commit message file, as the commit-msg hook passes it.
+commit-check file:
+    cog verify --file {{file}}
