@@ -60,3 +60,7 @@ test-watch:
 # package.json script: typecheck.
 typecheck:
     bun run typecheck
+
+# Verify commit messages in a range (`just commits origin/main..HEAD`).
+commits range="origin/main..HEAD":
+    cog check {{range}}
