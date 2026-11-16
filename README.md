@@ -32,19 +32,19 @@ Required: [bun](https://bun.sh). The git hooks and the release flow also need [c
 | `bun install`           | Install dependencies (also installs git hooks via Lefthook) |
 | `just dev`              | Start dev server at <http://localhost:5173>                 |
 | `just build`            | Production build to `dist/`                                 |
-| `bun run preview`       | Preview build                                               |
+| `just preview`          | Preview build                                               |
 | `just check`            | All checks: Biome + typecheck + test with coverage + build  |
-| `bun run typecheck`     | svelte-check + `bun --check`                                |
+| `just typecheck`        | svelte-check + `bun --check`                                |
 | `just test`             | Run tests                                                   |
-| `bun run test:coverage` | Tests with coverage (80% floor)                             |
+| `just coverage`         | Tests with coverage (80% floor)                             |
 | `just format`           | All fixes: Biome auto-fix (format/lint/imports)             |
-| `bun run changelog`     | Print the changelog to stdout                               |
+| `just changelog`        | Print the changelog to stdout                               |
 
 ## Releasing
 
 1. Commit with [Conventional Commits](https://www.conventionalcommits.org/); Lefthook and CI enforce the format.
-2. Run `bun run release` (`cog bump --auto`).
-3. The bump runs `bun run check`, syncs the version, commits and tags, pushes, then creates the GitHub release with the tag's changelog section as notes and `CHANGELOG.md` attached as an asset.
+2. Run `just release` (`cog bump --auto`).
+3. The bump runs `just check`, syncs the version, commits and tags, pushes, then creates the GitHub release with the tag's changelog section as notes and `CHANGELOG.md` attached as an asset.
 
 Requires `cog` and an authenticated `gh`. `main` deploys to GitHub Pages once CI passes.
 

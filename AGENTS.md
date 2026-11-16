@@ -50,10 +50,10 @@
 | `just build`            | Production build                                      |
 | `just clean`            | Remove coverage, dist and node_modules                |
 | `bun install`           | Install deps, installs git hooks                      |
-| `bun run preview`       | Preview build                                         |
-| `bun run typecheck`     | svelte-check + `bun --check`                          |
-| `bun run test:coverage` | Vitest with coverage (80% floor)                      |
-| `bun run changelog`     | Print changelog to stdout                             |
+| `just preview`          | Preview build                                         |
+| `just typecheck`        | svelte-check + `bun --check`                          |
+| `just coverage`         | Vitest with coverage (80% floor)                      |
+| `just changelog`        | Print changelog to stdout                             |
 
 ### Common Patterns
 
@@ -66,14 +66,14 @@
 
 ### Verification
 
-- `bun run check` must pass: Biome, typecheck, tests with coverage, build.
+- `just check` must pass: Biome, typecheck, tests with coverage, build.
 - Coverage floor is 80% (lines, statements, functions, branches). `stores/`, `workers/`, `visual-strategies.ts`, `context.ts`, `constants.ts`, and `data/` are excluded — keep logic in `src/lib/utils/` so it is covered.
 
 ### Releasing
 
 - Commits are Conventional Commits; Lefthook `commit-msg` runs `cog verify`, CI runs `cog check`.
-- `bun run release` (`cog bump --auto`) runs pre-bump hooks (`bun run check`, `scripts/sync_version.sh`), then pushes, pushes the tag, and creates the GitHub release with `cog changelog --at <tag>` as notes and `CHANGELOG.md` as an asset.
-- Never run `bun run release`, `cog bump`, or the push/release hooks unless explicitly instructed.
+- `just release` (`cog bump --auto`) runs pre-bump hooks (`just check`, `scripts/sync_version.sh`), then pushes, pushes the tag, and creates the GitHub release with `cog changelog --at <tag>` as notes and `CHANGELOG.md` as an asset.
+- Never run `just release`, `cog bump`, or the push/release hooks unless explicitly instructed.
 
 ### File System Access
 
