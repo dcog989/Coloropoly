@@ -42,15 +42,17 @@
 
 | Command                 | Action                                                |
 | ----------------------- | ----------------------------------------------------- |
+| `just check`            | All checks: Biome + typecheck + test:coverage + build |
+| `just dev`              | Start dev server (<http://localhost:5173>)            |
+| `just test`             | Vitest                                                |
+| `just lint`             | Linter alone (Biome)                                  |
+| `just format`           | All fixes: Biome auto-fix (format/lint/imports)       |
+| `just build`            | Production build                                      |
+| `just clean`            | Remove coverage, dist and node_modules                |
 | `bun install`           | Install deps, installs git hooks                      |
-| `bun run dev`           | Start dev server (<http://localhost:5173>)            |
-| `bun run build`         | Production build                                      |
 | `bun run preview`       | Preview build                                         |
-| `bun run check`         | All checks: Biome + typecheck + test:coverage + build |
 | `bun run typecheck`     | svelte-check + `bun --check`                          |
-| `bun run test`          | Vitest                                                |
 | `bun run test:coverage` | Vitest with coverage (80% floor)                      |
-| `bun run fix`           | All fixes: Biome auto-fix (format/lint/imports)       |
 | `bun run changelog`     | Print changelog to stdout                             |
 
 ### Common Patterns

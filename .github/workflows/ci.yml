@@ -51,14 +51,13 @@ jobs:
       - name: Audit dependencies
         run: bun audit --ignore=GHSA-gcqx-w48m-w2h4
 
-      - name: Check frontend format & lint
-        run: bunx biome check .
+      - name: Install just
+        uses: taiki-e/install-action@v2
+        with:
+          tool: just
 
-      - name: Check frontend types
-        run: bun run typecheck
-
-      - name: Build
-        run: bun run build
+      - name: Check
+        run: just check
 
   test:
     runs-on: ubuntu-latest

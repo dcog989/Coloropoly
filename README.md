@@ -30,14 +30,14 @@ Required: [bun](https://bun.sh). The git hooks and the release flow also need [c
 | Command                 | Action                                                      |
 | ----------------------- | ----------------------------------------------------------- |
 | `bun install`           | Install dependencies (also installs git hooks via Lefthook) |
-| `bun run dev`           | Start dev server at <http://localhost:5173>                 |
-| `bun run build`         | Production build to `dist/`                                 |
+| `just dev`              | Start dev server at <http://localhost:5173>                 |
+| `just build`            | Production build to `dist/`                                 |
 | `bun run preview`       | Preview build                                               |
-| `bun run check`         | All checks: Biome + typecheck + test with coverage + build  |
+| `just check`            | All checks: Biome + typecheck + test with coverage + build  |
 | `bun run typecheck`     | svelte-check + `bun --check`                                |
-| `bun run test`          | Run tests                                                   |
+| `just test`             | Run tests                                                   |
 | `bun run test:coverage` | Tests with coverage (80% floor)                             |
-| `bun run fix`           | All fixes: Biome auto-fix (format/lint/imports)             |
+| `just format`           | All fixes: Biome auto-fix (format/lint/imports)             |
 | `bun run changelog`     | Print the changelog to stdout                               |
 
 ## Releasing
