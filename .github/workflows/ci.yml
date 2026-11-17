@@ -48,8 +48,10 @@ jobs:
 
       # deepmerge is pinned by @sveltejs/vite-plugin-svelte and 4.3.1 is the last
       # release; the advisory covers every published version, so no fix exists.
+      # picomatch 4.0.7 is the latest release and the advisory covers <=4.0.7;
+      # it is a dev-only transitive of vite/vitest/svelte-check.
       - name: Audit dependencies
-        run: bun audit --ignore=GHSA-gcqx-w48m-w2h4
+        run: bun audit --ignore=GHSA-gcqx-w48m-w2h4 --ignore=GHSA-fc5q-39xc-vjpf
 
       - name: Install just
         uses: taiki-e/install-action@v2

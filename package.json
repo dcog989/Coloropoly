@@ -1,6 +1,6 @@
 {
   "name": "coloropoly",
-  "description": "The only color picker palette generator you need.",
+  "description": "Color toolbox: picker, palette, paintbox, image analyser, color sets.",
   "version": "3.11.2",
   "private": true,
   "type": "module",
