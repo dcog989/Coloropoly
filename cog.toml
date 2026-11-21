@@ -6,17 +6,16 @@ ignore_merge_commits = true
 tag_prefix = "v"
 
 pre_bump_hooks = [
-    "cog check --from-latest-tag",
-    "bun run check",
-    "./scripts/sync_version.sh {{version}}",
+  "cog check --from-latest-tag",
+  "bun run check",
+  "./scripts/sync_version.sh {{version}}",
 ]
 
 post_bump_hooks = [
-    "git push",
-    "git push origin {{version_tag}}",
-    "gh release create {{version_tag}} CHANGELOG.md --notes \"$(cog changelog --at {{version_tag}})\"",
+  "git push",
+  "git push origin {{version_tag}}",
+  "gh release create {{version_tag}} CHANGELOG.md --notes \"$(cog changelog --at {{version_tag}})\"",
 ]
 
 [changelog]
 path = "CHANGELOG.md"
-template = "changelog.tpl"
