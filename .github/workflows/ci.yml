@@ -30,6 +30,11 @@ jobs:
         with:
           tool: cocogitto
 
+      - name: Install just
+        uses: taiki-e/install-action@v2
+        with:
+          tool: just
+
       - name: Check conventional commits (PR)
         if: github.event_name == 'pull_request'
         run: just commits "${{ github.event.pull_request.base.sha }}..${{ github.event.pull_request.head.sha }}"
@@ -52,11 +57,6 @@ jobs:
       # it is a dev-only transitive of vite/vitest/svelte-check.
       - name: Audit dependencies
         run: bun audit --ignore=GHSA-gcqx-w48m-w2h4 --ignore=GHSA-fc5q-39xc-vjpf
-
-      - name: Install just
-        uses: taiki-e/install-action@v2
-        with:
-          tool: just
 
       - name: Check
         run: just check
