@@ -2,6 +2,27 @@
 All notable changes to this project will be documented in this file. See [conventional commits](https://www.conventionalcommits.org/) for commit guidelines.
 
 - - -
+## v3.11.3 - 2026-11-21
+#### Bug Fixes
+- (**ci**) ignore unpatched picomatch ReDoS advisory in audit - (4aedadc) - dcog989
+#### Continuous Integration
+- install just in the test and deploy jobs - (7e1cc15) - dcog989
+#### Miscellaneous Chores
+- (**build**) call just from the git hooks - (ecedae8) - dcog989
+- (**build**) call just from the git hooks - (60da83b) - dcog989
+- (**build**) close the remaining raw-command gaps - (5d42b9d) - dcog989
+- (**build**) call the just recipes from CI, hooks and docs - (eb32455) - dcog989
+- (**build**) wrap the remaining dev scripts in just - (3463a7a) - dcog989
+- (**build**) add an update recipe - (76e92c4) - dcog989
+- (**build**) add a justfile for the common dev tasks - (23d9404) - dcog989
+- (**cog**) drop the custom changelog template - (6cc88b9) - dcog989
+- (**deps**) bump taiki-e/install-action from 2.90.3 to 2.90.5 - (5bcff30) - dependabot[bot]
+- (**deps**) bump taiki-e/install-action from 2.87.31 to 2.90.3 - (54589d4) - dependabot[bot]
+- updates - (bed499f) - dcog989
+- colour -> color, refine website desc - (22ed700) - dcog989
+
+- - -
+
 ## v3.11.2 - 2026-11-14
 
 #### Bug Fixes
