@@ -40,8 +40,13 @@ export function isHarmonyMode(mode: GenerationMode): mode is HarmonyType {
 
 export function generateHarmony(baseColor: PaletteColor, type: HarmonyType): string[] {
   return colordx(baseColor)
-    .harmonies(type)
-    .map((color) => color.toHex());
+    .harmonies(type, { space: "oklch" })
+    .map((color) => {
+      // Rotating hue at a fixed chroma can leave sRGB; clamp it so the step keeps
+      // its perceived lightness and hue instead of clipping in RGB.
+      const { l, c, h, alpha } = color.toOklch();
+      return colordx({ l, c: Math.min(c, getMaxSrgbChroma(l, h)), h, alpha }).toHex();
+    });
 }
 
 export function generatePalette(baseColor: PaletteColor, axis: PaletteAxis, steps: number): string[] {

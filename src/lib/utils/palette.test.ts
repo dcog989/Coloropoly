@@ -96,4 +96,16 @@ describe("generateHarmony", () => {
     expect(generateHarmony(base, "tetradic")).toHaveLength(4);
     expect(generateHarmony(base, "rectangle")).toHaveLength(4);
   });
+
+  it("keeps lightness and hue when a high chroma step lands outside sRGB", () => {
+    const base = { l: 0.5, c: 0.37, h: 270 };
+    const steps = generateHarmony(base, "tetradic").map(toOklch);
+
+    steps.forEach((step, i) => {
+      const expectedHue = (base.h + i * 90) % 360;
+      const hueDistance = Math.abs(step.h - expectedHue);
+      expect(step.l).toBeCloseTo(base.l, 1);
+      expect(Math.min(hueDistance, 360 - hueDistance)).toBeLessThan(2);
+    });
+  });
 });
