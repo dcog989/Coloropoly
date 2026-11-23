@@ -2,6 +2,16 @@
 All notable changes to this project will be documented in this file. See [conventional commits](https://www.conventionalcommits.org/) for commit guidelines.
 
 - - -
+## v3.12.0 - 2026-11-23
+#### Features
+- (**palette**) rotate harmonies in OKLCH with sRGB chroma clamping - (5b586d9) - dcog989
+#### Continuous Integration
+- install just before the commit checks - (23e9a19) - dcog989
+#### Miscellaneous Chores
+- updates, colordx 7.5 - (a4de7b2) - dcog989
+
+- - -
+
 ## v3.11.3 - 2026-11-21
 #### Bug Fixes
 - (**ci**) ignore unpatched picomatch ReDoS advisory in audit - (4aedadc) - dcog989
