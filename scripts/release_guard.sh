@@ -7,13 +7,15 @@ if [ "$branch" != "main" ]; then
   exit 1
 fi
 
-if [ -n "$(git status --porcelain)" ]; then
+# cog writes CHANGELOG.md before pre-bump hooks, so it is expected to be dirty.
+if [ -n "$(git status --porcelain -- ':!CHANGELOG.md')" ]; then
   echo "error: working tree is dirty; commit or stash first" >&2
   exit 1
 fi
 
+# Local commits ahead of origin are fine: the bump pushes them.
 git fetch --quiet origin main
-if [ "$(git rev-parse HEAD)" != "$(git rev-parse origin/main)" ]; then
-  echo "error: local main is not at origin/main; pull or push first" >&2
+if ! git merge-base --is-ancestor origin/main HEAD; then
+  echo "error: local main has diverged from origin/main; pull --rebase first" >&2
   exit 1
 fi
