@@ -1,6 +1,6 @@
 # Coloropoly
 
-A color picker with palette generator, image analyser, contrast checker, color set browser, and export options. Author in Okhsl (default, gamut-aware), Oklch (wide gamut), or RGB, then copy or export to whichever format you need.
+A color picker toolbox with palette generator, image analyser, contrast checker, color set browser, and export options. Author in Okhsl (default, gamut-aware), Oklch (wide gamut), or RGB, then copy or export to whichever format you need.
 
 Visit [Coloropoly](https://dcog989.github.io/Coloropoly/).
 
@@ -27,24 +27,25 @@ Visit [Coloropoly](https://dcog989.github.io/Coloropoly/).
 
 Required: [bun](https://bun.sh). The git hooks and the release flow also need [cog](https://docs.cocogitto.io/) on your `PATH`; `bun install` installs the hooks, so `cog` must be present before your first commit.
 
-| Command                 | Action                                                      |
-| ----------------------- | ----------------------------------------------------------- |
-| `bun install`           | Install dependencies (also installs git hooks via Lefthook) |
-| `just dev`              | Start dev server at <http://localhost:5173>                 |
-| `just build`            | Production build to `dist/`                                 |
-| `just preview`          | Preview build                                               |
-| `just check`            | All checks: Biome + typecheck + test with coverage + build  |
-| `just typecheck`        | svelte-check + `bun --check`                                |
-| `just test`             | Run tests                                                   |
-| `just coverage`         | Tests with coverage (80% floor)                             |
-| `just format`           | All fixes: Biome auto-fix (format/lint/imports)             |
-| `just changelog`        | Print the changelog to stdout                               |
+| Command          | Action                                                      |
+| ---------------- | ----------------------------------------------------------- |
+| `bun install`    | Install dependencies (also installs git hooks via Lefthook) |
+| `just dev`       | Start dev server at <http://localhost:5173>                 |
+| `just build`     | Production build to `dist/`                                 |
+| `just preview`   | Preview build                                               |
+| `just check`     | All checks: Biome + typecheck + test with coverage + build  |
+| `just audit`     | Dependency advisories (same ignores as CI)                  |
+| `just typecheck` | svelte-check + `bun --check`                                |
+| `just test`      | Run tests                                                   |
+| `just coverage`  | Tests with coverage (80% floor)                             |
+| `just format`    | All fixes: Biome auto-fix (format/lint/imports)             |
+| `just changelog` | Print the changelog to stdout                               |
 
 ## Releasing
 
 1. Commit with [Conventional Commits](https://www.conventionalcommits.org/); Lefthook and CI enforce the format.
 2. Run `just release` (`cog bump --auto`).
-3. The bump runs `just check`, syncs the version, commits and tags, pushes, then creates the GitHub release with the tag's changelog section as notes and `CHANGELOG.md` attached as an asset.
+3. The bump checks the tree is clean and level with `origin/main`, runs `cog check`, `just audit` and `just check`, syncs the version, commits and tags, pushes, then creates the GitHub release with the tag's changelog section as notes and `CHANGELOG.md` attached as an asset. CI checks the tag as well, so a broken release shows red immediately.
 
 Requires `cog` and an authenticated `gh`. `main` deploys to GitHub Pages once CI passes.
 

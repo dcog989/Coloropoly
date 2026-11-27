@@ -1,9 +1,13 @@
-# Verify the repo: the same checks CI runs.
+# Verify the repo: the same checks CI runs (CI also runs the audit and the commit check).
 default: check
 
-# Full check, the same command CI runs.
+# Full check: Biome + typecheck + test with coverage + build.
 check:
     bun run check
+
+# Dependency advisories, with the same ignores CI uses.
+audit:
+    bun run audit
 
 # Linter alone.
 lint:

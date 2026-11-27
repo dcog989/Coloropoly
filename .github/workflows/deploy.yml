@@ -20,9 +20,13 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     # Only successful pushes from this repository. A pull request's CI run has a
     # head branch too, so a fork PR from a branch named "main" would otherwise
-    # pass the branch filter and publish its own commit.
+    # pass the branch filter and publish its own commit. A tag push has no head
+    # branch, so it never reaches this job.
     if: >-
       (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main') ||
       (github.event_name == 'workflow_run' &&
@@ -45,19 +49,12 @@ jobs:
 
       - name: Setup bun
         uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6
-        with:
-          bun-version: 1.4.4
 
       - name: Install dependencies
         run: bun install --frozen-lockfile
 
-      - name: Install just
-        uses: taiki-e/install-action@v2
-        with:
-          tool: just
-
       - name: Build
-        run: just build
+        run: bun run build
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9
@@ -65,4 +62,5 @@ jobs:
           path: ./dist
 
       - name: Deploy to GitHub Pages
+        id: deployment
         uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346

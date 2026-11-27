@@ -43,6 +43,7 @@
 | Command                 | Action                                                |
 | ----------------------- | ----------------------------------------------------- |
 | `just check`            | All checks: Biome + typecheck + test:coverage + build |
+| `just audit`            | Dependency advisories (same ignores as CI)            |
 | `just dev`              | Start dev server (<http://localhost:5173>)            |
 | `just test`             | Vitest                                                |
 | `just lint`             | Linter alone (Biome)                                  |
@@ -72,7 +73,7 @@
 ### Releasing
 
 - Commits are Conventional Commits; Lefthook `commit-msg` runs `cog verify`, CI runs `cog check`.
-- `just release` (`cog bump --auto`) runs pre-bump hooks (`just check`, `scripts/sync_version.sh`), then pushes, pushes the tag, and creates the GitHub release with `cog changelog --at <tag>` as notes and `CHANGELOG.md` as an asset.
+- `just release` (`cog bump --auto`) runs pre-bump hooks (`scripts/release_guard.sh`, `cog check`, `just audit`, `just check`, `scripts/sync_version.sh`), then pushes, pushes the tag, and creates the GitHub release with `cog changelog --at <tag>` as notes and `CHANGELOG.md` as an asset. CI also runs on the `v*` tag.
 - Never run `just release`, `cog bump`, or the push/release hooks unless explicitly instructed.
 
 ### File System Access

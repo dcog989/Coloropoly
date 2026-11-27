@@ -3,11 +3,9 @@ name: CI
 on:
   push:
     branches: [main]
+    tags: ["v*"]
   pull_request:
     branches: [main]
-
-env:
-  FORCE_JAVASCRIPT_ACTIONS_TO_NODE26: true
 
 permissions:
   contents: read
@@ -30,58 +28,27 @@ jobs:
         with:
           tool: cocogitto
 
-      - name: Install just
-        uses: taiki-e/install-action@v2
-        with:
-          tool: just
-
       - name: Check conventional commits (PR)
         if: github.event_name == 'pull_request'
-        run: just commits "${{ github.event.pull_request.base.sha }}..${{ github.event.pull_request.head.sha }}"
+        run: cog check "${{ github.event.pull_request.base.sha }}..${{ github.event.pull_request.head.sha }}"
 
+      # A tag push has an all-zero "before", so there is no range to check.
       - name: Check conventional commits (push)
         if: github.event_name == 'push' && github.event.before != '0000000000000000000000000000000000000000'
-        run: just commits "${{ github.event.before }}..${{ github.event.after }}"
+        run: cog check "${{ github.event.before }}..${{ github.event.after }}"
 
       - name: Setup bun
         uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6
-        with:
-          bun-version: 1.4.4
 
       - name: Install frontend dependencies
         run: bun install --frozen-lockfile
 
-      # deepmerge is pinned by @sveltejs/vite-plugin-svelte and 4.3.1 is the last
-      # release; the advisory covers every published version, so no fix exists.
-      # picomatch 4.0.7 is the latest release and the advisory covers <=4.0.7;
-      # it is a dev-only transitive of vite/vitest/svelte-check.
       - name: Audit dependencies
-        run: bun audit --ignore=GHSA-gcqx-w48m-w2h4 --ignore=GHSA-fc5q-39xc-vjpf
+        run: bun run audit
 
+      # Includes the coverage run, so there is only one test pass per push.
       - name: Check
-        run: just check
-
-  test:
-    runs-on: ubuntu-latest
-    timeout-minutes: 30
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
-
-      - name: Setup bun
-        uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6
-        with:
-          bun-version: 1.4.4
-
-      - name: Install frontend dependencies
-        run: bun install --frozen-lockfile
-
-      - name: Install just
-        uses: taiki-e/install-action@v2
-        with:
-          tool: just
-
-      - name: Run tests with coverage
-        run: just coverage
+        run: bun run check
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@303a32d7a59b442fa8d48b6a1cc6825c09c847a5
