@@ -17,12 +17,9 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
     timeout-minutes: 10
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     # Only successful pushes from this repository. A pull request's CI run has a
     # head branch too, so a fork PR from a branch named "main" would otherwise
     # pass the branch filter and publish its own commit. A tag push has no head
@@ -61,6 +58,15 @@ jobs:
         with:
           path: ./dist
 
+  # Separate job so a re-run of the deployment does not upload a second artifact.
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346
