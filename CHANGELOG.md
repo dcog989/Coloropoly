@@ -2,6 +2,20 @@
 All notable changes to this project will be documented in this file. See [conventional commits](https://www.conventionalcommits.org/) for commit guidelines.
 
 - - -
+## v3.12.1 - 2026-11-27
+#### Bug Fixes
+- (**contrast**) keep invert buttons legible on the current color - (fbd2f19) - dcog989
+- (**release**) tolerate cog's changelog write and local commits ahead of origin - (7490be4) - dcog989
+#### Continuous Integration
+- verify tags, gate releases on audit, drop duplicate CI job. rebuild bun.lock - (655ae51) - dcog989
+#### Miscellaneous Chores
+- updates - (9bbaa44) - dcog989
+- sync with scaffold - (dabb639) - dcog989
+#### Style
+- apply biome 2.6.9 formatter to svelte class attributes - (a108145) - dcog989
+
+- - -
+
 ## v3.12.0 - 2026-11-23
 #### Features
 - (**palette**) rotate harmonies in OKLCH with sRGB chroma clamping - (5b586d9) - dcog989
