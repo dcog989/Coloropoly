@@ -19,22 +19,12 @@ const emptySlotsCount = $derived(totalSlots - itemCount);
 const mobileEmptyLimit = $derived(Math.max(mobileCols * minRows, itemCount) - itemCount);
 </script>
 
-<div
-  class="
-      grid grid-cols-4 gap-3
-      md:grid-cols-5
-    "
->
+<div class="grid grid-cols-4 gap-3 md:grid-cols-5">
   {#each items as item (item.id)}
     <div class="group relative aspect-square">
       <button
         type="button"
-        class="
-                  block size-full cursor-pointer rounded-full border
-                  border-white/10 p-0 shadow-lg transition-transform
-                  [background:var(--paintbox-item)]
-                  hover:scale-105
-                "
+        class="block size-full cursor-pointer rounded-full border border-white/10 p-0 shadow-lg transition-transform [background:var(--paintbox-item)] hover:scale-105"
         style:--paintbox-item={item.css}
         onclick={() => color.set(item.css)}
         use:tooltip={color.formatColor(item.css)}
@@ -46,16 +36,7 @@ const mobileEmptyLimit = $derived(Math.max(mobileCols * minRows, itemCount) - it
           e.stopPropagation();
           paintbox.remove(item.id);
         }}
-        class="
-                  pointer-events-none absolute -top-2 -right-2 z-10 flex
-                  size-6 items-center justify-center rounded-full bg-black/50
-                  text-sm font-bold text-white opacity-0 shadow-lg
-                  transition-all
-                  group-hover:pointer-events-auto group-hover:opacity-100
-                  group-focus-within:pointer-events-auto
-                  group-focus-within:opacity-100 hover:bg-red-500
-                  max-md:pointer-events-auto max-md:opacity-100
-                "
+        class="pointer-events-none absolute -top-2 -right-2 z-10 flex size-6 items-center justify-center rounded-full bg-black/50 text-sm font-bold text-white opacity-0 shadow-lg transition-all group-hover:pointer-events-auto group-hover:opacity-100 group-focus-within:pointer-events-auto group-focus-within:opacity-100 hover:bg-red-500 max-md:pointer-events-auto max-md:opacity-100"
         aria-label="Remove color"
       >
         ×
@@ -74,12 +55,7 @@ const mobileEmptyLimit = $derived(Math.max(mobileCols * minRows, itemCount) - it
                 `
         : `block`}"
     >
-      <div
-        class="
-                  block size-full rounded-full border border-(--ui-border)
-                  bg-(--ui-bg) opacity-40
-                "
-      ></div>
+      <div class="block size-full rounded-full border border-(--ui-border) bg-(--ui-bg) opacity-40"></div>
     </div>
   {/each}
 </div>

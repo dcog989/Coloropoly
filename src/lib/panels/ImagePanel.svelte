@@ -75,12 +75,7 @@ const sortOptions: { label: string; value: SortMode }[] = [
 ];
 </script>
 
-<section
-  class="
-      panel flex flex-col
-    "
-  class:h-auto={collapsed}
->
+<section class="panel flex flex-col" class:h-auto={collapsed}>
   <div class="flex shrink-0 items-center justify-between" class:mb-6={!collapsed}>
     <h2 class="section-heading">Image Analyser</h2>
     <CollapseToggle bind:collapsed label="Image Analyser" controls="image-panel-body" />
@@ -98,11 +93,7 @@ const sortOptions: { label: string; value: SortMode }[] = [
         >
         <label
           for="img-upload"
-          class="
-                      flex h-full min-h-65 cursor-pointer flex-col items-center
-                      justify-center rounded-xl border-2 border-dashed
-                      bg-(--ui-bg) p-12 transition-all
-                    "
+          class="flex h-full min-h-65 cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed bg-(--ui-bg) p-12 transition-all"
           class:border-(--current-color)={isDragging}
           class:border-(--ui-border)={!isDragging}
           style:background-color={isDragging ? "color-mix(in oklch, var(--current-color) 10%, transparent)" : undefined}
@@ -111,12 +102,7 @@ const sortOptions: { label: string; value: SortMode }[] = [
           ondrop={onDrop}
         >
           <Image class="pointer-events-none mb-4 size-12 opacity-40" />
-          <span
-            class="
-                          pointer-events-none text-sm font-bold tracking-wider
-                          uppercase
-                        "
-          >
+          <span class="pointer-events-none text-sm font-bold tracking-wider uppercase">
             {imageAnalyzer.isProcessing ? "Processing..." : "Drop Image or Click to Upload"}
           </span>
           <span class="pointer-events-none mt-2 text-xs opacity-40">JPEG, PNG, WEBP, AVIF, GIF, BMP, SVG</span>
@@ -124,48 +110,23 @@ const sortOptions: { label: string; value: SortMode }[] = [
       </div>
     {:else}
       <!-- Controls & Thumbnail -->
-      <div
-        class="
-                  flex flex-col gap-6 rounded-xl border border-(--ui-border)
-                  bg-(--ui-bg) p-4
-                  md:flex-row
-                "
-      >
+      <div class="flex flex-col gap-6 rounded-xl border border-(--ui-border) bg-(--ui-bg) p-4 md:flex-row">
         <!-- Thumbnail -->
-        <div
-          class="
-                      group relative mx-auto shrink-0
-                      md:mx-0
-                    "
-        >
+        <div class="group relative mx-auto shrink-0 md:mx-0">
           <img
             src={imageAnalyzer.previewUrl}
             alt="Analyzed"
-            class="
-                          size-64 rounded-lg border border-(--ui-border)
-                          bg-(--ui-card) object-cover shadow-sm
-                        "
+            class="size-64 rounded-lg border border-(--ui-border) bg-(--ui-card) object-cover shadow-sm"
           >
 
           <button
             type="button"
             onclick={() => imageAnalyzer.clear()}
-            class="
-                          absolute inset-0 flex cursor-pointer items-center
-                          justify-center rounded-lg bg-black/40 opacity-0
-                          transition-all
-                          group-hover:opacity-100 group-focus-within:opacity-100
-                        "
+            class="absolute inset-0 flex cursor-pointer items-center justify-center rounded-lg bg-black/40 opacity-0 transition-all group-hover:opacity-100 group-focus-within:opacity-100"
             use:tooltip={"Clear image"}
             aria-label="Clear image"
           >
-            <div
-              class="
-                              rounded-full bg-white/20 p-4 text-white
-                              backdrop-blur-md transition-colors
-                              hover:bg-red-500
-                            "
-            >
+            <div class="rounded-full bg-white/20 p-4 text-white backdrop-blur-md transition-colors hover:bg-red-500">
               <X class="size-8" />
             </div>
           </button>
@@ -185,11 +146,7 @@ const sortOptions: { label: string; value: SortMode }[] = [
               >
                 {option.label}
                 {#if imageAnalyzer.sortMode === option.value}
-                  <div
-                    class="
-                                      size-2 rounded-full bg-white/50
-                                    "
-                  ></div>
+                  <div class="size-2 rounded-full bg-white/50"></div>
                 {/if}
               </button>
             {/each}
@@ -220,12 +177,7 @@ const sortOptions: { label: string; value: SortMode }[] = [
             {#if swatch !== null}
               <Swatch color={swatch} index={i} dynamicClass={false} />
             {:else}
-              <div
-                class="
-                                  aspect-square rounded-lg border
-                                  border-(--ui-border) bg-(--ui-bg) opacity-30
-                                "
-              ></div>
+              <div class="aspect-square rounded-lg border border-(--ui-border) bg-(--ui-bg) opacity-30"></div>
             {/if}
           {/each}
         </div>

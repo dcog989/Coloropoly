@@ -59,27 +59,15 @@ const handleInput = (e: Event) => {
 </script>
 
 <section
-  class="
-      panel overflow-x-hidden space-y-6
-    "
+  class="panel overflow-x-hidden space-y-6"
   style:--picker-l={color.l}
   style:--picker-c={color.c}
   style:--picker-h={color.h}
   style:--picker-max-c={color.chromaMax}
 >
   <!-- Top Row: Input and Mode Switch -->
-  <div
-    class="
-          flex flex-col items-center justify-between gap-4
-          md:flex-row
-        "
-  >
-    <div
-      class="
-              flex w-full flex-1 items-center gap-4
-              md:w-auto
-            "
-    >
+  <div class="flex flex-col items-center justify-between gap-4 md:flex-row">
+    <div class="flex w-full flex-1 items-center gap-4 md:w-auto">
       <h2 class="section-heading whitespace-nowrap">Color Picker</h2>
       <div class="relative z-50 w-full">
         <input
@@ -101,9 +89,7 @@ const handleInput = (e: Event) => {
               onclick={() => color.mapToSrgb()}
               aria-label="Map color to sRGB"
               use:tooltip={"Color is outside sRGB. Converted values are approximate. Click to map to the nearest sRGB color."}
-              class="
-                          cursor-pointer text-amber-500
-                        "
+              class="cursor-pointer text-amber-500"
             >
               <TriangleAlert class="size-4" />
             </button>
@@ -151,12 +137,7 @@ const handleInput = (e: Event) => {
   </div>
 
   <!-- Main Grid: Sliders & Swatch -->
-  <div
-    class="
-          grid grid-cols-1 gap-8
-          md:grid-cols-[1fr_160px]
-        "
-  >
+  <div class="grid grid-cols-1 gap-8 md:grid-cols-[1fr_160px]">
     <!-- Sliders -->
     <div class="space-y-5">
       {#if color.mode === "okhsl"}
@@ -181,26 +162,13 @@ const handleInput = (e: Event) => {
 
     <!-- Large Swatch -->
     <div class="h-32 min-h-50 w-full rounded-lg border border-white/10 shadow-xl md:h-auto">
-      <div
-        class="
-                  checkerboard group relative size-full overflow-hidden rounded-lg
-                "
-      >
+      <div class="checkerboard group relative size-full overflow-hidden rounded-lg">
         <div
-          class="
-                      absolute inset-0 transition-colors
-                      [background:var(--swatch-bg)]
-                    "
+          class="absolute inset-0 transition-colors [background:var(--swatch-bg)]"
           style:--swatch-bg={color.cssVar}
         ></div>
         <div
-          class="
-                      absolute inset-0 flex flex-col items-center justify-center
-                      gap-2
-                      translate-y-8 opacity-0 transition-all duration-300
-                      group-hover:translate-y-0 group-hover:opacity-100
-                      group-focus-within:translate-y-0 group-focus-within:opacity-100
-                    "
+          class="absolute inset-0 flex flex-col items-center justify-center gap-2 translate-y-8 opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100 group-focus-within:translate-y-0 group-focus-within:opacity-100"
         >
           <button
             type="button"
@@ -251,17 +219,10 @@ const handleInput = (e: Event) => {
       <button
         type="button"
         onclick={(e) => app.copy(format.value, e)}
-        class="
-                  group value-button cursor-pointer rounded-full border
-                  border-(--ui-border) bg-(--ui-bg) px-4 py-2 text-xs
-                  transition-all duration-200 hover:bg-(--current-color)
-                "
+        class="group value-button cursor-pointer rounded-full border border-(--ui-border) bg-(--ui-bg) px-4 py-2 text-xs transition-all duration-200 hover:bg-(--current-color)"
       >
         <span
-          class="
-                      group-hover:text-on-current mr-2 shrink-0 font-bold
-                      text-(--ui-text-muted) whitespace-nowrap transition-colors
-                    "
+          class="group-hover:text-on-current mr-2 shrink-0 font-bold text-(--ui-text-muted) whitespace-nowrap transition-colors"
           >{format.label}</span
         >
         <span class="value-reveal">

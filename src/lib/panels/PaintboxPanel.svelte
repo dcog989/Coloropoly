@@ -75,12 +75,7 @@ const sortOptions: { label: string; value: PaintboxSortMode }[] = [
 ];
 </script>
 
-<section
-  class="
-      panel flex flex-col
-    "
-  class:h-auto={collapsed}
->
+<section class="panel flex flex-col" class:h-auto={collapsed}>
   <div class="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center" class:mb-6={!collapsed}>
     <div class="flex w-full items-center justify-between gap-4 sm:contents">
       <h2 class="section-heading shrink-0">Paintbox</h2>

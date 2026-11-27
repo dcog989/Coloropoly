@@ -53,10 +53,7 @@ let {
       bind:value
       {oninput}
       aria-label={label}
-      class="
-              absolute inset-0 z-10 size-full rounded-full
-              bg-transparent
-            "
+      class="absolute inset-0 z-10 size-full rounded-full bg-transparent"
     >
   </div>
 </div>

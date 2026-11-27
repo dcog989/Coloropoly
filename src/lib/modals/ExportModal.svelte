@@ -39,19 +39,9 @@ const exports = $derived.by(() =>
     use:trapFocus
     transition:scale={{ duration: 300, easing: quadOut, start: 0.95 }}
   >
-    <header
-      class="
-              sticky top-0 z-10 flex items-center justify-between bg-(--ui-card)
-              pb-4
-            "
-    >
+    <header class="sticky top-0 z-10 flex items-center justify-between bg-(--ui-card) pb-4">
       <h2 class="modal-title" id="export-modal-title">Export Code</h2>
-      <div
-        class="
-                  flex items-center gap-2
-                  md:gap-4
-                "
-      >
+      <div class="flex items-center gap-2 md:gap-4">
         <select bind:value={exportFormat} aria-label="Export color format" class="select-control">
           <option value="oklch">OKLCH</option>
           <option value="hex">HEX</option>
@@ -69,11 +59,7 @@ const exports = $derived.by(() =>
             <button
               type="button"
               onclick={(e) => app.copy(exportItem.content, e)}
-              class="
-                              small-button value-button group
-                              border-transparent hover:border-(--ui-border)
-                              hover:bg-(--ui-bg)
-                            "
+              class="small-button value-button group border-transparent hover:border-(--ui-border) hover:bg-(--ui-bg)"
             >
               <span class="shrink-0 text-(--current-color)">Copy</span>
               <span class="value-reveal">
@@ -88,23 +74,14 @@ const exports = $derived.by(() =>
               <button
                 type="button"
                 onclick={() => exportCodeFile(app, exportItem.key, exportFormat)}
-                class="
-                                small-button shrink-0 border-(--ui-border)
-                                hover:border-(--current-color)
-                                hover:bg-(--current-color) hover:text-on-current
-                              "
+                class="small-button shrink-0 border-(--ui-border) hover:border-(--current-color) hover:bg-(--current-color) hover:text-on-current"
               >
                 Download
               </button>
             {/if}
           </div>
           <pre
-            class="
-                          max-h-50 overflow-auto rounded-2xl
-                          border border-(--ui-border) bg-(--ui-bg) p-4 font-mono
-                          text-xs
-                          md:p-6
-                        "
+            class="max-h-50 overflow-auto rounded-2xl border border-(--ui-border) bg-(--ui-bg) p-4 font-mono text-xs md:p-6"
           >{exportItem.content}</pre>
         </div>
       {/each}

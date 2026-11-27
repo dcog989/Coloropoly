@@ -10,12 +10,7 @@ let { message, subtitle }: Props = $props();
 <div class="flex flex-1 items-center justify-center" role="status" aria-live="polite">
   <div class="text-center">
     <div
-      class="
-              mx-auto mb-4 size-12 animate-spin rounded-full
-              border-4 border-(--ui-border)
-              border-t-(--ui-text)
-              motion-reduce:animate-none
-            "
+      class="mx-auto mb-4 size-12 animate-spin rounded-full border-4 border-(--ui-border) border-t-(--ui-text) motion-reduce:animate-none"
     ></div>
     <div class="text-sm opacity-60">{message}</div>
     {#if subtitle}

@@ -13,10 +13,7 @@ let { title, content, onClose }: Props = $props();
 </script>
 
 <div
-  class="
-      fixed inset-0 z-100 flex items-center justify-center p-4
-      md:p-8
-    "
+  class="fixed inset-0 z-100 flex items-center justify-center p-4 md:p-8"
   transition:fade={{ duration: 300, easing: quadOut }}
 >
   <button type="button" class="modal-scrim" onclick={onClose} aria-label="Close modal"></button>

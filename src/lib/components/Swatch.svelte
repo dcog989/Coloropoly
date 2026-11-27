@@ -27,12 +27,7 @@ const getActionClass = () => {
 </script>
 
 <div
-  class="
-      group relative aspect-square overflow-hidden rounded-lg
-      border border-white/10 shadow-md
-      [background:var(--swatch-color)]
-      hover:scale-105
-    "
+  class="group relative aspect-square overflow-hidden rounded-lg border border-white/10 shadow-md [background:var(--swatch-color)] hover:scale-105"
   style:--swatch-color={swatchColor}
 >
   <button
@@ -42,20 +37,9 @@ const getActionClass = () => {
     onclick={() => color.set(swatchColor)}
     aria-label="Select swatch {index + 1}"
   ></button>
-  <div
-    class="
-          pointer-events-none absolute inset-0 flex items-center justify-center
-          overflow-hidden
-        "
-  >
+  <div class="pointer-events-none absolute inset-0 flex items-center justify-center overflow-hidden">
     <div
-      class="
-              pointer-events-auto flex items-center justify-center gap-2
-              translate-y-8 opacity-0
-              transition-all duration-300
-              group-hover:translate-y-0 group-hover:opacity-100
-              group-focus-within:translate-y-0 group-focus-within:opacity-100
-            "
+      class="pointer-events-auto flex items-center justify-center gap-2 translate-y-8 opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100 group-focus-within:translate-y-0 group-focus-within:opacity-100"
     >
       <button
         onclick={(e) => {

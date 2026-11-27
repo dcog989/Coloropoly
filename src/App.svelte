@@ -183,24 +183,11 @@ const showInfo = (key: keyof typeof infoContent) => {
 
 <svelte:window onkeydown={handleKeyboard} onhashchange={applyHashColor} />
 
-<div
-  class="
-      flex min-h-screen flex-col pb-20 font-sans antialiased transition-colors
-      duration-500
-    "
-  inert={modalOpen}
->
+<div class="flex min-h-screen flex-col pb-20 font-sans antialiased transition-colors duration-500" inert={modalOpen}>
   <Header onSearch={openSearch} />
 
   <main
-    class="
-          grid w-full grid-cols-1 content-start gap-4 p-4
-          pt-0
-          sm:gap-6 sm:p-6 sm:pt-0
-          md:gap-8 md:p-8 md:pt-0
-          min-[1920px]:grid-cols-[1fr_500px_500px] min-[1920px]:grid-rows-[auto_auto]
-          min-[1920px]:px-16
-        "
+    class="grid w-full grid-cols-1 content-start gap-4 p-4 pt-0 sm:gap-6 sm:p-6 sm:pt-0 md:gap-8 md:p-8 md:pt-0 min-[1920px]:grid-cols-[1fr_500px_500px] min-[1920px]:grid-rows-[auto_auto] min-[1920px]:px-16"
   >
     <div class="min-h-0 min-w-64 w-full max-h-[48rem] min-[1920px]:col-start-1 min-[1920px]:row-start-1">
       <ColorPickerPanel />
@@ -236,18 +223,9 @@ const showInfo = (key: keyof typeof infoContent) => {
   </div>
 
   <footer
-    class="
-          bg-(--current-color-solid) text-on-current mx-auto flex w-full flex-wrap items-center
-          justify-between gap-4 px-4 py-6 opacity-80 transition-opacity
-          hover:opacity-100
-          sm:px-8
-        "
+    class="bg-(--current-color-solid) text-on-current mx-auto flex w-full flex-wrap items-center justify-between gap-4 px-4 py-6 opacity-80 transition-opacity hover:opacity-100 sm:px-8"
   >
-    <div
-      class="
-              flex flex-wrap gap-6 text-sm font-bold tracking-widest uppercase
-            "
-    >
+    <div class="flex flex-wrap gap-6 text-sm font-bold tracking-widest uppercase">
       <button onclick={() => showInfo("oklch")} type="button" class="footer-link">Why Okhsl + Oklch?</button>
       <span class="footer-divider">|</span>
       <button onclick={() => showInfo("analysis")} type="button" class="footer-link">Image Analysis?</button>
@@ -262,10 +240,7 @@ const showInfo = (key: keyof typeof infoContent) => {
     <button
       onclick={() => showInfo("shortcuts")}
       type="button"
-      class="
-              rounded-lg p-2 transition-colors
-              hover:bg-black/10 dark:hover:bg-white/10
-            "
+      class="rounded-lg p-2 transition-colors hover:bg-black/10 dark:hover:bg-white/10"
       aria-label="Keyboard Shortcuts"
     >
       <Keyboard class="size-5" />

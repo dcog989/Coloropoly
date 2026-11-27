@@ -24,21 +24,10 @@ const name = $derived(engine.closestName === PENDING_COLOR_NAME ? "" : engine.cl
 
 <!-- -webkit-mask-image kept for older WebKit/Safari; unprefixed mask-image serves modern engines -->
 <header
-  class="
-      sticky top-0 z-50
-      bg-[color-mix(in_oklch,var(--current-color)_20%,transparent)]
-      backdrop-blur-sm transition-colors duration-500
-    "
+  class="sticky top-0 z-50 bg-[color-mix(in_oklch,var(--current-color)_20%,transparent)] backdrop-blur-sm transition-colors duration-500"
   style="mask-image: linear-gradient(to bottom, black 50%, transparent 100%); -webkit-mask-image: linear-gradient(to bottom, black 50%, transparent 100%);"
 >
-  <div
-    class="
-          grid w-full grid-cols-[auto_1fr_auto_auto] items-center gap-2 sm:gap-4
-          p-4
-          sm:px-8 sm:py-6
-          md:pb-8
-        "
-  >
+  <div class="grid w-full grid-cols-[auto_1fr_auto_auto] items-center gap-2 sm:gap-4 p-4 sm:px-8 sm:py-6 md:pb-8">
     <button
       type="button"
       onclick={onSearch}

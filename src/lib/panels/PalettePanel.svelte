@@ -27,12 +27,7 @@ const removeRow = () => {
 };
 </script>
 
-<section
-  class="
-      panel
-    "
-  class:h-auto={collapsed}
->
+<section class="panel" class:h-auto={collapsed}>
   <div class="flex flex-col items-center justify-between gap-4 md:flex-row" class:mb-6={!collapsed}>
     <div class="flex w-full items-center justify-between gap-4 md:contents">
       <h2 class="section-heading shrink-0 self-start md:self-center">Palette</h2>

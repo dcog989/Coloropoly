@@ -129,12 +129,7 @@ const getApcaRating = (score: number) => {
           </div>
           <!-- Active Indicator -->
           {#if mode === m}
-            <div
-              class="
-                            absolute bottom-1 size-1 rounded-full
-                            bg-(--current-color)
-                          "
-            ></div>
+            <div class="absolute bottom-1 size-1 rounded-full bg-(--current-color)"></div>
           {/if}
         </button>
 
@@ -175,10 +170,7 @@ const getApcaRating = (score: number) => {
         class="text-input py-2 pr-4 pl-10 text-sm uppercase {customColorError ? "border-red-500" : ""}"
       >
       <div
-        class="
-                    absolute top-1/2 left-3 size-5 -translate-y-1/2
-                    rounded-full border border-(--ui-border)
-                  "
+        class="absolute top-1/2 left-3 size-5 -translate-y-1/2 rounded-full border border-(--ui-border)"
         style:background-color={customColorError ? "transparent" : parsedCustom?.toHex()}
       >
         {#if customColorError}
@@ -199,35 +191,14 @@ const getApcaRating = (score: number) => {
 
   <!-- 3. Preview Area -->
   <div
-    class="
-          group relative flex aspect-3/1 w-full flex-col items-center
-          justify-center overflow-hidden rounded-xl border border-(--ui-border)
-          p-2 text-center transition-colors duration-300
-          sm:p-3
-          md:p-4
-        "
+    class="group relative flex aspect-3/1 w-full flex-col items-center justify-center overflow-hidden rounded-xl border border-(--ui-border) p-2 text-center transition-colors duration-300 sm:p-3 md:p-4"
     style:background-color={bg}
     style:color={fg}
     data-axe-ignore
     aria-hidden="true"
   >
-    <h3
-      class="
-              mb-1 font-black
-              text-base
-              sm:text-lg
-              md:text-2xl
-            "
-    >
-      Sample Contrast
-    </h3>
-    <p
-      class="
-              max-w-[80%] text-[0.65rem] font-medium leading-tight
-              sm:text-xs
-              md:text-sm
-            "
-    >
+    <h3 class="mb-1 font-black text-base sm:text-lg md:text-2xl">Sample Contrast</h3>
+    <p class="max-w-[80%] text-[0.65rem] font-medium leading-tight sm:text-xs md:text-sm">
       How quickly the cunning brown foxes vexed the daft jumping zebras. 1 2 3 4 5 6 7 8 9 0.
     </p>
   </div>
@@ -235,41 +206,24 @@ const getApcaRating = (score: number) => {
   <!-- 4. Detailed Metrics -->
   <div class="grid grid-cols-2 gap-4">
     <!-- APCA Details -->
-    <div
-      class="
-              space-y-2 rounded-xl border border-(--ui-border) bg-(--ui-bg) p-4
-            "
-    >
+    <div class="space-y-2 rounded-xl border border-(--ui-border) bg-(--ui-bg) p-4">
       <div class="flex items-baseline justify-between">
         <span class="section-heading">APCA</span>
         <span class="text-xl font-black">{customColorError ? "--" : currentApca}</span>
       </div>
-      <div
-        class="
-                  mt-1 border-t border-(--ui-border) pt-2 text-sm font-medium
-                  opacity-70
-                "
-      >
+      <div class="mt-1 border-t border-(--ui-border) pt-2 text-sm font-medium opacity-70">
         {customColorError ? "Invalid color format" : getApcaRating(currentApca)}
       </div>
     </div>
 
     <!-- WCAG Ratio Details -->
-    <div
-      class="
-              space-y-2 rounded-xl border border-(--ui-border) bg-(--ui-bg) p-4
-            "
-    >
+    <div class="space-y-2 rounded-xl border border-(--ui-border) bg-(--ui-bg) p-4">
       <div class="flex items-baseline justify-between">
         <span class="section-heading">WCAG</span>
         <span class="text-xl font-black">{customColorError ? "--" : displayRatio}:1</span>
       </div>
 
-      <div
-        class="
-                  mt-1 flex justify-between border-t border-(--ui-border) pt-2
-                "
-      >
+      <div class="mt-1 flex justify-between border-t border-(--ui-border) pt-2">
         <div class="flex flex-col items-center gap-1">
           <span class="sub-label">AA Lg</span>
           {#if wcagScore !== "fail"}

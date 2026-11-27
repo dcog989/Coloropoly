@@ -105,12 +105,7 @@ $effect(() => {
   <div bind:this={content} class="inline-flex whitespace-nowrap {gapSize}">
     {#each letters as letter, i}
       {#if letter === " "}
-        <div
-          class="
-                      w-3 transition-all duration-1000
-                      md:w-5
-                    "
-        ></div>
+        <div class="w-3 transition-all duration-1000 md:w-5"></div>
       {:else}
         {@const style = getBlockStyle(i)}
         <span

@@ -169,13 +169,7 @@ function selectColor(hex: string) {
 </script>
 
 <div class="flex h-full flex-col">
-  <div
-    class="
-            flex flex-1 flex-col overflow-hidden rounded-xl border
-            border-(--ui-border) bg-(--ui-bg) p-4
-            md:p-6
-          "
-  >
+  <div class="flex flex-1 flex-col overflow-hidden rounded-xl border border-(--ui-border) bg-(--ui-bg) p-4 md:p-6">
     <input
       id="searchInput"
       type="text"
@@ -216,39 +210,18 @@ function selectColor(hex: string) {
               <button
                 type="button"
                 onclick={() => selectColor(color.hex)}
-                class="
-                                      group mb-1 box-border flex h-14 w-full
-                                      items-center gap-4 rounded-md p-2
-                                      text-left transition-colors
-                                      hover:bg-(--ui-card)
-                                    "
+                class="group mb-1 box-border flex h-14 w-full items-center gap-4 rounded-md p-2 text-left transition-colors hover:bg-(--ui-card)"
               >
                 <div
-                  class="
-                                          size-10 shrink-0 rounded-sm border
-                                          border-white/10 shadow-sm
-                                          transition-transform
-                                          [background:var(--item-bg)]
-                                          group-hover:scale-110
-                                        "
+                  class="size-10 shrink-0 rounded-sm border border-white/10 shadow-sm transition-transform [background:var(--item-bg)] group-hover:scale-110"
                   style:--item-bg={color.hex}
                   use:tooltip={colorStore.formatColor(color.hex)}
                 ></div>
                 <div class="min-w-0 flex-1">
-                  <div
-                    class="
-                                              truncate text-sm font-bold
-                                              text-(--ui-text)
-                                            "
-                  >
+                  <div class="truncate text-sm font-bold text-(--ui-text)">
                     {color.name}
                   </div>
-                  <div
-                    class="
-                                              font-mono text-xs tracking-wider
-                                              uppercase opacity-70
-                                            "
-                  >
+                  <div class="font-mono text-xs tracking-wider uppercase opacity-70">
                     {color.hex}
                   </div>
                 </div>
@@ -256,14 +229,7 @@ function selectColor(hex: string) {
             {/each}
           </div>
         {:else}
-          <div
-            class="
-                              flex h-full items-center justify-center text-sm
-                              opacity-60
-                            "
-          >
-            No colors found
-          </div>
+          <div class="flex h-full items-center justify-center text-sm opacity-60">No colors found</div>
         {/if}
       </div>
     {/if}

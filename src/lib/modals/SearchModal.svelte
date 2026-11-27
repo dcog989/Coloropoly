@@ -12,10 +12,7 @@ let { onClose }: Props = $props();
 </script>
 
 <div
-  class="
-      fixed inset-0 z-50 flex items-start justify-center px-4 pt-20
-      md:px-8 md:pt-28
-    "
+  class="fixed inset-0 z-50 flex items-start justify-center px-4 pt-20 md:px-8 md:pt-28"
   transition:fade={{ duration: 300, easing: quadOut }}
 >
   <button type="button" class="modal-scrim" onclick={onClose} aria-label="Close search"></button>

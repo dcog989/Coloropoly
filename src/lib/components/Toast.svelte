@@ -28,9 +28,7 @@ const isCursor = $derived(toast.active?.x !== undefined && toast.active?.y !== u
         duration: 200,
         opacity: 0,
       }}
-      class="
-              section-heading rounded-lg border border-(--ui-border)
-              bg-(--ui-card) p-4 shadow-xl"
+      class="section-heading rounded-lg border border-(--ui-border) bg-(--ui-card) p-4 shadow-xl"
     >
       {toast.active.message}
     </div>
