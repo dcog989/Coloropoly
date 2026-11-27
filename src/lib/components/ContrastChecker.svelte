@@ -147,8 +147,9 @@ const getApcaRating = (score: number) => {
           class="
                     absolute top-1.5 right-1.5 rounded-md p-1
                     transition-colors
-                    hover:bg-black/5 dark:hover:bg-white/10
-                    {inverted[m] ? `text-(--current-color)` : `text-(--ui-text-muted) opacity-60 hover:opacity-100`}
+                    {inverted[m]
+            ? `bg-(--current-color-solid) text-on-current`
+            : `text-(--ui-text-muted) opacity-60 hover:bg-black/5 hover:opacity-100 dark:hover:bg-white/10`}
                   "
         >
           <ArrowRightLeft class="size-[18px]" />
